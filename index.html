@@ -341,6 +341,84 @@ select[data-bcc="bancoMotorista"],select[data-bcc="bancoPassageiro"]{min-width:2
 .cl-veic .th img,.cl-veic .th svg{max-width:84px; max-height:46px; width:auto; height:auto;}
 @media (max-width:1180px){ .cl-layout{grid-template-columns:1fr;} }
 
+
+/* ---------- checklist de saída e retorno ---------- */
+.ck-layout{display:grid; grid-template-columns:minmax(0,1fr) 330px; gap:16px; align-items:start;}
+.ck-main{display:flex; flex-direction:column; gap:16px; min-width:0;}
+.ck-head{display:grid; grid-template-columns:180px minmax(0,1fr); gap:20px; align-items:center;}
+.ck-ph{height:104px; display:grid; place-items:center; background:linear-gradient(135deg,#f4f6fa,#e9edf3); border-radius:12px;}
+.ck-ph img,.ck-ph svg{max-height:92px; max-width:92%; width:auto; height:auto; filter:drop-shadow(0 10px 8px rgba(20,22,27,.12));}
+.ck-head h3{margin:0 0 3px; font-size:16.5px; font-weight:800; letter-spacing:-.2px;}
+.ck-head .muted{font-size:12px;}
+.seg{display:inline-flex; background:var(--canvas); border:1px solid var(--line); border-radius:11px; padding:3px; gap:3px; margin-top:12px;}
+.seg button{border:0; background:transparent; color:var(--ink2); font-size:13px; font-weight:700; padding:0 18px; border-radius:8px; min-height:36px; display:inline-flex; align-items:center; gap:7px;}
+.seg button[aria-pressed="true"]{background:var(--black); color:#fff;}
+.seg button i{width:8px; height:8px; border-radius:50%; background:var(--c);}
+.gauge{display:grid; grid-template-columns:repeat(5,1fr); gap:5px;}
+.gauge button{border:1px solid var(--line); background:#fff; border-radius:9px; padding:7px 0 6px; font-size:11.5px; font-weight:700; color:var(--ink2); display:flex; flex-direction:column; align-items:center; gap:5px; min-height:46px;}
+.gauge button i{display:block; width:68%; height:6px; border-radius:3px; background:linear-gradient(90deg,var(--c) var(--p),var(--line2) var(--p));}
+.gauge button:hover{border-color:var(--blue);}
+.gauge button[aria-pressed="true"]{border-color:var(--black); background:var(--black); color:#fff;}
+.ck-secs{columns:2 340px; column-gap:16px; margin-bottom:-16px;}
+.ck-sec{padding:14px 14px 8px; break-inside:avoid; margin-bottom:16px; display:block;}
+.ck-sec-h{display:flex; align-items:center; gap:8px; margin-bottom:6px;}
+.ck-sec-h b{flex:1; font-size:13.5px; font-weight:800; min-width:0;}
+.ck-sec-h .cnt{font-size:11.5px; color:var(--muted); font-weight:700; font-variant-numeric:tabular-nums; white-space:nowrap;}
+.ck-sec-h .cnt.ok{color:var(--green);}
+.ck-it{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:10px; align-items:center; padding:7px 6px; border-top:1px solid var(--line2); font-size:12.5px; border-radius:8px;}
+.ck-it .lb{min-width:0; overflow-wrap:anywhere; line-height:1.35;}
+.ck-it .lb em{font-style:normal; color:var(--muted); font-variant-numeric:tabular-nums; margin-right:4px;}
+.ck-it .lb small{display:block; font-size:10.5px; color:#b77400; font-weight:700; margin-top:1px;}
+.ck-it.nok{background:var(--red-soft);}
+.ck-it.falta{box-shadow:inset 3px 0 0 var(--orange); background:var(--orange-soft);}
+.tri{display:inline-flex; gap:4px;}
+.tri button{min-width:44px; height:31px; border:1px solid var(--line); background:#fff; border-radius:7px; font-size:11px; font-weight:800; color:var(--muted); padding:0 6px;}
+.tri button:hover{border-color:var(--ink2); color:var(--ink2);}
+.tri button[data-v="ok"][aria-pressed="true"]{background:var(--green); border-color:var(--green); color:#fff;}
+.tri button[data-v="nok"][aria-pressed="true"]{background:var(--red); border-color:var(--red); color:#fff;}
+.tri button[data-v="na"][aria-pressed="true"]{background:#8a90a0; border-color:#8a90a0; color:#fff;}
+.ck-diag{position:relative; border:1px solid var(--line2); border-radius:12px; overflow:hidden; background:#fff; max-width:760px; margin:0 auto; user-select:none; -webkit-user-select:none;}
+.ck-diag.ed{cursor:crosshair; touch-action:manipulation;}
+.ck-diag img{display:block; width:100%; height:auto; pointer-events:none;}
+.mk{position:absolute; transform:translate(-50%,-50%); width:24px; height:24px; border-radius:50%; background:var(--red); color:#fff; font-size:11px; font-weight:800; display:grid; place-items:center; border:2px solid #fff; box-shadow:0 2px 6px rgba(0,0,0,.3); pointer-events:none;}
+.mk.old{background:#8a90a0;}
+.mk-i{display:inline-grid; place-items:center; width:22px; height:22px; border-radius:50%; background:var(--red); color:#fff; font-size:11px; font-weight:800; flex-shrink:0;}
+.mk-i.old{background:#8a90a0;}
+.av-row{display:grid; grid-template-columns:auto 140px minmax(0,1fr) auto; gap:8px; align-items:center; padding:8px 0; border-bottom:1px solid var(--line2);}
+.av-row:last-child{border-bottom:0;}
+.av-ro{display:flex; gap:9px; align-items:flex-start; padding:7px 0; border-bottom:1px solid var(--line2); font-size:12.5px;}
+.av-ro:last-child{border-bottom:0;}
+.ck-side .prog{height:10px; border-radius:5px; background:var(--line2); overflow:hidden; margin:10px 0 4px;}
+.ck-side .prog i{display:block; height:100%; background:var(--blue); border-radius:5px; transition:width .2s;}
+.ck-side .prog i.full{background:var(--green);}
+.ck-cnts{display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin:12px 0;}
+.ck-cnts div{background:var(--canvas); border-radius:9px; padding:8px 4px; text-align:center;}
+.ck-cnts b{display:block; font-size:18px; font-weight:800; font-variant-numeric:tabular-nums;}
+.ck-cnts span{font-size:10.5px; color:var(--muted); font-weight:700;}
+.ck-check{display:flex; gap:9px; align-items:flex-start; font-size:12.5px; line-height:1.4; margin-top:12px; cursor:pointer;}
+.ck-check input{width:18px; height:18px; margin-top:1px; flex-shrink:0; accent-color:var(--blue);}
+.ck-cmp{display:grid; grid-template-columns:repeat(auto-fit,minmax(118px,1fr)); gap:10px; background:var(--blue-soft); border-radius:12px; padding:12px 14px; margin-top:14px; font-size:12px;}
+.ck-cmp span{display:block; color:var(--muted); font-weight:600; font-size:11px;}
+.ck-cmp b{font-size:14px; font-weight:800;}
+.badge.rota{background:var(--blue-soft); color:var(--blue);}
+.nok-list{margin:4px 0 0; padding:0; list-style:none; font-size:12.5px;}
+.nok-list li{padding:6px 0; border-bottom:1px solid var(--line2); display:flex; gap:8px; align-items:baseline;}
+.nok-list li:last-child{border-bottom:0;}
+.nok-list li::before{content:""; width:7px; height:7px; border-radius:50%; background:var(--red); flex-shrink:0; transform:translateY(-1px);}
+.nok-list li small{color:var(--muted); font-size:11px; margin-left:auto; white-space:nowrap;}
+.nok-list li.novo b{color:var(--red);}
+.ck-tpl-sec{columns:2 260px; column-gap:22px; font-size:12.5px; margin:0; padding:0; list-style:none;}
+.ck-tpl-sec li{padding:5px 0; border-bottom:1px solid var(--line2); break-inside:avoid;}
+.ck-tpl-sec li em{font-style:normal; color:var(--muted); margin-right:6px; font-variant-numeric:tabular-nums;}
+@media (max-width:1180px){ .ck-layout{grid-template-columns:1fr;} }
+@media (max-width:760px){
+  .ck-head{grid-template-columns:1fr; gap:12px;} .ck-ph{height:96px;}
+  .seg{display:flex;} .seg button{flex:1; justify-content:center;}
+  .tri button{min-width:46px; height:38px;}
+  .ck-it{grid-template-columns:1fr; gap:6px;} .ck-it .tri{justify-content:flex-end;}
+  .av-row{grid-template-columns:auto minmax(0,1fr) auto;} .av-row input{grid-column:1/-1;}
+}
+
 @media (max-width:1100px){ .fleet{grid-template-columns:1fr;} .fleet-list{position:static;} .fl-body{max-height:340px;} }
 @media (max-width:760px){
   #rail{inset:auto 0 0 0; width:auto; height:62px; flex-direction:row; justify-content:space-around; padding:0 6px; gap:0;}
@@ -365,6 +443,7 @@ select[data-bcc="bancoMotorista"],select[data-bcc="bancoPassageiro"]{min-width:2
   <button type="button" class="rail-btn" data-view="painel" aria-label="Painel"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span class="tt">Painel</span></button>
   <button type="button" class="rail-btn" data-view="veiculos" aria-label="Veículos"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 15V8h12v7"/><path d="M14 10h4l3 3v2h-7"/><circle cx="6.5" cy="16.5" r="1.8"/><circle cx="17" cy="16.5" r="1.8"/></svg><span class="tt">Veículos</span></button>
   <button type="button" class="rail-btn" data-view="revisao" aria-label="Revisão"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.3 5.3L3 18l3 3 6.4-6.4a4 4 0 0 0 5.3-5.3l-2.6 2.6-2.4-.6-.6-2.4z"/></svg><span class="tt">Revisão</span></button>
+  <button type="button" class="rail-btn" data-view="checklist" aria-label="Checklist"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M8.5 12.5l2 2 4-4.5"/><path d="M9 18h6"/></svg><span class="tt">Checklist de saída e retorno</span></button>
   <button type="button" class="rail-btn" data-view="colaboradores" aria-label="Colaboradores"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.3"/><path d="M2.8 19.5c.6-3.2 3-5.2 6.2-5.2s5.6 2 6.2 5.2"/><path d="M16 4.9a3.2 3.2 0 0 1 0 6.2M18.6 14.6c1.5.8 2.4 2.5 2.7 4.9"/></svg><span class="tt">Colaboradores</span></button>
   <button type="button" class="rail-btn" data-view="alertas" aria-label="Alertas"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9.5 17h-19z"/><path d="M12 10v4M12 17.5v.5"/></svg><span class="tt">Alertas</span></button>
   <button type="button" class="rail-btn" data-view="cadastro" aria-label="Cadastro"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span class="tt">Cadastro completo</span></button>
@@ -493,6 +572,59 @@ select[data-bcc="bancoMotorista"],select[data-bcc="bancoPassageiro"]{min-width:2
         </div>
         <div id="bcFicha"></div>
       </div>
+    </div>
+  </section>
+
+
+  <!-- ===================== CHECKLIST ===================== -->
+  <section id="viewChecklist" class="view" style="display:none;">
+    <div class="fchips" id="ckTabs" role="tablist" style="margin-bottom:14px;">
+      <button type="button" class="fchip on" data-ckaba="novo" role="tab">Novo checklist</button>
+      <button type="button" class="fchip" data-ckaba="hist" role="tab">Checklists realizados</button>
+      <button type="button" class="fchip" data-ckaba="modelos" role="tab">Modelos por veículo</button>
+    </div>
+    <div class="box warn" id="ckErroBox" style="display:none; margin-top:0;"><h4>Checklists sem permissão no Firestore</h4><div class="note" style="margin-top:0;">Publique as regras do Firestore atualizadas (arquivo firestore.rules), que incluem a coleção frota_checklists.</div></div>
+    <div class="kpis" id="ckKpis"></div>
+    <div id="ckNovoWrap">
+      <div class="card lock-card" id="ckLocked">
+        <span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
+        <div style="flex:1; min-width:220px;"><b style="font-size:14.5px;">Checklist disponível só no Modo edição</b><div class="note" style="margin-top:3px;">Para preencher o checklist de saída ou de retorno, entre com o PIN de edição. Os checklists realizados ficam visíveis para todos.</div></div>
+        <button type="button" class="btn btn-dark" id="ckIrEdicao">Ir para o Modo edição</button>
+      </div>
+      <div id="ckNovo"></div>
+    </div>
+    <div id="ckHistWrap" style="display:none;">
+      <div class="cl-layout">
+        <div class="card">
+          <div class="card-h"><h3>Checklists realizados</h3><span class="sub" id="ckCount"></span></div>
+          <div class="ftools">
+            <input id="ckBusca" type="search" placeholder="Buscar placa, motorista, conferente…" aria-label="Buscar checklist">
+            <select id="ckFModelo" aria-label="Modelo"><option value="">Modelo: todos</option></select>
+          </div>
+          <div class="fchips" id="ckChips"></div>
+          <div class="tablewrap" style="max-height:calc(100vh - 360px); min-height:280px;">
+            <table class="tb vt">
+              <thead><tr id="ckHead">
+                <th class="sortable" data-k="quando">Data</th>
+                <th class="sortable" data-k="tipo">Tipo</th>
+                <th class="sortable" data-k="placa">Placa</th>
+                <th class="sortable" data-k="condutor">Motorista</th>
+                <th class="sortable" data-k="km">KM</th>
+                <th class="sortable hide-sm" data-k="nivel">Nível</th>
+                <th class="sortable" data-k="nok">N/OK</th>
+                <th class="sortable hide-sm" data-k="av">Avarias</th>
+                <th class="sortable" data-k="sit">Situação</th>
+              </tr></thead>
+              <tbody id="ckBody"></tbody>
+            </table>
+          </div>
+        </div>
+        <div id="ckFicha"></div>
+      </div>
+    </div>
+    <div id="ckModWrap" style="display:none;">
+      <div class="mtabs" id="ckModTabs" role="tablist" aria-label="Modelos de checklist"></div>
+      <div id="ckModBody"></div>
     </div>
   </section>
 
@@ -826,6 +958,7 @@ const frotaRef = collection(db, "frota");
 const histRef = collection(db, "frota_historico");
 const afRef = collection(db, "frota_afastamentos");
 const colabRef = collection(db, "frota_colaboradores");
+const ckRef = collection(db, "frota_checklists");
 
 const SEED = {"veiculos":[["CITROEN JUMPY CARGO","GAZ2E95","OALAS DAMASCENO VIEIRA","","1299935930","2022/2023","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","09/07/2024","2026"],["CITROEN JUMPY CARGO","RUE1C31","MARCOS VINICIUS PEREIRA DE OLIVEIRA","","1298070780","2022/2023","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","24/01/2023",""],["CITROEN JUMPY CARGO","RUE1C37","ADAILTON DA SILVA VIANA","","1298070853","2022/2023","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","25/09/2024",""],["CITROEN JUMPY CARGO","RUE1C14","PAULO HENRIQUE GONÇALVES SABINO","","1298070594","2022/2023","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","25/09/2024",""],["CITROEN JUMPY CARGO","RUE1C16","ANTONIO ALVES DA MOTA FILHO","","1298070608","2022/2023","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","15/07/2022",""],["CITROEN JUMPY CARGO","RUE1C11","RAFAEL FRANCELINO DE QUEIROZ","","1298070543","2022/2023","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","26/01/2023",""],["CITROEN JUMPY CARGO","RUE1C19","EULER JUNIOR FERREIRA DA SILVA","","1298070659","2022/2023","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","25/09/2024",""],["CITROEN JUMPY CARGO","RUE1C35","JHENIS RODRIGUES DOS SANTOS","ESTAVA COM IMAVAN","1298070837","2022/2023","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","25/09/2024",""],["CITROEN JUMPY CARGO","RUE1C38","SERGIO HENRIQUE DE JESES ARAUJO","","1298070870","2022/2023","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","03/10/2022",""],["CITROEN JUMPY CARGO","RTX1E69","JEFERSON ABRANTES DA SILVA","","1292456954","2022/2023","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","25/09/2024",""],["I/ PEUGEOT E EXPERT CARGO","RTW8H85","WESCLEY CLAUDINO DE SOUSA","","1292684817","2022/2022","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","09/07/2024",""],["I/ PEUGEOT E EXPERT CARGO","RTX1E59","DARLAN PEREIRA DE OLIVEIRA","","1292456750","2022/2022","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","21/11/2022",""],["I/ PEUGEOT E EXPERT CARGO","RTX1E43","GABRIEL BRENER DA SILVA","","1292456571","2022/2022","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","06/12/2022",""],["I/ PEUGEOT E EXPERT CARGO","RUE1C04","DIONAI MARTINS DA CUNHA","","1298070462","2022/2022","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","25/09/2024",""],["I/FIAT SCUDO CARGO TD","OVO5A15","BRUCE MARTINS DA SILVA","REVISÃO FEITA","1454904019","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","12/09/2025",""],["I/FIAT SCUDO CARGO TD","OVO5B39","RONALDO FABRIZIO COELHO DA SILVA","FAZER REVISÃO","1454790757","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","12/09/2025",""],["I/FIAT SCUDO CARGO TD","OVO4J10","CARLOS ELIAS ALVES","REVISÃO FEITA","1454790803","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","12/09/2025",""],["I/FIAT SCUDO CARGO TD","OVO4J22","RIEDE BATISTA LOBO","FAZER ORÇAMENTO BATIDA","1454784463","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","12/09/2025",""],["I/FIAT SCUDO CARGO TD","OZX7G43","JHEYSSON GENESIO SOARES PANUNCIO","REVISÃO FEITA","1458682789","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","12/09/2025",""],["I/FIAT SCUDO CARGO TD","RER6F92","VICTOR SECUNDO DIAS","REVISÃO FEITA","1463293809","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","08/10/2025",""],["I/FIAT SCUDO CARGO TD","RER2H90","WOSHINGTON BARCELOS FAGUNDES DE ARAUJO","","1463058397","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","08/10/2025",""],["I/FIAT SCUDO CARGO TD","RER2H98","WILLIAM DE CARVALHO DIAS","","1463061282","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","08/10/2025",""],["I/FIAT SCUDO CARGO TD","RER6F94","JORGE ANTONIO MATOS NETO","","1463153829","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","08/10/2025",""],["I/FIAT SCUDO CARGO TD","RER6F93","MATHEUS ROBERTO PEREIRA DE OLIVEIRA","","1463385563","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","08/10/2025",""],["I/FIAT SCUDO CARGO TD","RER6F91","WHAGNO MARTINS DOS SANTOS","REVISÃO OK","1463295011","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","08/10/2025",""],["I/FIAT SCUDO CARGO TD","RER6F83","OFICINA","OFICINA","1463297227","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","08/10/2025",""],["I/FIAT SCUDO CARGO TD","RER6F90","GILFERSON GIBEON LOPES DE SENA","FAZER REVISÃO","1463295810","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","08/10/2025",""],["I/FIAT SCUDO CARGO TD","RER6F89","JOAO PEDRO DA SILVA GONÇALVES","","1463296379","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","10/11/2025",""],["I/FIAT SCUDO CARGO TD","RER6F87","ANTONIO FRANCISCO DA SILVA CUNHA","REVISÃO FEITA","1463296891","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","10/11/2025",""],["FIAT/ARGO 1.0 FLEX (Alugado)","GMF9F20","RUBENS DA CRUZ GARCIA","","","2024/2024","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","25/04/2024",""],["FIAT/ARGO 1.0 FLEX (Alugado)","GMF9F29","WENDEL WANDO DO NASCIMENTO LOPES","","1387088570","2024/2024","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","-",""],["FIAT/ARGO 1.0 FLEX (Alugado)","GMF9F27","ROMEU ALVES DA NATIVIDADE","","1387088553","2024/2024","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","-",""],["FIAT/ARGO 1.0 FLEX (Alugado)","SIP6E45","LILIAN CASTORINA PIGNATA DE MELO","","1357907718","2023/2024","COMERCIAL","DIRETOR","BRANCA","LETS","DISDAL","22/11/2023",""],["FIAT/ARGO 1.0 FLEX (Alugado)","TCH8J02","PRISCILA PEREIRA CANDIDO","","1404097098","2024/2025","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","08/10/2024",""],["FIAT/ARGO 1.0 FLEX (Alugado)","TCY8C71","JANAINA APARECIDA DE JESUS SOUSA","","1410063663","2024/2025","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","22/11/2024",""],["FIAT/ARGO 1.0 FLEX (Alugado)","TCY8C78","JOSE IVALDO DA CRUZ SILVA","","1410063736","2024/2025","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","22/11/2024",""],["FIAT/ARGO 1.0 FLEX (Alugado)","TZY0A05","SILVIO FERREIRA DOS SANTOS","","1501363040","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","04/09/2026","2026"],["FIAT/ARGO 1.0 FLEX (Alugado)","TZZ3J55","LUCAS RIBEIRO ALVES PEREIRA","","1502492900","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","10/09/2026",""],["FIAT/ARGO 1.0 FLEX (Alugado)","TZZ3J58","JULIO GLESSON TORRES ROCHA","","1502492978","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","04/09/2026","2026"],["FIAT/ARGO 1.0 FLEX (Alugado)","TZZ3J59","WALLISON PEREIRA DIAS DE MESQUITA","","1502492994","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","04/09/2026",""],["FIAT/ARGO 1.0 FLEX (Alugado)","TZZ3J61","RAFAEL BEZERRA DOS SANTOS","","1502493028","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","04/09/2026",""],["FIAT/ARGO 1.0 FLEX (Alugado)","TZZ3J62","LUCAS NERES MONCUETH","","1502493036","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","04/09/2026",""],["FIAT/ARGO 1.0 FLEX (Alugado)","UAE5F07","RENATO FERNANDES SOUSA SILVA","","1503947308","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","04/09/2026","2026"],["FIAT/ARGO 1.0 FLEX (Alugado)","UAE5F09","JOAO FABIANO GOMES FERREIRA","","1503947324","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","04/09/2026","2026"],["FIAT/ARGO 1.0 FLEX (Alugado)","UAE5F10","FLAVIO AUGUSTO TREVIZOLO","","1503947332","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","04/09/2026","2026"],["FIAT/ARGO 1.0 FLEX (Alugado)","UAE5F12","MATHEUS DE SOUSA CRUZ","","1503947340","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","04/09/2026","2026"],["FIAT/ARGO 1.0 FLEX (Alugado)","UAE5F13","RACHEL STELLA ROCHA CAETANO","","1503947359","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","04/09/2026","2026"],["FIAT/ARGO 1.0 FLEX (Alugado)","UVM8J14","ELIANE GOMES DE SOUZA","","1509887390","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","04/09/2026","2026"],["FIAT/ARGO 1.0 FLEX (Alugado)","UVM8J17","BRUNA CAROLINE SILVA","","1509887463","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","10/09/2026",""],["FIAT/ARGO 1.0 FLEX (Alugado)","TZZ3J60","PATIO","","1502493001","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","","2026"],["FIAT/ARGO 1.0 FLEX (Alugado)","TZZ3J57","PATIO","","1502492960","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","","2026"],["FIAT/ARGO 1.0 FLEX (Alugado)","UVV7I62","PATIO","","1519078398","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","","2026"],["FIAT/FIORINO ENDURANCE","SGP1E32","GIVALDO FERNANDES","","1324344390","2022/2023","MERCHANDISING","COORDENADOR","BRANCA","FERRARI","DISDAL","04/11/2022",""],["FIAT/FIORINO ENDURANCE","UIZ0B25","PATIO","FÉRIAS","1489497371","2026/2026","MERCHANDISING","COORDENADOR","BRANCA","FERRARI","DISDAL","19/05/2026",""],["FIAT/FIORINO ENDURANCE","UJD3A97","EDUARDO HENRIQUE SILVA TEIXEIRA","","1506563128","2026/2027","MERCHANDISING","COORDENADOR","BRANCA","FERRARI","DISDAL","",""],["FIAT/FIORINO ENDURANCE","UJD3A80","SIMONE DA SILVA SANTOS","","1506562288","2026/2027","MERCHANDISING","COORDENADOR","BRANCA","FERRARI","DISDAL","",""],["FIAT/FIORINO ENDURANCE","UJD4G72","LUIZ FERNANDO SOUZA SANTANA","","","","","","","","","",""],["Kombi Furgão 1.4 Flex","AVU4773","NILVAN PEREIRA DO NASCIMENTO","","480484562","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","08/09/2022","2026"],["Kombi Furgão 1.4 Flex","AWN3981","RODRIGO HORNORIO CASSIANO","","509492290","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","","2026"],["Kombi Furgão 1.4 Flex","AWR7018","MARCIO VICENTE DA SILVA JUNIOR","","528520261","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","13/10/2022","2026"],["Kombi Furgão 1.4 Flex","AWR7022","OFICINA","FALTA ARRUAMR BANCO","528516485","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","","2026"],["Kombi Furgão 1.4 Flex","EQY4215","PATIO","","329686444","2011/2012","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","04/03/2024","2026"],["Kombi Furgão 1.4 Flex","EZC2997","ANGELO ZENOLY ALI FIGUEIREDO","","538956780","2013/2014","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","04/03/2024","2026"],["Kombi Furgão 1.4 Flex","FGC0279","EDSON ROCHA COELHO","FALTA ARRUAMR BANCO","529739569","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","12/07/2022","2026"],["Kombi Furgão 1.4 Flex","IVD2J92","PATIO","ANDRE","598570608","2013/2014","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","16/07/2022","2026"],["Kombi Furgão 1.4 Flex","JEH8392","OFICINA","ANDRE","505684551","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","20/01/2023","2026"],["Kombi Furgão 1.4 Flex","JEH8632","JARBAS GUTEMBERG DE SOUZA","","505778718","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","11/01/2023","2026"],["Kombi Furgão 1.4 Flex","JEH9282","OFICINA","IMAVAN LANTERNAGEM","505808820","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","12/09/2022","2026"],["Kombi Furgão 1.4 Flex","JEH9302","OFICINA","","505808730","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","22/08/2022","2026"],["Kombi Furgão 1.4 Flex","JEN3311","LUCAS BRAIAN DOS SANTOS RODRIGUES BISPO","","504371550","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","","2026"],["Kombi Furgão 1.4 Flex","JER0A17","OFICINA","","509413056","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","19/09/2022","2026"],["Kombi Furgão 1.4 Flex","JEU0130","PATIO","","509284469","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","","2026"],["Kombi Furgão 1.4 Flex","NDL9307","RYAN SANTOS PEREIRA DA SILVA","","589781936","2013/2014","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","26/09/2022",""],["Kombi Furgão 1.4 Flex","OHA8F85","ADENILSON LOPES DE SOUZA","","480018995","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","","2026"],["Kombi Furgão 1.4 Flex","OVQ9450","FERNANDO JULIO NOBREGA DA SILVA","MANDAR PARA OFICINA","597918210","2013/2014","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","21/05/2022",""],["I/NISSAN SENTRA EXC CVT","SGZ7E39","GUSTAVO PEREIRA ALVES","","1433877705","2025/2025","DIRETORIA COMERCIAL","DIRETOR","BRANCA","FERRARI","DISDAL","15/04/2025",""],["I/NISSAN SENTRA EXC CVT","SGZ6J52","CLAUDIONOR BATISTA DA SILVA JUNIOR","","1433700740","2025/2025","DIRETORIA OPERACIONAL","DIRETOR","BRANCA","FERRARI","DISDAL","15/04/2025",""],["RENAULT/MASTER 13M3 25DCI","EPG2G94","JOSE LUIZ RODRIGUES DA COSTA","","472055909","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","26/01/2026",""],["RENAULT/MASTER 13M3 25DCI","JKF5A04","ISLEI JOSÉ TAVARES","","480323887","2012/2013","FLEX","VENDEDORES","PRATA","FERRARI","DISDAL","05/08/2022","2026"],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH1F85","","DEVOLVIDO","1324838741","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH6I96","","DEVOLVIDO","1325123118","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH8E23","","DEVOLVIDO","1325215519","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH9J20","","DEVOLVIDO","1325314320","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVI1B90","","DEVOLVIDO","1304930260","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","11/04/2024",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVI4B76","","DEVOLVIDO","1325428814","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","14/12/2022",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH1F90","","DEVOLVIDO","1324838814","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","-",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH6I97","DAVI SOARES DE LIMA","SERÁ RENOVADO","1325123126","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","-",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH1F88","","DEVOLVIDO","1324838784","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH1F89","","DEVOLVIDO","1324838806","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","26/11/2022",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH1F81","","DEVOLVIDO","1324838695","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH1F82","","DEVOLVIDO","1324838709","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH8E24","","DEVOLVIDO","1325215535","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","26/11/2022",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH8E25","","DEVOLVIDO","1325215551","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVL5H60","","DEVOLVIDO","1326299767","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","",""],["VW/GOL MPI (ALUGADO)","RVT5C82","PATIO","","1330441696","2023/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","",""]],"afastamentos":[["DIONAI MARTINS DA CUNHA","FERIAS","",""],["CRISTIANO DOS SANTOS FERREIRA","FERIAS","14/10/2026",""]]};
 // Base de colaboradores (nome, departamento, supervisor e vencimento da CNH). RG, CPF, nº da CNH e telefone ficaram de fora porque o banco é de leitura pública.
@@ -834,6 +967,8 @@ const BASE_COLAB = [{"nome":"ADAILTON DA SILVA VIANA","departamento":"Vendedores
 const BASE_REV = [{"placa":"GAZ2E95","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"RUE1C31","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"RUE1C37","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"RUE1C14","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"RUE1C16","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"RUE1C11","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"RUE1C19","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"RUE1C35","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"RUE1C38","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"RTX1E69","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"RTW8H85","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"RTX1E59","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"RTX1E43","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"RUE1C04","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"OVO5A15","ultimaRevisao":"2026-09-29","kmUltimaRevisao":15000,"km":16183,"situacao":"OK","kmAtualizadoEm":"","agendamento":""},{"placa":"OVO5B39","ultimaRevisao":"2026-10-03","kmUltimaRevisao":20396,"km":20402,"situacao":"OK","kmAtualizadoEm":"2026-10-03","agendamento":""},{"placa":"OVO4J10","ultimaRevisao":"2026-09-11","kmUltimaRevisao":16788,"km":17845,"situacao":"OK","kmAtualizadoEm":"2026-10-03","agendamento":""},{"placa":"OVO4J22","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"OZX7G43","ultimaRevisao":"2026-09-29","kmUltimaRevisao":20300,"km":20840,"situacao":"OK","kmAtualizadoEm":"","agendamento":""},{"placa":"RER6F92","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"RER2H90","ultimaRevisao":"","kmUltimaRevisao":0,"km":16068,"situacao":"OK","kmAtualizadoEm":"","agendamento":""},{"placa":"RER2H98","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"RER6F94","ultimaRevisao":"","kmUltimaRevisao":0,"km":14847,"situacao":"OK","kmAtualizadoEm":"2026-10-03","agendamento":""},{"placa":"RER6F93","ultimaRevisao":"2026-09-20","kmUltimaRevisao":20000,"km":26500,"situacao":"OK","kmAtualizadoEm":"2026-10-02","agendamento":""},{"placa":"RER6F91","ultimaRevisao":"2026-09-26","kmUltimaRevisao":13000,"km":13710,"situacao":"OK","kmAtualizadoEm":"2026-10-02","agendamento":""},{"placa":"RER6F83","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"RER6F90","ultimaRevisao":"","kmUltimaRevisao":0,"km":12481,"situacao":"OK","kmAtualizadoEm":"","agendamento":""},{"placa":"RER6F89","ultimaRevisao":"2026-09-26","kmUltimaRevisao":20197,"km":20447,"situacao":"OK","kmAtualizadoEm":"2026-10-02","agendamento":""},{"placa":"RER6F87","ultimaRevisao":"2026-10-03","kmUltimaRevisao":16252,"km":16374,"situacao":"OK","kmAtualizadoEm":"2026-10-03","agendamento":""},{"placa":"GMF9F20","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"GMF9F29","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"SIP6E45","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"GMF9F27","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"TCH8J02","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"TCY8C71","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"TCY8C78","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"TZY0A05","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"TZZ3J55","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"TZZ3J58","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"TZZ3J59","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"TZZ3J61","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"TZZ3J62","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"UAE5F07","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"UAE5F09","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"UAE5F10","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"UAE5F12","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"UAE5F13","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"UVM8J14","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"UVM8J17","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"SGP1E32","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"UIZ0B25","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"UJD3A97","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"UJD3A80","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"UJD4G72","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"AVU4773","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"AWN3981","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"AWR7018","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"AWR7022","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"EQY4215","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"EZC2997","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"FGC0279","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"IVD2J92","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"JEH8392","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"JEH8632","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"JEH9282","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"JEH9302","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"JEN3311","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"JER0A17","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"JEU0130","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"NDL9307","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"OHA8F85","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"OVQ9450","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"SGZ7E39","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"SGZ6J52","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"EPG2G94","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"JKF5A04","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"RVH6I97","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""}];
 // Relatório BANCOS KOMBIS (serviço no banco do motorista e do passageiro)
 const BASE_BANCOS = [{"placa":"AVU4773","motorista":"Assento / reencapar","passageiro":"","obs":"Só motorista"},{"placa":"AWN3981","motorista":"Assento / reencapar","passageiro":"","obs":"Só motorista"},{"placa":"AWR7018","motorista":"Completo (encosto e assento)","passageiro":"","obs":"Só motorista"},{"placa":"AWR7022","motorista":"Assento / reencapar","passageiro":"","obs":"Só motorista"},{"placa":"EQY4215","motorista":"Completo (encosto e assento)","passageiro":"Completo (encosto e assento)","obs":"Completo"},{"placa":"EZC2997","motorista":"Assento / reencapar","passageiro":"","obs":"Só motorista"},{"placa":"FGC0279","motorista":"Assento / reencapar","passageiro":"","obs":"Só motorista"},{"placa":"IVD2J92","motorista":"Assento / reencapar","passageiro":"","obs":"Só motorista"},{"placa":"JEH8392","motorista":"Reencapar ou costurar","passageiro":"Reencapar ou costurar","obs":"Fora"},{"placa":"JEH8632","motorista":"Assento / reencapar","passageiro":"","obs":"Só motorista"},{"placa":"JEH9282","motorista":"Assento / reencapar","passageiro":"","obs":"Só motorista"},{"placa":"JEH9302","motorista":"Completo (encosto e assento)","passageiro":"","obs":"Só motorista"},{"placa":"JEN3311","motorista":"Completo (encosto e assento)","passageiro":"","obs":"Só motorista"},{"placa":"JER0A17","motorista":"Assento / reencapar","passageiro":"","obs":"Só motorista e olhar a estrutura do banco"},{"placa":"JEU0130","motorista":"Completo (encosto e assento)","passageiro":"Reencapar ou costurar","obs":"As duas"},{"placa":"NDL9307","motorista":"Costurar","passageiro":"Não precisa","obs":"Fora"},{"placa":"OHA8F85","motorista":"Assento","passageiro":"","obs":"Só motorista"},{"placa":"OVQ9450","motorista":"Completo (encosto e assento)","passageiro":"","obs":"Só motorista"}];
+// CHECKLISTS de saída e retorno, um por modelo (itens e desenho de avarias tirados das planilhas enviadas)
+const CK_MODELOS = {"Fiat Fiorino":{"tipo":"FIORINO ENDURANCE","diag":"fiorino","energia":"combustivel","secoes":[{"t":"Itens de segurança e documentação","i":[["itens-de-seg.crlv","CRLV"],["itens-de-seg.manual-do-veiculo","Manual do veículo"],["itens-de-seg.macaco","Macaco"],["itens-de-seg.triangulo","Triângulo"],["itens-de-seg.chave-de-roda","Chave de roda"],["itens-de-seg.estepe","Estepe"],["itens-de-seg.cartao-abastecimento","Cartão abastecimento"]]},{"t":"Condições internas","i":[["condicoes-in.cinto-de-seguranca","Cinto de segurança"],["condicoes-in.bancos","Bancos"],["condicoes-in.painel","Painel"],["condicoes-in.buzina","Buzina"],["condicoes-in.portas-puxador-macanetas-e-fechaduras-chave","Portas (puxador/maçanetas e fechaduras/chave)"],["condicoes-in.painel-digital-abastecimento-velocimetro-etc","Painel digital (abastecimento/velocímetro etc.)"]]},{"t":"Parte elétrica","i":[["parte-eletri.setas","Setas"],["parte-eletri.farois-luz-da-placa","Faróis/luz da placa"],["parte-eletri.luz-de-re","Luz de ré"],["parte-eletri.luz-de-freio","Luz de freio"],["parte-eletri.ar-condicionado-som","Ar condicionado/som"],["parte-eletri.luz-da-cabine","Luz da cabine"],["parte-eletri.luz-de-teto-da-cabine","Luz de teto da cabine"]]},{"t":"Mecânica","i":[["mecanica.freios-freio-de-mao","Freios (freio de mão)"],["mecanica.direcao","Direção"],["mecanica.nivel-aditivo-agua","Nível aditivo/água"],["mecanica.nivel-de-oleo","Nível de óleo"]]},{"t":"Condições externas","i":[["condicoes-ex.retrovisor-das-portas","Retrovisor das portas"],["condicoes-ex.vidros-das-janelas","Vidros das janelas"],["condicoes-ex.palhetas-do-limpador","Palhetas do limpador"],["condicoes-ex.para-brisa","Para brisa"],["condicoes-ex.porta-traseira-macaneta-amortecedor","Porta traseira (maçaneta/amortecedor)"],["condicoes-ex.pneus-dianteiros-traseiros","Pneus dianteiros/traseiros"],["condicoes-ex.antena","Antena"]]}]},"Peugeot Partner":{"tipo":"PEUGEOT PARTNER 1.6 FLEX","diag":"partner","energia":"combustivel","secoes":[{"t":"Itens de segurança e documentação","i":[["itens-de-seg.crlv","CRLV"],["itens-de-seg.manual-do-veiculo","Manual do veículo"],["itens-de-seg.macaco","Macaco"],["itens-de-seg.triangulo","Triângulo"],["itens-de-seg.chave-de-roda","Chave de roda"],["itens-de-seg.estepe","Estepe"],["itens-de-seg.cartao-abastecimento","Cartão abastecimento"]]},{"t":"Condições internas","i":[["condicoes-in.cinto-de-seguranca","Cinto de segurança"],["condicoes-in.bancos","Bancos"],["condicoes-in.painel","Painel"],["condicoes-in.buzina","Buzina"],["condicoes-in.portas-puxador-macanetas-e-fechaduras-chave","Portas (puxador/maçanetas e fechaduras/chave)"],["condicoes-in.painel-digital-abastecimento-velocimetro-etc","Painel digital (abastecimento/velocímetro etc.)"]]},{"t":"Parte elétrica","i":[["parte-eletri.setas","Setas"],["parte-eletri.farois-luz-da-placa","Faróis/luz da placa"],["parte-eletri.luz-de-re","Luz de ré"],["parte-eletri.luz-de-freio","Luz de freio"],["parte-eletri.ar-condicionado-som","Ar condicionado/som"],["parte-eletri.luz-da-cabine","Luz da cabine"],["parte-eletri.luz-de-teto-da-cabine","Luz de teto da cabine"]]},{"t":"Mecânica","i":[["mecanica.freios-freio-de-mao","Freios (freio de mão)"],["mecanica.direcao","Direção"],["mecanica.nivel-aditivo-agua","Nível aditivo/água"],["mecanica.nivel-de-oleo","Nível de óleo"]]},{"t":"Condições externas","i":[["condicoes-ex.retrovisor-das-portas","Retrovisor das portas"],["condicoes-ex.vidros-das-janelas","Vidros das janelas"],["condicoes-ex.palhetas-do-limpador","Palhetas do limpador"],["condicoes-ex.para-brisa","Para brisa"],["condicoes-ex.porta-traseira-macaneta-amortecedor","Porta traseira (maçaneta/amortecedor)"],["condicoes-ex.pneus-dianteiros-traseiros","Pneus dianteiros/traseiros"],["condicoes-ex.antena","Antena"]]}]},"Fiat Scudo":{"tipo":"I/FIAT SCUDO CARGO TD","diag":"van","energia":"bateria","secoes":[{"t":"Itens de segurança e documentação","i":[["itens-de-seg.crlv","CRLV"],["itens-de-seg.manual-do-veiculo","Manual do veículo"],["itens-de-seg.macaco","Macaco"],["itens-de-seg.triangulo","Triângulo"],["itens-de-seg.chave-de-roda","Chave de roda"],["itens-de-seg.estepe","Estepe"],["itens-de-seg.cartao-de-abastecimento","Cartão de abastecimento"]]},{"t":"Condições internas","i":[["condicoes-in.cinto-de-seguranca","Cinto de segurança"],["condicoes-in.bancos","Bancos"],["condicoes-in.painel","Painel"],["condicoes-in.buzina","Buzina"],["condicoes-in.portas-puxador-macanetas-e-fechaduras-chave","Portas (puxador/maçanetas e fechaduras/chave)"],["condicoes-in.painel-digital-abastecimento-velocimetro-etc","Painel digital (abastecimento/velocímetro etc.)"]]},{"t":"Parte elétrica","i":[["parte-eletri.setas","Setas"],["parte-eletri.farois-luz-da-placa","Faróis/luz da placa"],["parte-eletri.luz-de-re","Luz de ré"],["parte-eletri.luz-de-freio","Luz de freio"],["parte-eletri.ar-condicionado-som","Ar condicionado/som"],["parte-eletri.luz-da-cabine","Luz da cabine"],["parte-eletri.luz-de-teto-da-cabine","Luz de teto da cabine"],["parte-eletri.luz-interna-furgao","Luz interna furgão"]]},{"t":"Mecânica","i":[["mecanica.freios-freio-de-mao","Freios (freio de mão)"],["mecanica.direcao","Direção"],["mecanica.nivel-de-aditivo-agua","Nível de aditivo/água"],["mecanica.nivel-do-oleo-do-motor","Nível do óleo do motor"]]},{"t":"Condições externas","i":[["condicoes-ex.retrovisor-das-portas","Retrovisor das portas"],["condicoes-ex.vidros-das-janelas","Vidros das janelas"],["condicoes-ex.palhetas-do-limpador","Palhetas do limpador"],["condicoes-ex.para-brisa","Para brisa"],["condicoes-ex.porta-lateral-macaneta","Porta lateral (maçaneta)"],["condicoes-ex.porta-traseira-macaneta-amortecedor","Porta traseira (maçaneta/amortecedor)"],["condicoes-ex.macaneta-da-porta-lateral-interna","Maçaneta da porta lateral interna"],["condicoes-ex.plug-de-carregamento-tampa-e-funcionamento","Plug de carregamento (tampa e funcionamento)"],["condicoes-ex.prateleiras","Prateleiras"],["condicoes-ex.grade-de-separacao-cabine-furgao","Grade de separação cabine/furgão"],["condicoes-ex.pneus-dianteiros-traseiros","Pneus dianteiros/traseiros"],["condicoes-ex.antena","Antena"]]}]},"Peugeot Expert":{"tipo":"I/ PEUGEOT E EXPERT CARGO","diag":"van","energia":"bateria","secoes":[{"t":"Itens de segurança e documentação","i":[["itens-de-seg.crlv","CRLV"],["itens-de-seg.manual-do-veiculo","Manual do veículo"],["itens-de-seg.macaco","Macaco"],["itens-de-seg.triangulo","Triângulo"],["itens-de-seg.chave-de-roda","Chave de roda"],["itens-de-seg.estepe","Estepe"]]},{"t":"Condições internas","i":[["condicoes-in.cinto-de-seguranca","Cinto de segurança"],["condicoes-in.bancos","Bancos"],["condicoes-in.painel","Painel"],["condicoes-in.buzina","Buzina"],["condicoes-in.portas-puxador-macanetas-e-fechaduras-chave","Portas (puxador/maçanetas e fechaduras/chave)"],["condicoes-in.painel-digital-abastecimento-velocimetro-etc","Painel digital (abastecimento/velocímetro etc.)"],["condicoes-in.carregador-eletrico","Carregador elétrico"]]},{"t":"Parte elétrica","i":[["parte-eletri.setas","Setas"],["parte-eletri.farois-luz-da-placa","Faróis/luz da placa"],["parte-eletri.luz-de-re","Luz de ré"],["parte-eletri.luz-de-freio","Luz de freio"],["parte-eletri.ar-condicionado-som","Ar condicionado/som"],["parte-eletri.luz-da-cabine","Luz da cabine"],["parte-eletri.luz-de-teto-da-cabine","Luz de teto da cabine"],["parte-eletri.luz-interna-furgao","Luz interna furgão"]]},{"t":"Mecânica","i":[["mecanica.freios-freio-de-mao","Freios (freio de mão)"],["mecanica.direcao","Direção"]]},{"t":"Condições externas","i":[["condicoes-ex.retrovisor-das-portas","Retrovisor das portas"],["condicoes-ex.vidros-das-janelas","Vidros das janelas"],["condicoes-ex.palhetas-do-limpador","Palhetas do limpador"],["condicoes-ex.para-brisa","Para brisa"],["condicoes-ex.porta-lateral-macaneta","Porta lateral (maçaneta)"],["condicoes-ex.porta-traseira-macaneta-amortecedor","Porta traseira (maçaneta/amortecedor)"],["condicoes-ex.macaneta-da-porta-lateral-interna","Maçaneta da porta lateral interna"],["condicoes-ex.plug-de-carregamento-tampa-e-funcionamento","Plug de carregamento (tampa e funcionamento)"],["condicoes-ex.prateleiras","Prateleiras"],["condicoes-ex.grade-de-separacao-cabine-furgao","Grade de separação cabine/furgão"],["condicoes-ex.pneus-dianteiros-traseiros","Pneus dianteiros/traseiros"],["condicoes-ex.antena","Antena"]]}]},"Renault Master":{"tipo":"RENAULT/MASTER 13M3 25DCI","diag":"master","energia":"bateria","secoes":[{"t":"Cabine","i":[["cabine.documento","Documento"],["cabine.cartao-de-abastecimento","Cartão de abastecimento"],["cabine.volante","Volante"],["cabine.tampa-do-fusivel","Tampa do fusível"],["cabine.forro-de-portas","Forro de portas"],["cabine.botao-do-vidro-eletrico","Botão do vidro elétrico"],["cabine.macaneta-interna-externa","Maçaneta interna/externa"],["cabine.botao-regulador-retrovisor","Botão regulador retrovisor"],["cabine.chave-de-seta","Chave de seta"],["cabine.chave-do-limpador","Chave do limpador"],["cabine.porta-copo-painel","Porta copo painel"],["cabine.botao-intensidade-farol","Botão intensidade farol"],["cabine.saida-de-ar","Saída de ar"],["cabine.luz-do-teto","Luz do teto"],["cabine.botao-pisca-alerta","Botão pisca alerta"],["cabine.entrada-12v","Entrada 12V"],["cabine.porta-trecos","Porta-trecos"],["cabine.botao-ar","Botão ar"],["cabine.botao-ar-direcao-quente-frio-intensidade","Botão ar (direção/quente-frio/intensidade)"],["cabine.porta-luvas","Porta luvas"],["cabine.quebra-sol","Quebra-sol"],["cabine.alca-de-teto","Alça de teto"],["cabine.trava-da-cabine-bau","Trava da cabine/baú"],["cabine.bancos-alavancas-distancia-tamanho-costas","Bancos (alavancas distância/tamanho/costas)"],["cabine.marcha","Marcha"],["cabine.freio-de-mao","Freio de mão"],["cabine.tapecaria-teto-assoalho","Tapeçaria (teto/assoalho)"],["cabine.velocimetro-conta-giro","Velocímetro/conta giro"],["cabine.painel-eletronico","Painel eletrônico"],["cabine.cinto-de-seguranca","Cinto de segurança"],["cabine.macaco","Macaco"],["cabine.chave-de-roda","Chave de roda"],["cabine.triangulo","Triângulo"]]},{"t":"Parte elétrica","i":[["parte-eletri.setas","Setas"],["parte-eletri.farois-farolete-baixo-alto","Faróis (farolete/baixo/alto)"],["parte-eletri.luz-de-re","Luz de ré"],["parte-eletri.luz-de-freio","Luz de freio"],["parte-eletri.pisca-alerta","Pisca-alerta"],["parte-eletri.controle-da-temperatura","Controle da temperatura"],["parte-eletri.luz-do-painel","Luz do painel"],["parte-eletri.luz-da-placa-traseira","Luz da placa traseira"]]},{"t":"Mecânica","i":[["mecanica.pedais-freio-acelerador","Pedais (freio/acelerador)"],["mecanica.amortecedor","Amortecedor"],["mecanica.direcao","Direção"],["mecanica.pneus-dianteiros","Pneus dianteiros"],["mecanica.pneus-traseiros","Pneus traseiros"],["mecanica.estepe","Estepe"]]},{"t":"Combustível","i":[["combustivel.marcador-de-combustivel-eletrico","Marcador de combustível elétrico"],["combustivel.tampa-do-carregador","Tampa do carregador"],["combustivel.botao-de-trava-do-carregador","Botão de trava do carregador"]]},{"t":"Condição de uso","i":[["condicao-de-.andou-com-o-veiculo","Andou com o veículo"]]},{"t":"Carroceria","i":[["carroceria.divisoria-cabine-carroceria","Divisória cabine/carroceria"],["carroceria.isolamento-interno","Isolamento interno"],["carroceria.fechaduras-interna-e-externa-traseira","Fechaduras interna e externa traseira"],["carroceria.fechadura-interna-e-externa-lateral","Fechadura interna e externa lateral"],["carroceria.macanetas-porta-lateral-e-traseira","Maçanetas porta lateral e traseira"],["carroceria.trilho-porta-lateral-e-guia","Trilho porta lateral e guia"]]},{"t":"Parte externa","i":[["parte-extern.espelho-dos-farois-dianteiro-traseiro-e-seta-lat","Espelho dos faróis dianteiro/traseiro e seta lateral"],["parte-extern.antena","Antena"],["parte-extern.retrovisores","Retrovisores"],["parte-extern.placas","Placas"],["parte-extern.parabrisa","Parabrisa"],["parte-extern.braco-do-limpador","Braço do limpador"],["parte-extern.palheta-limpador","Palheta limpador"],["parte-extern.vidros-das-portas","Vidros das portas"],["parte-extern.dobradicas-das-portas-traseiras","Dobradiças das portas traseiras"],["parte-extern.pneus","Pneus"],["parte-extern.simbolos-renault-master","Símbolos Renault/Master"]]}]},"Nissan Sentra":{"tipo":"I/NISSAN SENTRA EXC CVT","diag":"sedan","energia":"combustivel","secoes":[{"t":"Parte interna","i":[["parte-intern.documento","Documento"],["parte-intern.puxador-da-porta","Puxador da porta"],["parte-intern.fechadura-externa-botao-sensor","Fechadura externa (botão sensor)"],["parte-intern.macaneta-portas-interna-externa","Maçaneta portas interna/externa"],["parte-intern.chave-sensor-presenca-alarme","Chave (sensor presença/alarme)"],["parte-intern.maquina-de-vidros-automaticas","Máquina de vidros automáticas"],["parte-intern.botao-de-trava-automatica","Botão de trava automática"],["parte-intern.botao-regulador-retrovisor-lateral","Botão regulador retrovisor lateral"],["parte-intern.saidas-do-ar-condicionado","Saídas do ar condicionado"],["parte-intern.botao-de-regulagem-intensidade-farol","Botão de regulagem intensidade farol"],["parte-intern.alavanca-abastecimento","Alavanca abastecimento"],["parte-intern.alavanca-capo","Alavanca capo"],["parte-intern.som","Som"],["parte-intern.botao-pisca-alerta","Botão pisca alerta"],["parte-intern.botao-do-ar-desembacador-circulacao-ar","Botão do ar/desembaçador/circulação ar"],["parte-intern.botao-ar-direcao-nivel-quente-frio","Botão ar/direção/nível/quente-frio"],["parte-intern.porta-luvas","Porta luvas"],["parte-intern.quebra-sol-espelhos","Quebra-sol (espelhos)"],["parte-intern.retrovisor-interno","Retrovisor interno"],["parte-intern.painel-digital","Painel digital"],["parte-intern.velocimetro","Velocímetro"],["parte-intern.carregador-12v-usb","Carregador 12V/USB"],["parte-intern.botao-de-ignicao","Botão de ignição"],["parte-intern.alavanca-marcha-automatica","Alavanca marcha automática"],["parte-intern.freio-de-mao","Freio de mão"],["parte-intern.protecao-barra-de-direcao","Proteção barra de direção"],["parte-intern.chave-de-seta-botoes-farol","Chave de seta (botões farol)"],["parte-intern.chave-do-limpador","Chave do limpador"],["parte-intern.volante","Volante"],["parte-intern.botoes-de-som-painel-de-bordo-volante","Botões de som/painel de bordo (volante)"],["parte-intern.buzina","Buzina"],["parte-intern.botoes-telefone-volante","Botões telefone (volante)"],["parte-intern.botoes-controle-do-painel","Botões controle do painel"],["parte-intern.botao-luminosidade-comp-de-bordo","Botão luminosidade comp de bordo"],["parte-intern.botao-sensor-de-faixa","Botão sensor de faixa"],["parte-intern.botao-teto-solar-protecao-teto-solar","Botão teto solar/proteção teto solar"],["parte-intern.botao-de-aquecimento-banco","Botão de aquecimento banco"],["parte-intern.guarda-pertences-entre-os-bancos","Guarda pertences (entre os bancos)"],["parte-intern.sensor-portas-de-mudanca-de-faixa","Sensor portas de mudança de faixa"],["parte-intern.alavanca-de-teto-dianteiras-traseiras","Alavanca de teto (dianteiras/traseiras)"],["parte-intern.digital-bordo","Digital bordo"],["parte-intern.bancos-distancia-tamanho-costas","Bancos (distância/tamanho/costas)"],["parte-intern.carregador-usb-entre-bancos-frente","Carregador USB (entre bancos frente)"],["parte-intern.descanso-bracos-entre-bancos","Descanso braços (entre bancos)"],["parte-intern.forro-das-portas","Forro das portas"],["parte-intern.tapecaria-geral","Tapeçaria geral"],["parte-intern.assoalho","Assoalho"],["parte-intern.cinto-de-seguranca","Cinto de segurança"],["parte-intern.tapecaria-porta-malas","Tapeçaria porta malas"],["parte-intern.estepe","Estepe"],["parte-intern.chave-de-roda","Chave de roda"],["parte-intern.macaco","Macaco"],["parte-intern.triangulo","Triângulo"]]},{"t":"Parte elétrica","i":[["parte-eletri.camera-de-re","Câmera de ré"],["parte-eletri.camera-frontal","Câmera frontal"],["parte-eletri.farol","Farol"],["parte-eletri.luz-de-re","Luz de ré"],["parte-eletri.luz-de-freio","Luz de freio"],["parte-eletri.ar-condicionado","Ar condicionado"],["parte-eletri.setas","Setas"],["parte-eletri.pisca-alerta","Pisca alerta"],["parte-eletri.luz-da-placa-traseira","Luz da placa traseira"]]},{"t":"Mecânica","i":[["mecanica.pedais","Pedais"],["mecanica.nivel-de-agua","Nível de água"],["mecanica.nivel-de-oleo-motor","Nível de óleo motor"],["mecanica.alinhamento","Alinhamento"],["mecanica.freio","Freio"]]},{"t":"Condição de uso","i":[["condicao-de-.andou-com-o-veiculo","Andou com o veículo"]]},{"t":"Parte externa","i":[["parte-extern.pneus","Pneus"],["parte-extern.retrovisor-laterais","Retrovisor laterais"],["parte-extern.vidros-das-portas","Vidros das portas"],["parte-extern.vidro-porta-malas","Vidro porta malas"],["parte-extern.vidro-para-brisa","Vidro para brisa"],["parte-extern.limpador","Limpador"],["parte-extern.borracha-limpador","Borracha limpador"],["parte-extern.palhetas-do-limpador","Palhetas do limpador"],["parte-extern.placas","Placas"],["parte-extern.plaqueta-do-nome-nissan-sentra","Plaqueta do nome (Nissan/Sentra)"],["parte-extern.lente-do-farol-e-setas-dianteira","Lente do farol e setas dianteira"],["parte-extern.lente-do-farol-e-setas-traseiras","Lente do farol e setas traseiras"]]},{"t":"Combustível","i":[["combustivel.tampa-do-combustivel","Tampa do combustível"]]}]},"Fiat Argo":{"tipo":"FIAT/ARGO 1.0 FLEX","diag":"argo","energia":"combustivel","secoes":[{"t":"Parte interna","i":[["parte-intern.documento","Documento"],["parte-intern.luz-interna","Luz interna"],["parte-intern.luz-painel","Luz painel"],["parte-intern.marcador-de-combustivel","Marcador de combustível"],["parte-intern.marcador-de-km","Marcador de KM"],["parte-intern.adesivo-de-manutencao-10-000-km","Adesivo de manutenção (10.000 km)"],["parte-intern.controle-do-alarme","Controle do alarme"],["parte-intern.maquina-de-vidro-eletrico","Máquina de vidro elétrico"],["parte-intern.maquina-de-vidro-manual","Máquina de vidro manual"],["parte-intern.puxador-da-porta","Puxador da porta"],["parte-intern.macaneta-porta-interna-externa","Maçaneta porta interna/externa"],["parte-intern.fechadura-das-portas-chave","Fechadura das portas (chave)"],["parte-intern.trava-eletrica","Trava elétrica"],["parte-intern.forro-das-portas","Forro das portas"],["parte-intern.borracha-das-portas","Borracha das portas"],["parte-intern.canaletas-das-janelas","Canaletas das janelas"],["parte-intern.retrovisor-interno","Retrovisor interno"],["parte-intern.cinto-de-seguranca","Cinto de segurança"],["parte-intern.alavanca-do-capo","Alavanca do capo"],["parte-intern.chave-de-setas","Chave de setas"],["parte-intern.chave-do-limpador","Chave do limpador"],["parte-intern.porta-luvas","Porta luvas"],["parte-intern.som","Som"],["parte-intern.botao-do-pisca-alerta","Botão do pisca alerta"],["parte-intern.botao-do-farol","Botão do farol"],["parte-intern.bancos-estetica-e-alavancas-de-regulagem","Bancos (estética e alavancas de regulagem)"],["parte-intern.tapetes-emborrachados","Tapetes emborrachados"],["parte-intern.forro-do-teto","Forro do teto"],["parte-intern.botoes-do-volante-telefone-som","Botões do volante (telefone/som)"],["parte-intern.alavanca-regulagem-volante","Alavanca regulagem volante"],["parte-intern.tampa-interna-do-porta-malas","Tampa interna do porta malas"],["parte-intern.carpete-porta-malas","Carpete porta malas"],["parte-intern.triangulo","Triângulo"],["parte-intern.chave-de-roda","Chave de roda"],["parte-intern.macaco","Macaco"],["parte-intern.estepe","Estepe"],["parte-intern.fechadura-porta-malas","Fechadura porta malas"],["parte-intern.borracha-porta-malas","Borracha porta malas"],["parte-intern.amortecedor-do-porta-malas","Amortecedor do porta malas"]]},{"t":"Parte elétrica","i":[["parte-eletri.farol","Farol"],["parte-eletri.luz-de-re","Luz de ré"],["parte-eletri.luz-de-freio","Luz de freio"],["parte-eletri.ar-condicionado","Ar condicionado"],["parte-eletri.setas","Setas"],["parte-eletri.pisca-alerta","Pisca alerta"],["parte-eletri.luz-da-placa-traseira","Luz da placa traseira"]]},{"t":"Mecânica","i":[["mecanica.pedais","Pedais"],["mecanica.nivel-de-agua","Nível de água"],["mecanica.nivel-de-oleo-motor","Nível de óleo motor"],["mecanica.alinhamento","Alinhamento"],["mecanica.freio","Freio"],["mecanica.freio-de-mao","Freio de mão"],["mecanica.alavanca-marcha","Alavanca marcha"]]},{"t":"Condição de uso","i":[["condicao-de-.andou-com-o-veiculo","Andou com o veículo"]]},{"t":"Parte externa","i":[["parte-extern.pneus","Pneus"],["parte-extern.retrovisor-laterais","Retrovisor laterais"],["parte-extern.vidros-das-portas","Vidros das portas"],["parte-extern.vidro-porta-malas","Vidro porta malas"],["parte-extern.vidro-para-brisa","Vidro para brisa"],["parte-extern.limpador","Limpador"],["parte-extern.borracha-limpador","Borracha limpador"],["parte-extern.palhetas-do-limpador","Palhetas do limpador"],["parte-extern.placas","Placas"],["parte-extern.plaqueta-do-nome-argo-fiat","Plaqueta do nome (Argo/Fiat)"],["parte-extern.lente-do-farol-e-setas-dianteira","Lente do farol e setas dianteira"],["parte-extern.lente-do-farol-e-setas-traseiras","Lente do farol e setas traseiras"],["parte-extern.antena-radio","Antena rádio"]]},{"t":"Combustível","i":[["combustivel.tampa-do-combustivel","Tampa do combustível"]]}]},"VW Kombi":{"tipo":"KOMBI 1.4 FLEX","diag":"kombi","energia":"combustivel","secoes":[{"t":"Itens de segurança e documentação","i":[["itens-de-seg.crlv","CRLV"],["itens-de-seg.cartao-abastecimento","Cartão abastecimento"],["itens-de-seg.macaco","Macaco"],["itens-de-seg.triangulo","Triângulo"],["itens-de-seg.chave-de-roda","Chave de roda"],["itens-de-seg.estepe","Estepe"]]},{"t":"Condições internas","i":[["condicoes-in.cinto-de-seguranca","Cinto de segurança"],["condicoes-in.bancos","Bancos"],["condicoes-in.painel","Painel"],["condicoes-in.buzina","Buzina"],["condicoes-in.portas-puxador-macanetas-e-fechadura","Portas (puxador/maçanetas e fechadura)"],["condicoes-in.marcador-de-combustivel","Marcador de combustível"]]},{"t":"Parte elétrica","i":[["parte-eletri.setas","Setas"],["parte-eletri.farois-luz-da-placa","Faróis/luz da placa"],["parte-eletri.luz-de-re","Luz de ré"],["parte-eletri.luz-de-freio","Luz de freio"],["parte-eletri.controle-do-thermo-king-funcionamento","Controle do Thermo King/funcionamento"],["parte-eletri.luz-do-painel","Luz do painel"],["parte-eletri.luz-de-teto-da-cabine","Luz de teto da cabine"],["parte-eletri.luz-da-cabine","Luz da cabine"]]},{"t":"Mecânica","i":[["mecanica.freios","Freios"],["mecanica.direcao","Direção"],["mecanica.embreagem","Embreagem"],["mecanica.adesivo-troca-de-oleo-motor-8-000-km","Adesivo troca de óleo motor (8.000 KM)"],["mecanica.nivel-de-aditivo-agua","Nível de aditivo/água"],["mecanica.nivel-do-oleo-do-motor","Nível do óleo do motor"],["mecanica.nivel-de-oleo-de-freio","Nível de óleo de freio"]]},{"t":"Condições externas","i":[["condicoes-ex.retrovisor-das-portas","Retrovisor das portas"],["condicoes-ex.vidros-das-janelas","Vidros das janelas"],["condicoes-ex.palhetas-do-limpador","Palhetas do limpador"],["condicoes-ex.para-brisa","Para brisa"],["condicoes-ex.porta-lateral-fechadura-macaneta","Porta lateral (fechadura/maçaneta)"],["condicoes-ex.porta-traseira-fechadura-macaneta-amortecedor","Porta traseira (fechadura/maçaneta/amortecedor)"],["condicoes-ex.macaneta-da-porta-lateral-interna","Maçaneta da porta lateral interna"],["condicoes-ex.porta-do-motor-fechadura-macaneta","Porta do motor (fechadura/maçaneta)"],["condicoes-ex.isolamento-interno","Isolamento interno"],["condicoes-ex.thermo-king-fixado-funcionando","Thermo King (fixado/funcionando)"],["condicoes-ex.tampa-de-combustivel-principal-chave","Tampa de combustível principal (chave)"],["condicoes-ex.tampa-de-combustivel-reserva","Tampa de combustível reserva"],["condicoes-ex.pneus-dianteiros-traseiros","Pneus dianteiros/traseiros"]]}]},"Nissan Versa":{"tipo":"NISSAN VERSA 1.6 ADVANTAGE","diag":"sedan","energia":"combustivel","secoes":[{"t":"Parte interna","i":[["parte-intern.documento","Documento"],["parte-intern.puxador-da-porta","Puxador da porta"],["parte-intern.fechadura-externa-botao-sensor","Fechadura externa (botão sensor)"],["parte-intern.macaneta-portas-interna-externa","Maçaneta portas interna/externa"],["parte-intern.chave-sensor-presenca-alarme","Chave (sensor presença/alarme)"],["parte-intern.maquina-de-vidros-automaticas","Máquina de vidros automáticas"],["parte-intern.botao-de-trava-automatica","Botão de trava automática"],["parte-intern.botao-regulador-retrovisor-lateral","Botão regulador retrovisor lateral"],["parte-intern.saidas-do-ar-condicionado","Saídas do ar condicionado"],["parte-intern.botao-de-regulagem-intensidade-farol","Botão de regulagem intensidade farol"],["parte-intern.alavanca-abastecimento","Alavanca abastecimento"],["parte-intern.alavanca-capo","Alavanca capo"],["parte-intern.som","Som"],["parte-intern.botao-pisca-alerta","Botão pisca alerta"],["parte-intern.botao-do-ar-desembacador-circulacao-ar","Botão do ar/desembaçador/circulação ar"],["parte-intern.botao-ar-direcao-nivel-quente-frio","Botão ar/direção/nível/quente-frio"],["parte-intern.porta-luvas","Porta luvas"],["parte-intern.quebra-sol-espelhos","Quebra-sol (espelhos)"],["parte-intern.retrovisor-interno","Retrovisor interno"],["parte-intern.painel-digital","Painel digital"],["parte-intern.velocimetro","Velocímetro"],["parte-intern.carregador-12v-usb","Carregador 12V/USB"],["parte-intern.botao-de-ignicao","Botão de ignição"],["parte-intern.alavanca-marcha-automatica","Alavanca marcha automática"],["parte-intern.freio-de-mao","Freio de mão"],["parte-intern.protecao-barra-de-direcao","Proteção barra de direção"],["parte-intern.chave-de-seta-botoes-farol","Chave de seta (botões farol)"],["parte-intern.chave-do-limpador","Chave do limpador"],["parte-intern.volante","Volante"],["parte-intern.botoes-de-som-painel-de-bordo-volante","Botões de som/painel de bordo (volante)"],["parte-intern.buzina","Buzina"],["parte-intern.botoes-telefone-volante","Botões telefone (volante)"],["parte-intern.botoes-controle-do-painel","Botões controle do painel"],["parte-intern.digital-bordo","Digital bordo"],["parte-intern.bancos-distancia-tamanho-costas","Bancos (distância/tamanho/costas)"],["parte-intern.carregador-usb-entre-bancos-frente","Carregador USB (entre bancos frente)"],["parte-intern.descanso-bracos-entre-bancos","Descanso braços (entre bancos)"],["parte-intern.forro-das-portas","Forro das portas"],["parte-intern.tapecaria-geral","Tapeçaria geral"],["parte-intern.assoalho","Assoalho"],["parte-intern.cinto-de-seguranca","Cinto de segurança"],["parte-intern.tapecaria-porta-malas","Tapeçaria porta malas"],["parte-intern.estepe","Estepe"],["parte-intern.chave-de-roda","Chave de roda"],["parte-intern.macaco","Macaco"],["parte-intern.triangulo","Triângulo"]]},{"t":"Parte elétrica","i":[["parte-eletri.camera-de-re","Câmera de ré"],["parte-eletri.farol","Farol"],["parte-eletri.luz-de-re","Luz de ré"],["parte-eletri.luz-de-freio","Luz de freio"],["parte-eletri.ar-condicionado","Ar condicionado"],["parte-eletri.setas","Setas"],["parte-eletri.pisca-alerta","Pisca alerta"],["parte-eletri.luz-da-placa-traseira","Luz da placa traseira"]]},{"t":"Mecânica","i":[["mecanica.pedais","Pedais"],["mecanica.nivel-de-agua","Nível de água"],["mecanica.nivel-de-oleo-motor","Nível de óleo motor"],["mecanica.alinhamento","Alinhamento"],["mecanica.freio","Freio"]]},{"t":"Condição de uso","i":[["condicao-de-.andou-com-o-veiculo","Andou com o veículo"]]},{"t":"Parte externa","i":[["parte-extern.pneus","Pneus"],["parte-extern.retrovisor-laterais","Retrovisor laterais"],["parte-extern.vidros-das-portas","Vidros das portas"],["parte-extern.vidro-porta-malas","Vidro porta malas"],["parte-extern.vidro-para-brisa","Vidro para brisa"],["parte-extern.limpador","Limpador"],["parte-extern.borracha-limpador","Borracha limpador"],["parte-extern.palhetas-do-limpador","Palhetas do limpador"],["parte-extern.placas","Placas"],["parte-extern.plaqueta-do-nome-nissan-versa","Plaqueta do nome (Nissan/Versa)"],["parte-extern.lente-do-farol-e-setas-dianteira","Lente do farol e setas dianteira"],["parte-extern.lente-do-farol-e-setas-traseiras","Lente do farol e setas traseiras"]]},{"t":"Combustível","i":[["combustivel.tampa-do-combustivel","Tampa do combustível"]]}]},"Citroën Jumpy":{"tipo":"CITROEN JUMPY CARGO","diag":"van","energia":"bateria","secoes":[{"t":"Itens de segurança e documentação","i":[["itens-de-seg.crlv","CRLV"],["itens-de-seg.manual-do-veiculo","Manual do veículo"],["itens-de-seg.macaco","Macaco"],["itens-de-seg.triangulo","Triângulo"],["itens-de-seg.chave-de-roda","Chave de roda"],["itens-de-seg.estepe","Estepe"]]},{"t":"Condições internas","i":[["condicoes-in.cinto-de-seguranca","Cinto de segurança"],["condicoes-in.bancos","Bancos"],["condicoes-in.painel","Painel"],["condicoes-in.buzina","Buzina"],["condicoes-in.portas-puxador-macanetas-e-fechaduras-chave","Portas (puxador/maçanetas e fechaduras/chave)"],["condicoes-in.painel-digital-abastecimento-velocimetro-etc","Painel digital (abastecimento/velocímetro etc.)"],["condicoes-in.carregador-eletrico","Carregador elétrico"]]},{"t":"Parte elétrica","i":[["parte-eletri.setas","Setas"],["parte-eletri.farois-luz-da-placa","Faróis/luz da placa"],["parte-eletri.luz-de-re","Luz de ré"],["parte-eletri.luz-de-freio","Luz de freio"],["parte-eletri.ar-condicionado-som","Ar condicionado/som"],["parte-eletri.luz-da-cabine","Luz da cabine"],["parte-eletri.luz-de-teto-da-cabine","Luz de teto da cabine"],["parte-eletri.luz-interna-furgao","Luz interna furgão"]]},{"t":"Mecânica","i":[["mecanica.freios-freio-de-mao","Freios (freio de mão)"],["mecanica.direcao","Direção"],["mecanica.nivel-aditivo-agua","Nível aditivo/água"]]},{"t":"Condições externas","i":[["condicoes-ex.retrovisor-das-portas","Retrovisor das portas"],["condicoes-ex.vidros-das-janelas","Vidros das janelas"],["condicoes-ex.palhetas-do-limpador","Palhetas do limpador"],["condicoes-ex.para-brisa","Para brisa"],["condicoes-ex.porta-lateral-macaneta","Porta lateral (maçaneta)"],["condicoes-ex.porta-traseira-macaneta-amortecedor","Porta traseira (maçaneta/amortecedor)"],["condicoes-ex.macaneta-da-porta-lateral-interna","Maçaneta da porta lateral interna"],["condicoes-ex.plug-de-carregamento-tampa-e-funcionamento","Plug de carregamento (tampa e funcionamento)"],["condicoes-ex.prateleiras","Prateleiras"],["condicoes-ex.grade-de-separacao-cabine-furgao","Grade de separação cabine/furgão"],["condicoes-ex.pneus-dianteiros-traseiros","Pneus dianteiros/traseiros"],["condicoes-ex.antena","Antena"]]}]},"VW Gol":{"tipo":"VW/GOL 1.0 FLEX 12V 5P","diag":"gol","energia":"combustivel","secoes":[{"t":"Parte interna","i":[["parte-intern.documento","Documento"],["parte-intern.luz-interna","Luz interna"],["parte-intern.luz-painel","Luz painel"],["parte-intern.marcador-de-combustivel","Marcador de combustível"],["parte-intern.marcador-de-km","Marcador de KM"],["parte-intern.adesivo-de-manutencao-10-000-km","Adesivo de manutenção (10.000 km)"],["parte-intern.controle-do-alarme","Controle do alarme"],["parte-intern.maquina-de-vidro-eletrico","Máquina de vidro elétrico"],["parte-intern.maquina-de-vidro-manual","Máquina de vidro manual"],["parte-intern.puxador-da-porta","Puxador da porta"],["parte-intern.macaneta-porta-interna-externa","Maçaneta porta interna/externa"],["parte-intern.fechadura-das-portas-chave","Fechadura das portas (chave)"],["parte-intern.trava-eletrica","Trava elétrica"],["parte-intern.forro-das-portas","Forro das portas"],["parte-intern.borracha-das-portas-vedacao-janela","Borracha das portas/vedação janela"],["parte-intern.retrovisor-interno","Retrovisor interno"],["parte-intern.cinto-de-seguranca","Cinto de segurança"],["parte-intern.alavanca-do-capo","Alavanca do capo"],["parte-intern.volante","Volante"],["parte-intern.protetor-barra-de-direcao","Protetor barra de direção"],["parte-intern.chave-de-setas","Chave de setas"],["parte-intern.chave-do-limpador","Chave do limpador"],["parte-intern.porta-luvas","Porta luvas"],["parte-intern.som","Som"],["parte-intern.botao-do-pisca-alerta","Botão do pisca alerta"],["parte-intern.botao-do-farol","Botão do farol"],["parte-intern.botao-do-ar-quente-frio-potencia-direcao","Botão do ar (quente-frio/potência/direção)"],["parte-intern.bancos-estetica-e-alavancas-de-regulagem","Bancos (estética e alavancas de regulagem)"],["parte-intern.tapecaria-assoalho-e-teto","Tapeçaria (assoalho e teto)"],["parte-intern.tampa-interna-do-porta-malas","Tampa interna do porta malas"],["parte-intern.carpete-porta-malas","Carpete porta malas"],["parte-intern.triangulo","Triângulo"],["parte-intern.chave-de-roda","Chave de roda"],["parte-intern.macaco","Macaco"],["parte-intern.estepe","Estepe"],["parte-intern.fechadura-porta-malas","Fechadura porta malas"],["parte-intern.borracha-porta-malas","Borracha porta malas"],["parte-intern.amortecedor-do-porta-malas","Amortecedor do porta malas"]]},{"t":"Parte elétrica","i":[["parte-eletri.farol","Farol"],["parte-eletri.luz-de-re","Luz de ré"],["parte-eletri.luz-de-freio","Luz de freio"],["parte-eletri.ar-condicionado","Ar condicionado"],["parte-eletri.setas","Setas"],["parte-eletri.pisca-alerta","Pisca alerta"],["parte-eletri.luz-da-placa-traseira","Luz da placa traseira"]]},{"t":"Mecânica","i":[["mecanica.pedais-embreagem-freio-acelerador","Pedais (embreagem/freio/acelerador)"],["mecanica.nivel-de-agua","Nível de água"],["mecanica.nivel-de-oleo-motor","Nível de óleo motor"],["mecanica.alinhamento","Alinhamento"],["mecanica.freio-de-mao","Freio de mão"],["mecanica.alavanca-marcha","Alavanca marcha"]]},{"t":"Parte externa","i":[["parte-extern.pneus","Pneus"],["parte-extern.retrovisor-laterais","Retrovisor laterais"],["parte-extern.vidros-das-portas-porta-malas","Vidros das portas/porta malas"],["parte-extern.parabrisa","Parabrisa"],["parte-extern.braco-do-limpador","Braço do limpador"],["parte-extern.palheta-do-limpador","Palheta do limpador"],["parte-extern.placas","Placas"],["parte-extern.plaqueta-do-nome-do-veiculo","Plaqueta do nome do veículo"],["parte-extern.lentes-dos-farois-e-setas-dianteira-traseira","Lentes dos faróis e setas (dianteira/traseira)"],["parte-extern.antena-radio","Antena rádio"]]},{"t":"Combustível","i":[["combustivel.tampa-do-combustivel","Tampa do combustível"]]},{"t":"Condição de uso","i":[["condicao-de-.andou-com-o-veiculo","Andou com o veículo"]]}]}};
 
 /* ---------------------------- utilidades ---------------------------- */
 const $ = id => document.getElementById(id);
@@ -854,7 +989,7 @@ const avCor = s => { let h=0; for(const c of String(s||'')) h=(h*31+c.charCodeAt
 
 function modeloDe(tipo){
   const t = norm(tipo);
-  for(const [k,v] of [['JUMPY','Citroën Jumpy'],['EXPERT','Peugeot Expert'],['SCUDO','Fiat Scudo'],['ARGO','Fiat Argo'],['FIORINO','Fiat Fiorino'],['KOMBI','VW Kombi'],['SENTRA','Nissan Sentra'],['MASTER','Renault Master'],['GOL','VW Gol']]) if(t.includes(k)) return v;
+  for(const [k,v] of [['JUMPY','Citroën Jumpy'],['EXPERT','Peugeot Expert'],['SCUDO','Fiat Scudo'],['ARGO','Fiat Argo'],['FIORINO','Fiat Fiorino'],['KOMBI','VW Kombi'],['SENTRA','Nissan Sentra'],['MASTER','Renault Master'],['GOL','VW Gol'],['PARTNER','Peugeot Partner'],['VERSA','Nissan Versa']]) if(t.includes(k)) return v;
   return tipo ? tipo.trim() : 'Sem modelo';
 }
 function deptoDe(dep){
@@ -895,7 +1030,7 @@ function linhaParaVeiculo(c){
 // Vista lateral desenhada em SVG, uma silhueta por tipo de carroceria.
 const CARROCERIA = {
   'Citroën Jumpy':'van', 'Peugeot Expert':'van', 'Fiat Scudo':'van', 'Renault Master':'vanG', 'VW Kombi':'kombi',
-  'Fiat Fiorino':'furgao', 'Fiat Argo':'hatch', 'VW Gol':'hatch', 'Nissan Sentra':'sedan'
+  'Fiat Fiorino':'furgao', 'Fiat Argo':'hatch', 'VW Gol':'hatch', 'Nissan Sentra':'sedan', 'Peugeot Partner':'furgao', 'Nissan Versa':'sedan'
 };
 const SIL = {
   van:   {wr:105, wf:318, top:'M28,148 L28,62 Q28,44 46,42 L268,40 Q282,40 290,48 L334,92 Q340,98 352,100 L382,108 Q392,111 392,124 L392,148', win:['M262,50 L284,50 L322,92 L262,94 Z'], doors:[258,186], lamp:[372,108], tail:[28,70], front:392, rear:28},
@@ -935,6 +1070,7 @@ function svgVeiculo(modelo, cor){
 }
 
 /* ---------------------------- estado ---------------------------- */
+let checklists = [], ckErro = false;
 let frota = [], afast = [], hist = [], colabs = [], colabsErro = false, canWrite = false, carregou = false;
 const ativos = () => frota.filter(v => v.status !== 'Devolvido');
 let selModelo = null, selPlaca = null, flFiltro = '', vBuscaTxt = '';
@@ -964,6 +1100,13 @@ function calcAlertas(){
     if(v.status==='Pátio' && v.proprietario!=='Alugada') add(v,'Atenção','Próprio parado no pátio',(v.observacao||'Sem condutor')+ha);
     if(v.condutor && fora.has(norm(v.condutor))){ const a=fora.get(norm(v.condutor)); add(v,'Atenção','Condutor afastado',`${a.motivo}${a.retorno?' até '+brData(a.retorno):''} · carro pode ser remanejado`); }
     if(!v.docAno) add(v,'Atenção','Licenciamento sem registro','Ano do documento vazio');
+    { const uc = ultimoCk(v.placa);
+      if(uc && uc.tipo==='Retorno' && (uc.novasAvarias>0 || (uc.novasNok||[]).length)){
+        const partes = [(uc.novasNok||[]).length ? `${uc.novasNok.length} item${uc.novasNok.length>1?'s':''} N/OK novo${uc.novasNok.length>1?'s':''}` : '', uc.novasAvarias ? `${uc.novasAvarias} avaria${uc.novasAvarias>1?'s':''} nova${uc.novasAvarias>1?'s':''}` : ''].filter(Boolean).join(' · ');
+        out.push({placa:v.placa, modelo:v.modelo, condutor:uc.condutor||'', nivel:'Crítico', alerta:'Novidade no retorno', detalhe:`${partes} · retorno de ${brData(uc.data)}`, ck:uc.id});
+      } else if(uc && (uc.nok||[]).length){
+        out.push({placa:v.placa, modelo:v.modelo, condutor:uc.condutor||'', nivel:'Atenção', alerta:'Checklist com itens N/OK', detalhe:uc.nok.slice(0,3).join(', ')+(uc.nok.length>3?` e mais ${uc.nok.length-3}`:''), ck:uc.id});
+      } }
   });
   const em30 = new Date(new Date(hoje).getTime()+30*864e5).toISOString().slice(0,10);
   colabs.forEach(c => { if(!c.cnhVenc) return; const v = frota.find(x=>x.status!=='Devolvido' && norm(x.condutor)===norm(c.nome));
@@ -1140,6 +1283,7 @@ function fichaHTML(v){
       <div><span>Retirada</span><b>${esc(v.retirada||'—')}</b></div>
       <div><span>RENAVAM</span><b>${esc(v.renavam||'—')}</b></div>
       <div><span>Unidade</span><b>${esc(v.unidade||'—')}</b></div>
+      ${(() => { const uc = ultimoCk(v.placa); return `<div class="full"><span>Último checklist</span>${uc ? `<b><button type="button" class="link" data-ckgo="${esc(uc.id)}">${esc(uc.tipo)} em ${brData(uc.data)} ${esc(uc.hora||'')}</button> <span class="muted" style="font-weight:600">· ${fmt(uc.km)} km · ${(uc.nok||[]).length ? (uc.nok.length+' N/OK') : 'sem N/OK'}</span></b>` : `<b class="muted" style="font-weight:600">Nenhum checklist registrado</b>`}</div>`; })()}
       <div class="full"><span>Observação</span>${canWrite ? `<textarea class="obs-edit" data-obs="${esc(v.placa)}" rows="3" style="margin-top:5px;" aria-label="Observação de ${esc(v.placa)}" placeholder="Escreva uma observação…">${esc(v.observacao)}</textarea><small class="muted" style="font-size:11px;">Salva ao sair do campo.</small>` : `<b>${esc(v.observacao||'—')}</b>`}</div>
     </div>
     <div class="eyebrow" style="margin:16px 0 10px;">Alertas e histórico</div>
@@ -1153,6 +1297,7 @@ function abrirModelo(m){ selModelo = m; flFiltro=''; vBuscaTxt=''; selPlaca=null
 $('mTabs').addEventListener('click', e => { const b=e.target.closest('[data-mod]'); if(b) abrirModelo(b.dataset.mod); });
 $('mBody').addEventListener('click', e => {
   const ed = e.target.closest('[data-edit]'); if(ed){ abrirEdicao(ed.dataset.edit); return; }
+  const cg = e.target.closest('[data-ckgo]'); if(cg){ irPara({ck:cg.dataset.ckgo}); return; }
   const mc = e.target.closest('.mcard[data-mod]'); if(mc){ abrirModelo(mc.dataset.mod); return; }
   const f = e.target.closest('[data-f]'); if(f){ flFiltro=f.dataset.f; selPlaca=null; renderVeiculosModelo(); return; }
   if(e.target.closest('select,textarea,input')) return;
@@ -1830,6 +1975,438 @@ $('btnAfSalvar').addEventListener('click', async () => {
   catch(err){ $('afMsg').textContent='Erro: '+(err.code||err.message); }
 });
 
+/* ---------------------------- checklist de saída e retorno ---------------------------- */
+const CK_NIVEIS = {combustivel:['Vazio','1/4','1/2','3/4','Cheio'], bateria:['0%','25%','50%','75%','100%']};
+const CK_ROT_NIVEL = {combustivel:'Nível de combustível', bateria:'Carga da bateria'};
+const CK_AVARIAS = ['Risco','Amassado','Quebrado','Trincado','Faltando peça','Outro'];
+const CK_DIAG = m => `img/ck/${CK_MODELOS[m]?.diag || 'van'}.webp`;
+let ckAuto = true, ckAba = 'novo', ckModelo = null, ckDraft = null, ckSel = null, ckFiltro = '', ckSort = {k:'quando', dir:-1}, ckModTpl = null;
+const ckTpl = m => CK_MODELOS[m] || null;
+function ckItens(m){ return (ckTpl(m)?.secoes||[]).flatMap(s => s.i.map(([id,txt]) => ({id, t:txt, s:s.t}))); }
+function ckTs(c){ return (c.data||'')+'T'+(c.hora||'00:00'); }
+function ckOrdenados(placa){ return checklists.filter(c=>c.placa===placa).sort((a,b)=>ckTs(b).localeCompare(ckTs(a)) || (b.tipo==='Retorno')-(a.tipo==='Retorno')); }
+function ultimoCk(placa){ return ckOrdenados(placa)[0] || null; }
+function saidaAberta(placa){ return ckOrdenados(placa).find(c=>c.tipo==='Saída' && !c.retornoId) || null; }
+function nivelTxt(c){ const n = CK_NIVEIS[c.energia||'combustivel']; return c.nivel==null || c.nivel==='' ? '—' : (n[c.nivel] ?? '—'); }
+function ckModelosOrdem(){
+  const cont = {}; ativos().forEach(v => cont[v.modelo] = (cont[v.modelo]||0)+1);
+  return Object.keys(CK_MODELOS).sort((a,b)=> (cont[b]||0)-(cont[a]||0) || a.localeCompare(b)).map(m=>({m, n:cont[m]||0, itens:ckItens(m).length}));
+}
+function horaAgora(){ const d=new Date(); return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
+function novoDraft(placa){
+  const v = frota.find(x=>x.placa===placa), ab = placa ? saidaAberta(placa) : null;
+  let conf=''; try{ conf = localStorage.getItem('frota_ck_conferente')||''; }catch(e){}
+  return {placa: placa||'', tipo: ab ? 'Retorno' : 'Saída', data: hojeISO(), hora: horaAgora(), km:'', nivel:null,
+    condutor: (ab?.condutor || v?.condutor || ''), conferente: conf, itens:{}, avarias:[], obs:'', ciente:false, voltaPatio:true};
+}
+function guardarRascunho(){ try{ localStorage.setItem('frota_ck_rascunho', JSON.stringify({modelo:ckModelo, d:ckDraft})); }catch(e){} }
+function apagarRascunho(){ try{ localStorage.removeItem('frota_ck_rascunho'); }catch(e){} }
+try{ const r = JSON.parse(localStorage.getItem('frota_ck_rascunho')||'null'); if(r && CK_MODELOS[r.modelo] && r.d){ ckModelo = r.modelo; ckDraft = r.d; ckAuto = false; } }catch(e){}
+const draftUsado = () => ckDraft && (Object.keys(ckDraft.itens||{}).length || (ckDraft.avarias||[]).length || ckDraft.km || ckDraft.obs);
+
+function renderChecklist(){
+  if(!$('viewChecklist')) return;
+  document.querySelectorAll('#ckTabs [data-ckaba]').forEach(b=>{ const on=b.dataset.ckaba===ckAba; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
+  $('ckErroBox').style.display = ckErro ? '' : 'none';
+  $('ckNovoWrap').style.display = ckAba==='novo' ? '' : 'none';
+  $('ckHistWrap').style.display = ckAba==='hist' ? '' : 'none';
+  $('ckModWrap').style.display = ckAba==='modelos' ? '' : 'none';
+  renderCkKpis();
+  $('ckKpis').style.display = (ckAba==='novo' && canWrite && window.innerWidth<=760) ? 'none' : '';
+  if(ckAba==='novo') renderCkNovo(false);
+  else if(ckAba==='hist') renderCkHist();
+  else renderCkModelos();
+}
+function renderCkKpis(){
+  const hoje = hojeISO(), lim = new Date(Date.now()-30*864e5).toISOString().slice(0,10);
+  const deHoje = checklists.filter(c=>c.data===hoje);
+  const abertas = new Set(ativos().map(v=>saidaAberta(v.placa)).filter(Boolean).map(c=>c.id));
+  const ret30 = checklists.filter(c=>c.tipo==='Retorno' && c.data>=lim);
+  const novid = ret30.filter(c=>c.novasAvarias>0 || (c.novasNok||[]).length).length;
+  const comNok = ativos().filter(v=>(ultimoCk(v.placa)?.nok||[]).length).length;
+  const km30 = ret30.reduce((s,c)=>s+(Number(c.kmRodado)||0),0);
+  const semCk = ativos().filter(v=>!ultimoCk(v.placa)).length;
+  $('ckKpis').innerHTML = [
+    ['Checklists hoje', deHoje.length, (()=>{ const sa=deHoje.filter(c=>c.tipo==='Saída').length, re=deHoje.length-sa; return `${sa} saída${sa===1?'':'s'} · ${re} retorno${re===1?'':'s'}`; })(), 'var(--blue)'],
+    ['Em rota', abertas.size, 'saída sem retorno registrado', 'var(--green)'],
+    ['Retornos com novidade', novid, `de ${ret30.length} retornos em 30 dias`, 'var(--red)'],
+    ['Veículos com N/OK', comNok, 'no último checklist', 'var(--orange)'],
+    ['KM rodado', fmt(km30), 'entre saída e retorno, 30 dias', 'var(--black)'],
+    ['Sem checklist', semCk, `de ${ativos().length} veículos ativos`, 'var(--muted)'],
+  ].map(([t,n,p,cor])=>`<div class="kpi" style="--c:${cor}"><div class="t"><i></i>${t}</div><div class="n">${typeof n==='number'?fmt(n):n}</div><div class="p">${esc(p)}</div></div>`).join('');
+}
+
+/* ---------- formulário ---------- */
+function ckChaveForm(){ return [ckModelo, ckDraft?.placa, ckDraft?.tipo, canWrite, frota.length>0].join('|'); }
+function renderCkNovo(forcar){
+  $('ckLocked').style.display = canWrite ? 'none' : '';
+  if(!canWrite){ $('ckNovo').innerHTML=''; $('ckNovo').dataset.key=''; return; }
+  const mods = ckModelosOrdem();
+  if(!ckModelo || !CK_MODELOS[ckModelo] || (ckAuto && !draftUsado())) ckModelo = mods[0]?.m;
+  if(!ckDraft) ckDraft = novoDraft('');
+  const key = ckChaveForm();
+  if(!forcar && $('ckNovo').dataset.key===key){ renderCkLado(); renderCkPlacas(); return; }
+  $('ckNovo').dataset.key = key;
+  const m = ckModelo, tpl = ckTpl(m), d = ckDraft, its = ckItens(m);
+  const v = frota.find(x=>x.placa===d.placa);
+  const saida = d.tipo==='Retorno' && d.placa ? saidaAberta(d.placa) : null;
+  const nokSaida = new Set(saida?.nok||[]);
+  const niveis = CK_NIVEIS[tpl.energia];
+  let n = 0;
+  $('ckNovo').innerHTML = `
+    <div class="mtabs" id="ckMods" role="tablist" aria-label="Modelo do veículo">${mods.map(o=>`<button type="button" class="mtab${o.m===m?' on':''}" role="tab" aria-selected="${o.m===m}" data-ckmod="${esc(o.m)}"><span class="th">${svgVeiculo(o.m)}</span><span>${esc(o.m)}<small>${o.itens} itens · ${o.n} veículo${o.n===1?'':'s'}</small></span></button>`).join('')}</div>
+    <div class="ck-layout">
+      <div class="ck-main">
+        <div class="card ck-head">
+          <div class="ck-ph">${svgVeiculo(m, v?.cor)}</div>
+          <div style="min-width:0">
+            <h3>Checklist ${esc(m)}</h3>
+            <div class="muted">${esc(tpl.tipo)} · ${its.length} itens em ${tpl.secoes.length} grupos</div>
+            <div class="seg" role="group" aria-label="Tipo do checklist">
+              <button type="button" data-tipo="Saída" aria-pressed="${d.tipo==='Saída'}" style="--c:var(--green)"><i></i>Saída</button>
+              <button type="button" data-tipo="Retorno" aria-pressed="${d.tipo==='Retorno'}" style="--c:var(--orange)"><i></i>Retorno</button>
+            </div>
+          </div>
+        </div>
+        <div class="card form">
+          <div class="card-h" style="margin-bottom:0;"><h3>Dados da ${d.tipo==='Saída'?'saída':'chegada'}</h3><span class="sub">campos com * são obrigatórios</span></div>
+          <div class="form-grid">
+            <div><label for="ck_placa">Placa *</label><select id="ck_placa" data-ckf="placa"></select></div>
+            <div><label for="ck_condutor">Motorista *</label><select id="ck_condutor" data-ckf="condutor">${optsCondutor(d.condutor)}</select></div>
+            <div><label for="ck_data">Data *</label><input id="ck_data" type="date" data-ckf="data" value="${esc(d.data)}"></div>
+            <div><label for="ck_hora">Hora *</label><input id="ck_hora" type="time" data-ckf="hora" value="${esc(d.hora)}"></div>
+            <div><label for="ck_km">KM do painel *</label><input id="ck_km" type="number" inputmode="numeric" min="0" step="1" data-ckf="km" value="${esc(d.km)}" placeholder="${saida ? 'saída: '+fmt(saida.km) : v?.km ? 'último: '+fmt(v.km) : 'ex: 45230'}"></div>
+            <div><label for="ck_conf">Conferido por (transporte) *</label><input id="ck_conf" type="text" data-ckf="conferente" value="${esc(d.conferente)}" placeholder="Seu nome" autocomplete="name"></div>
+            <div class="full"><label>${CK_ROT_NIVEL[tpl.energia]} *</label>
+              <div class="gauge" role="group" aria-label="${CK_ROT_NIVEL[tpl.energia]}">${niveis.map((r,i)=>`<button type="button" data-nivel="${i}" aria-pressed="${d.nivel===i}" style="--p:${i*25}%; --c:${i===0?'var(--red)':i===1?'var(--orange)':'var(--green)'}"><i></i>${r}</button>`).join('')}</div></div>
+            <div class="full"><label for="ck_obs">Observação de ${d.tipo==='Saída'?'saída':'retorno'}</label><textarea id="ck_obs" rows="2" data-ckf="obs" placeholder="Detalhe qualquer item marcado como N/OK ou outra informação">${esc(d.obs)}</textarea></div>
+          </div>
+          ${d.tipo==='Retorno' ? (saida ? `<div class="ck-cmp">
+              <div><span>Saída registrada</span><b>${brData(saida.data)} ${esc(saida.hora||'')}</b></div>
+              <div><span>KM na saída</span><b>${fmt(saida.km)} km</b></div>
+              <div><span>${CK_ROT_NIVEL[saida.energia||tpl.energia]} na saída</span><b>${esc(nivelTxt(saida))}</b></div>
+              <div><span>N/OK na saída</span><b>${(saida.nok||[]).length}</b></div>
+              <div><span>KM rodado</span><b id="ckKmRod">${d.km && Number(d.km)>=Number(saida.km) ? fmt(Number(d.km)-Number(saida.km))+' km' : '—'}</b></div>
+            </div>` : (d.placa ? `<div class="box warn" style="margin-bottom:0;"><div class="note" style="margin:0;">Não há checklist de saída em aberto para ${esc(d.placa)}. O retorno será gravado sem comparação.</div></div>` : '')) : ''}
+        </div>
+        <div class="ck-secs">${tpl.secoes.map((s,si)=>`<div class="card ck-sec" data-sec="${si}">
+          <div class="ck-sec-h"><b>${esc(s.t)}</b><span class="cnt" data-seccnt="${si}"></span><button type="button" class="btn-mini" data-secok="${si}" title="Marca como OK os itens ainda sem resposta deste grupo">Tudo OK</button></div>
+          ${s.i.map(([id,txt])=>{ n++; const val=d.itens[id]; return `<div class="ck-it${val==='nok'?' nok':''}" data-it="${esc(id)}">
+            <span class="lb"><em>${n}.</em>${esc(txt)}${nokSaida.has(txt)?'<small>N/OK na saída</small>':''}</span>
+            <span class="tri" role="group" aria-label="${esc(txt)}">${[['ok','OK'],['nok','N/OK'],['na','NA']].map(([k,r])=>`<button type="button" data-v="${k}" aria-pressed="${val===k}">${r}</button>`).join('')}</span></div>`; }).join('')}
+        </div>`).join('')}</div>
+        <div class="card">
+          <div class="card-h"><h3>Avarias na lataria</h3><span class="sub">toque no desenho onde houver avaria</span></div>
+          <div class="ck-diag ed" id="ckDiag" role="button" tabindex="0" aria-label="Desenho do ${esc(m)}: toque para marcar uma avaria"><img src="${CK_DIAG(m)}" alt="" draggable="false"><span id="ckMks"></span></div>
+          <div id="ckAvList" style="margin-top:10px;"></div>
+          <div class="note">${d.tipo==='Retorno' && saida ? 'Marcadores cinza: avarias já registradas na saída. Marque em vermelho só as avarias novas.' : 'Marque todas as avarias visíveis na saída: riscos, amassados, peças quebradas ou faltando.'}</div>
+        </div>
+      </div>
+      <aside class="card ficha-card ck-side" id="ckSide"></aside>
+    </div>`;
+  renderCkPlacas(); renderCkAvarias(); renderCkLado();
+  tpl.secoes.forEach((s,si)=>pintarSecao(si));
+}
+function renderCkPlacas(){
+  const sel = $('ck_placa'); if(!sel || document.activeElement===sel) return;
+  const lista = frota.filter(v=>v.modelo===ckModelo && v.status!=='Devolvido').sort((a,b)=>a.placa.localeCompare(b.placa));
+  sel.innerHTML = `<option value="">${lista.length ? 'Escolha a placa' : 'Nenhum veículo deste modelo na frota'}</option>` + lista.map(v=>{ const ab = saidaAberta(v.placa);
+    return `<option value="${esc(v.placa)}"${v.placa===ckDraft.placa?' selected':''}>${esc(v.placa)} · ${esc(v.condutor?titulo(v.condutor):ST_LABEL[v.status])}${ab?' · em rota':''}</option>`; }).join('');
+}
+function pintarSecao(si){
+  const s = ckTpl(ckModelo).secoes[si], feitos = s.i.filter(([id])=>ckDraft.itens[id]).length, nok = s.i.filter(([id])=>ckDraft.itens[id]==='nok').length;
+  const el = document.querySelector(`[data-seccnt="${si}"]`); if(!el) return;
+  el.textContent = `${feitos}/${s.i.length}${nok?` · ${nok} N/OK`:''}`; el.classList.toggle('ok', feitos===s.i.length && !nok);
+}
+function pintarItem(id){
+  const row = document.querySelector(`#ckNovo [data-it="${CSS.escape(id)}"]`); if(!row) return;
+  const val = ckDraft.itens[id];
+  row.classList.toggle('nok', val==='nok'); if(val) row.classList.remove('falta');
+  row.querySelectorAll('[data-v]').forEach(b=>b.setAttribute('aria-pressed', b.dataset.v===val));
+}
+function renderCkAvarias(){
+  const d = ckDraft, saida = d.tipo==='Retorno' && d.placa ? saidaAberta(d.placa) : null;
+  const velhas = saida?.avarias || [];
+  $('ckMks').innerHTML = velhas.map((a,i)=>`<span class="mk old" style="left:${a.x}%; top:${a.y}%" title="Saída: ${esc(a.t)}">${i+1}</span>`).join('')
+    + d.avarias.map((a,i)=>`<span class="mk" style="left:${a.x}%; top:${a.y}%">${i+1}</span>`).join('');
+  $('ckAvList').innerHTML = (velhas.length ? velhas.map((a,i)=>`<div class="av-ro"><span class="mk-i old">${i+1}</span><span><b>${esc(a.t)}</b>${a.obs?` · ${esc(a.obs)}`:''} <span class="muted">(já registrada na saída)</span></span></div>`).join('') : '')
+    + (d.avarias.length ? d.avarias.map((a,i)=>`<div class="av-row"><span class="mk-i">${i+1}</span>
+        <select class="in-sm" data-avt="${i}" aria-label="Tipo da avaria ${i+1}">${CK_AVARIAS.map(t=>`<option${t===a.t?' selected':''}>${t}</option>`).join('')}</select>
+        <input class="in-sm" data-avo="${i}" value="${esc(a.obs)}" placeholder="Onde e como (ex: para-choque traseiro esquerdo)" aria-label="Detalhe da avaria ${i+1}">
+        <button type="button" class="btn-x" data-avx="${i}">Remover</button></div>`).join('') : `<div class="muted" style="font-size:12.5px; padding:4px 0;">${velhas.length?'Nenhuma avaria nova marcada.':'Nenhuma avaria marcada.'}</div>`);
+}
+function renderCkLado(){
+  const el = $('ckSide'); if(!el) return;
+  const d = ckDraft, its = ckItens(ckModelo), c = k => its.filter(i=>d.itens[i.id]===k).length;
+  const feitos = its.filter(i=>d.itens[i.id]).length, p = its.length ? Math.round(feitos/its.length*100) : 0;
+  const noks = its.filter(i=>d.itens[i.id]==='nok');
+  const saida = d.tipo==='Retorno' && d.placa ? saidaAberta(d.placa) : null, nokSaida = new Set(saida?.nok||[]);
+  const v = frota.find(x=>x.placa===d.placa);
+  el.innerHTML = `
+    <div class="eyebrow">${d.tipo==='Saída'?'Checklist de saída':'Checklist de retorno'}</div>
+    <div style="display:flex; align-items:center; gap:10px; margin-top:8px; flex-wrap:wrap;">${d.placa?placaHTML(d.placa):'<span class="muted">Placa não escolhida</span>'}${v?`<span class="badge ${ST[v.status]}">${ST_LABEL[v.status]}</span>`:''}</div>
+    <div class="prog" aria-hidden="true"><i class="${feitos===its.length?'full':''}" style="width:${p}%"></i></div>
+    <div style="font-size:12px; color:var(--muted); font-weight:600;">${feitos} de ${its.length} itens conferidos (${p}%)</div>
+    <div class="ck-cnts"><div><b style="color:var(--green)">${c('ok')}</b><span>OK</span></div><div><b style="color:var(--red)">${c('nok')}</b><span>N/OK</span></div><div><b>${c('na')}</b><span>NA</span></div><div><b style="color:#b77400">${its.length-feitos}</b><span>Faltam</span></div></div>
+    ${noks.length ? `<div class="eyebrow" style="margin-top:4px;">Itens N/OK</div><ul class="nok-list">${noks.map(i=>`<li class="${saida && !nokSaida.has(i.t)?'novo':''}"><b>${esc(i.t)}</b>${saida && !nokSaida.has(i.t)?'<small>novo</small>':''}</li>`).join('')}</ul>` : ''}
+    <div class="muted" style="font-size:12px; margin-top:10px;">${d.avarias.length} avaria${d.avarias.length===1?'':'s'} ${saida?'nova'+(d.avarias.length===1?'':'s'):'marcada'+(d.avarias.length===1?'':'s')} no desenho</div>
+    ${d.tipo==='Retorno' ? `<label class="ck-check"><input type="checkbox" data-ckf="voltaPatio"${d.voltaPatio?' checked':''}><span><b>Veículo fica no pátio</b><br><span class="muted">Tira o motorista e muda a situação para Pátio. Desmarque se o carro continua com o motorista.</span></span></label>`
+      : `<div class="note" style="margin-top:12px;">Ao salvar, o veículo passa para <b>Em uso</b> com o motorista escolhido e o KM atual é atualizado.</div>`}
+    <label class="ck-check"><input type="checkbox" data-ckf="ciente"${d.ciente?' checked':''}><span>O motorista acompanhou a vistoria e está ciente dos itens marcados.</span></label>
+    <div id="ckMsg" class="note" style="color:var(--red); min-height:0;"></div>
+    <button type="button" class="btn btn-dark" id="ckSalvar" style="width:100%; margin-top:10px;">Salvar checklist de ${d.tipo==='Saída'?'saída':'retorno'}</button>
+    <div style="display:flex; gap:8px; margin-top:8px;"><button type="button" class="btn btn-line" id="ckImprimir" style="flex:1;">Imprimir em branco</button><button type="button" class="btn btn-line" id="ckLimpar" style="flex:1;">Limpar</button></div>`;
+}
+function trocarModelo(m){
+  if(m===ckModelo) return;
+  if(draftUsado() && !confirm('Descartar o checklist em andamento?')) return;
+  ckModelo = m; ckAuto = false; ckDraft = novoDraft(''); apagarRascunho(); renderCkNovo(true);
+}
+$('ckNovo').addEventListener('click', e => {
+  const mb = e.target.closest('[data-ckmod]'); if(mb){ trocarModelo(mb.dataset.ckmod); return; }
+  const tb = e.target.closest('[data-tipo]'); if(tb){ if(ckDraft.tipo!==tb.dataset.tipo){ ckDraft.tipo = tb.dataset.tipo; const ab = ckDraft.placa && ckDraft.tipo==='Retorno' ? saidaAberta(ckDraft.placa) : null; if(ab) ckDraft.condutor = ab.condutor||ckDraft.condutor; guardarRascunho(); renderCkNovo(true); } return; }
+  const nb = e.target.closest('[data-nivel]'); if(nb){ ckDraft.nivel = Number(nb.dataset.nivel); document.querySelectorAll('#ckNovo [data-nivel]').forEach(b=>b.setAttribute('aria-pressed', b===nb)); guardarRascunho(); return; }
+  const vb = e.target.closest('.tri [data-v]'); if(vb){ const id = vb.closest('[data-it]').dataset.it; ckDraft.itens[id] = vb.dataset.v; pintarItem(id); pintarSecao(Number(vb.closest('[data-sec]').dataset.sec)); renderCkLado(); guardarRascunho(); return; }
+  const sb = e.target.closest('[data-secok]'); if(sb){ const si = Number(sb.dataset.secok); ckTpl(ckModelo).secoes[si].i.forEach(([id])=>{ if(!ckDraft.itens[id]){ ckDraft.itens[id]='ok'; pintarItem(id); } }); pintarSecao(si); renderCkLado(); guardarRascunho(); return; }
+  const xb = e.target.closest('[data-avx]'); if(xb){ ckDraft.avarias.splice(Number(xb.dataset.avx),1); renderCkAvarias(); renderCkLado(); guardarRascunho(); return; }
+  const dg = e.target.closest('#ckDiag'); if(dg){ const r = dg.getBoundingClientRect(); const x = (e.clientX-r.left)/r.width*100, y = (e.clientY-r.top)/r.height*100; if(x<0||x>100||y<0||y>100) return;
+    ckDraft.avarias.push({x:Math.round(x*100)/100, y:Math.round(y*100)/100, t:'Risco', obs:''}); renderCkAvarias(); renderCkLado(); guardarRascunho();
+    const inp = document.querySelector(`[data-avo="${ckDraft.avarias.length-1}"]`); if(inp) inp.focus({preventScroll:true}); return; }
+  if(e.target.closest('#ckSalvar')){ salvarChecklist(); return; }
+  if(e.target.closest('#ckImprimir')){ imprimirCk(null, ckModelo); return; }
+  if(e.target.closest('#ckLimpar')){ if(draftUsado() && !confirm('Limpar todas as marcações deste checklist?')) return; const p = ckDraft.placa; ckDraft = novoDraft(p); apagarRascunho(); renderCkNovo(true); return; }
+});
+$('ckNovo').addEventListener('keydown', e => { if(e.target.id==='ckDiag' && (e.key==='Enter'||e.key===' ')){ e.preventDefault(); ckDraft.avarias.push({x:50, y:50, t:'Risco', obs:''}); renderCkAvarias(); renderCkLado(); guardarRascunho(); } });
+function ckCampo(e){
+  const el = e.target;
+  if(el.dataset.avt!=null){ ckDraft.avarias[Number(el.dataset.avt)].t = el.value; guardarRascunho(); return; }
+  if(el.dataset.avo!=null){ ckDraft.avarias[Number(el.dataset.avo)].obs = el.value; guardarRascunho(); return; }
+  const f = el.dataset.ckf; if(!f) return;
+  if(f==='placa'){ if(e.type!=='change') return; const keep = ckDraft.conferente; ckDraft = {...novoDraft(el.value), itens:ckDraft.itens, avarias:ckDraft.avarias, conferente:keep||novoDraft('').conferente}; guardarRascunho(); renderCkNovo(true); return; }
+  ckDraft[f] = el.type==='checkbox' ? el.checked : el.value;
+  if(f==='conferente'){ try{ localStorage.setItem('frota_ck_conferente', el.value.trim()); }catch(_){} }
+  if(f==='km' && $('ckKmRod')){ const s = saidaAberta(ckDraft.placa); $('ckKmRod').textContent = s && el.value && Number(el.value)>=Number(s.km) ? fmt(Number(el.value)-Number(s.km))+' km' : '—'; }
+  guardarRascunho();
+}
+$('ckNovo').addEventListener('input', ckCampo);
+$('ckNovo').addEventListener('change', ckCampo);
+
+async function salvarChecklist(){
+  if(!canWrite) return;
+  const d = ckDraft, m = ckModelo, tpl = ckTpl(m), its = ckItens(m), v = frota.find(x=>x.placa===d.placa);
+  const erro = t => { const el=$('ckMsg'); if(el) el.textContent = t; toast(t); };
+  if(!v) return erro('Escolha a placa do veículo.');
+  const km = parseInt(d.km,10);
+  if(!(km>0)) return erro('Informe o KM do painel.');
+  if(!d.data || !d.hora) return erro('Informe a data e a hora.');
+  if(!d.condutor) return erro('Informe o motorista.');
+  if(!String(d.conferente||'').trim()) return erro('Informe quem conferiu o veículo.');
+  if(d.nivel==null) return erro(`Marque o nível de ${tpl.energia==='bateria'?'carga da bateria':'combustível'}.`);
+  const falta = its.filter(i=>!d.itens[i.id]);
+  if(falta.length){
+    falta.forEach(i=>document.querySelector(`#ckNovo [data-it="${CSS.escape(i.id)}"]`)?.classList.add('falta'));
+    document.querySelector(`#ckNovo [data-it="${CSS.escape(falta[0].id)}"]`)?.scrollIntoView({behavior:'smooth', block:'center'});
+    return erro(`Falta${falta.length>1?'m':''} ${falta.length} ite${falta.length>1?'ns':'m'} sem marcação. Use NA quando o item não se aplica.`);
+  }
+  if(!d.ciente) return erro('Confirme que o motorista acompanhou a vistoria.');
+  const saida = d.tipo==='Retorno' ? saidaAberta(v.placa) : null;
+  if(saida && km < Number(saida.km)) return erro(`KM do retorno (${fmt(km)}) é menor que o da saída (${fmt(saida.km)}).`);
+  if(!saida && v.km && km < Number(v.km) && !confirm(`O KM informado (${fmt(km)}) é menor que o KM atual cadastrado (${fmt(v.km)}). Salvar mesmo assim?`)) return;
+  const nok = its.filter(i=>d.itens[i.id]==='nok').map(i=>i.t);
+  const body = {placa:v.placa, modelo:m, tipo:d.tipo, data:d.data, hora:d.hora, km, nivel:d.nivel, energia:tpl.energia,
+    condutor:String(d.condutor).toUpperCase(), conferente:String(d.conferente).trim(), itens:{...d.itens}, nok, total:its.length,
+    nNa: its.filter(i=>d.itens[i.id]==='na').length, avarias:d.avarias.map(a=>({x:a.x, y:a.y, t:a.t, obs:String(a.obs||'').trim()})),
+    obs:String(d.obs||'').trim(), ciente:true, criadoEm:serverTimestamp()};
+  if(saida){
+    const nokS = new Set(saida.nok||[]);
+    Object.assign(body, {saidaId:saida.id, kmRodado:km-Number(saida.km), novasNok:nok.filter(t=>!nokS.has(t)), novasAvarias:body.avarias.length, nivelSaida:saida.nivel ?? null});
+  }
+  const ref = doc(ckRef);
+  const fv = {atualizadoEm:serverTimestamp(), ultimoChecklist:{id:ref.id, tipo:d.tipo, data:d.data}};
+  if(!v.km || km > Number(v.km)){ fv.km = km; fv.kmAtualizadoEm = d.data; }
+  const mud = [];
+  if(d.tipo==='Saída'){
+    if(norm(body.condutor)!==norm(v.condutor)){ fv.condutor = body.condutor; if(v.condutor) fv.condutorAnterior = v.condutor; mud.push(`motorista ${titulo(body.condutor)}`); }
+    if(v.status!=='Em uso'){ fv.status='Em uso'; fv.statusDesde=hojeISO(); mud.push('situação: Em uso'); }
+  } else if(d.voltaPatio && v.status!=='Pátio'){
+    fv.status='Pátio'; fv.statusDesde=hojeISO(); if(v.condutor) fv.condutorAnterior = v.condutor; fv.condutor=''; mud.push('situação: Pátio');
+  }
+  $('ckSalvar').disabled = true;
+  try{
+    const b = writeBatch(db);
+    b.set(ref, body);
+    if(saida) b.update(doc(db,'frota_checklists',saida.id), {retornoId:ref.id});
+    b.update(doc(db,'frota',v.placa), fv);
+    await b.commit();
+    const res = d.tipo==='Saída'
+      ? `Checklist de saída: ${fmt(km)} km · ${nok.length?nok.length+' N/OK':'tudo OK'}${body.avarias.length?` · ${body.avarias.length} avaria${body.avarias.length>1?'s':''}`:''}`
+      : `Checklist de retorno: ${saida?fmt(body.kmRodado)+' km rodados · ':''}${saida ? ((body.novasNok.length||body.novasAvarias) ? [body.novasNok.length?body.novasNok.length+' N/OK novo'+(body.novasNok.length>1?'s':''):'', body.novasAvarias?body.novasAvarias+' avaria'+(body.novasAvarias>1?'s':'')+' nova'+(body.novasAvarias>1?'s':''):''].filter(Boolean).join(' · ') : 'sem novidade') : (nok.length?nok.length+' N/OK':'tudo OK')}`;
+    await logHist('atualizado', v.placa, res + (mud.length?` · ${mud.join(' · ')}`:''));
+    toast(`${v.placa}: checklist de ${d.tipo==='Saída'?'saída':'retorno'} salvo.`);
+    apagarRascunho(); ckDraft = novoDraft(''); ckSel = ref.id; ckAba = 'hist'; ckFiltro=''; $('ckBusca').value=''; $('ckFModelo').value='';
+    renderChecklist(); window.scrollTo({top:0});
+  }catch(err){ erro(String(err.code).includes('permission') ? 'Sem permissão para gravar checklists. Publique as regras do Firestore atualizadas.' : 'Não foi possível salvar: '+(err.code||err.message)); const bt=$('ckSalvar'); if(bt) bt.disabled=false; }
+}
+
+/* ---------- checklists realizados ---------- */
+function ckSituacao(c){
+  if(c.tipo==='Saída') return c.retornoId ? ['Retornou','dev'] : ['Em rota','rota'];
+  if(!c.saidaId) return ['Sem saída','dev'];
+  return (c.novasAvarias>0 || (c.novasNok||[]).length) ? ['Com novidade','crit'] : ['Sem novidade','uso'];
+}
+function renderCkHist(){
+  preencherSelect('ckFModelo', [...new Set(checklists.map(c=>c.modelo))].sort(), 'Modelo: todos');
+  const q = norm($('ckBusca').value), fm = $('ckFModelo').value;
+  const base = checklists.filter(c => (!fm || c.modelo===fm) && (!q || norm([c.placa,c.condutor,c.conferente,c.modelo].join(' ')).includes(q)));
+  const n = f => base.filter(f).length;
+  const fs = {'':()=>true, saida:c=>c.tipo==='Saída', retorno:c=>c.tipo==='Retorno', rota:c=>c.tipo==='Saída'&&!c.retornoId, nok:c=>(c.nok||[]).length>0, novidade:c=>ckSituacao(c)[0]==='Com novidade'};
+  const chips = [['','Todos'],['saida','Saídas'],['retorno','Retornos'],['rota','Em rota'],['nok','Com N/OK'],['novidade','Retorno com novidade']];
+  $('ckChips').innerHTML = chips.map(([f,l])=>`<button type="button" class="fchip${ckFiltro===f?' on':''}" data-ckf2="${f}">${l} · ${n(fs[f])}</button>`).join('');
+  const rows = base.filter(fs[ckFiltro]||fs['']);
+  const {k, dir} = ckSort;
+  const val = c => k==='quando' ? ckTs(c) : k==='km' ? Number(c.km)||0 : k==='nok' ? (c.nok||[]).length : k==='av' ? (c.avarias||[]).length : k==='nivel' ? (c.nivel??-1) : k==='sit' ? ckSituacao(c)[0] : String(c[k]||'');
+  rows.sort((a,b)=>(val(a)>val(b)?1:val(a)<val(b)?-1:0)*dir || ckTs(b).localeCompare(ckTs(a)));
+  document.querySelectorAll('#ckHead th.sortable').forEach(th=>th.setAttribute('aria-sort', th.dataset.k===k?(dir>0?'ascending':'descending'):'none'));
+  $('ckCount').textContent = `${rows.length} de ${checklists.length}`;
+  if(!rows.find(c=>c.id===ckSel)) ckSel = rows[0]?.id || null;
+  $('ckBody').innerHTML = rows.length ? rows.map(c => { const [st,cl] = ckSituacao(c); return `<tr class="${c.id===ckSel?'on':''}" data-ck="${esc(c.id)}" tabindex="0">
+      <td style="white-space:nowrap">${brData(c.data)}<div class="muted" style="font-size:11px;">${esc(c.hora||'')}</div></td>
+      <td><span class="badge ${c.tipo==='Saída'?'uso':'patio'}">${esc(c.tipo)}</span></td>
+      <td>${placaHTML(c.placa,true)}<div class="muted" style="font-size:11px; margin-top:3px;">${esc(c.modelo)}</div></td>
+      <td>${esc(titulo(c.condutor||'—'))}</td>
+      <td style="font-variant-numeric:tabular-nums; white-space:nowrap">${fmt(c.km)}${c.kmRodado!=null?`<div class="muted" style="font-size:11px;">+${fmt(c.kmRodado)} km</div>`:''}</td>
+      <td class="hide-sm">${esc(nivelTxt(c))}</td>
+      <td>${(c.nok||[]).length ? `<span class="badge crit">${c.nok.length}</span>` : '<span class="muted">0</span>'}</td>
+      <td class="hide-sm">${(c.avarias||[]).length || '<span class="muted">0</span>'}</td>
+      <td><span class="badge ${cl}">${st}</span></td></tr>`; }).join('')
+    : `<tr><td colspan="9" class="empty">${checklists.length ? 'Nenhum checklist com esse filtro.' : 'Nenhum checklist registrado ainda.'}</td></tr>`;
+  $('ckFicha').innerHTML = fichaCk(checklists.find(c=>c.id===ckSel));
+}
+function diagRO(c, velhas){
+  return `<div class="ck-diag" style="margin-top:8px;"><img src="${CK_DIAG(c.modelo)}" alt="Desenho do ${esc(c.modelo)} com as avarias marcadas" draggable="false">${(velhas||[]).map((a,i)=>`<span class="mk old" style="left:${a.x}%; top:${a.y}%">${i+1}</span>`).join('')}${(c.avarias||[]).map((a,i)=>`<span class="mk" style="left:${a.x}%; top:${a.y}%">${i+1}</span>`).join('')}</div>`;
+}
+function fichaCk(c){
+  if(!c) return `<div class="card empty">${checklists.length ? 'Selecione um checklist.' : 'Os checklists salvos aparecem aqui.'}</div>`;
+  const v = frota.find(x=>x.placa===c.placa) || {placa:c.placa, modelo:c.modelo, condutor:c.condutor, status:'Em uso'};
+  const par = c.tipo==='Saída' ? checklists.find(x=>x.id===c.retornoId) : checklists.find(x=>x.id===c.saidaId);
+  const [st,cl] = ckSituacao(c);
+  const novas = new Set(c.novasNok||[]);
+  const velhas = c.tipo==='Retorno' && par ? par.avarias : null;
+  const rot = CK_ROT_NIVEL[c.energia||'combustivel'];
+  return `<div class="card ficha-card">
+    <div class="vh" style="margin-bottom:10px;"><div class="vh-who"><span class="av" style="background:${avCor(c.condutor)}; --s:${c.tipo==='Saída'?'var(--green)':'var(--orange)'}">${esc(iniciais(c.condutor))}</span><div style="min-width:0"><b>${esc(titulo(c.condutor||'—'))}</b><small>Checklist de ${c.tipo==='Saída'?'saída':'retorno'} · ${brData(c.data)} ${esc(c.hora||'')}</small></div></div><span class="badge ${cl}">${st}</span></div>
+    <div class="cl-veic" style="margin-top:0;"><span class="th">${svgVeiculo(c.modelo, v.cor)}</span><span style="min-width:0">${placaHTML(c.placa)}<div class="muted" style="font-size:11.5px; margin-top:4px;">${esc(c.modelo)}</div></span></div>
+    <div class="ficha" style="margin-top:6px;">
+      <div><span>KM do painel</span><b>${fmt(c.km)} km</b></div>
+      <div><span>${rot}</span><b>${esc(nivelTxt(c))}${c.nivelSaida!=null && c.tipo==='Retorno' ? ` <span class="muted" style="font-weight:600">(saída ${esc(CK_NIVEIS[c.energia||'combustivel'][c.nivelSaida]||'—')})</span>`:''}</b></div>
+      ${c.tipo==='Retorno' && c.kmRodado!=null ? `<div><span>KM rodado</span><b>${fmt(c.kmRodado)} km</b></div>` : ''}
+      <div><span>Conferido por</span><b>${esc(c.conferente||'—')}</b></div>
+      <div><span>Itens conferidos</span><b>${c.total||0} · ${(c.nok||[]).length} N/OK · ${c.nNa||0} NA</b></div>
+      <div><span>${c.tipo==='Saída'?'Retorno':'Saída'}</span><b>${par ? `<button type="button" class="link" data-cksel="${esc(par.id)}">${brData(par.data)} ${esc(par.hora||'')} · ${fmt(par.km)} km</button>` : (c.tipo==='Saída' ? 'Ainda não retornou' : 'Sem saída registrada')}</b></div>
+      ${c.obs ? `<div class="full"><span>Observação</span><b>${esc(c.obs)}</b></div>` : ''}
+    </div>
+    <div class="eyebrow" style="margin:16px 0 4px;">Itens N/OK</div>
+    ${(c.nok||[]).length ? `<ul class="nok-list">${c.nok.map(t=>`<li class="${novas.has(t)?'novo':''}"><b>${esc(t)}</b>${novas.has(t)?'<small>novo no retorno</small>':''}</li>`).join('')}</ul>` : '<div class="muted" style="font-size:12.5px;">Todos os itens OK ou não se aplicam.</div>'}
+    <div class="eyebrow" style="margin:16px 0 4px;">Avarias${c.tipo==='Retorno'?' novas':''} · ${(c.avarias||[]).length}</div>
+    ${(c.avarias||[]).length || (velhas||[]).length ? diagRO(c, velhas) + (c.avarias||[]).map((a,i)=>`<div class="av-ro"><span class="mk-i">${i+1}</span><span><b>${esc(a.t)}</b>${a.obs?` · ${esc(a.obs)}`:''}</span></div>`).join('') + ((velhas||[]).length ? `<div class="note" style="margin-top:6px;">Cinza: ${velhas.length} avaria${velhas.length>1?'s':''} já registrada${velhas.length>1?'s':''} na saída.</div>`:'') : '<div class="muted" style="font-size:12.5px;">Nenhuma avaria marcada.</div>'}
+    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:16px;">
+      <button type="button" class="btn btn-line" data-ckprint="${esc(c.id)}" style="flex:1;">Imprimir</button>
+      ${canWrite && c.tipo==='Saída' && !c.retornoId ? `<button type="button" class="btn btn-dark" data-ckret="${esc(c.id)}" style="flex:1.4;">Fazer checklist de retorno</button>` : ''}
+    </div>
+    ${canWrite ? `<button type="button" class="btn-x" data-ckdel="${esc(c.id)}" style="margin-top:12px;">Excluir este checklist</button>` : ''}
+  </div>`;
+}
+function selCk(id){ ckSel=id; document.querySelectorAll('#ckBody tr').forEach(tr=>tr.classList.toggle('on', tr.dataset.ck===id)); $('ckFicha').innerHTML = fichaCk(checklists.find(c=>c.id===id)); if(window.innerWidth<=1180) $('ckFicha').scrollIntoView({behavior:'smooth', block:'start'}); }
+$('ckBody').addEventListener('click', e=>{ const tr=e.target.closest('tr[data-ck]'); if(tr) selCk(tr.dataset.ck); });
+$('ckBody').addEventListener('keydown', e=>{ const tr=e.target.closest('tr[data-ck]'); if(tr && (e.key==='Enter'||e.key===' ')){ e.preventDefault(); selCk(tr.dataset.ck); } });
+$('ckChips').addEventListener('click', e=>{ const b=e.target.closest('[data-ckf2]'); if(!b) return; ckFiltro=b.dataset.ckf2; renderCkHist(); });
+['ckBusca','ckFModelo'].forEach(id=>$(id).addEventListener('input', renderCkHist));
+document.querySelectorAll('#ckHead th.sortable').forEach(th=>th.addEventListener('click',()=>{ const k=th.dataset.k; ckSort={k, dir: ckSort.k===k?-ckSort.dir:(k==='quando'?-1:1)}; renderCkHist(); }));
+$('ckFicha').addEventListener('click', async e=>{
+  const s = e.target.closest('[data-cksel]'); if(s){ if(!$('ckBody').querySelector(`[data-ck="${CSS.escape(s.dataset.cksel)}"]`)){ ckFiltro=''; $('ckBusca').value=''; $('ckFModelo').value=''; ckSel=s.dataset.cksel; renderCkHist(); } else selCk(s.dataset.cksel); return; }
+  const p = e.target.closest('[data-ckprint]'); if(p){ const c = checklists.find(x=>x.id===p.dataset.ckprint); if(c) imprimirCk(c, c.modelo); return; }
+  const r = e.target.closest('[data-ckret]'); if(r){ const c = checklists.find(x=>x.id===r.dataset.ckret); if(!c) return;
+    if(draftUsado() && !(ckDraft.placa===c.placa && ckDraft.tipo==='Retorno') && !confirm('Descartar o checklist em andamento?')) return;
+    if(!(ckDraft && ckDraft.placa===c.placa && ckDraft.tipo==='Retorno')){ ckModelo = CK_MODELOS[c.modelo] ? c.modelo : ckModelo; ckAuto = false; ckDraft = novoDraft(c.placa); ckDraft.tipo='Retorno'; ckDraft.condutor = c.condutor; }
+    ckAba='novo'; renderChecklist(); renderCkNovo(true); window.scrollTo({top:0}); return; }
+  const dl = e.target.closest('[data-ckdel]'); if(dl && canWrite){ const c = checklists.find(x=>x.id===dl.dataset.ckdel); if(!c) return;
+    if(!confirm(`Excluir o checklist de ${c.tipo.toLowerCase()} de ${c.placa} (${brData(c.data)})? Essa ação não pode ser desfeita.`)) return;
+    try{ const b = writeBatch(db); b.delete(doc(db,'frota_checklists',c.id));
+      if(c.tipo==='Retorno' && c.saidaId && checklists.some(x=>x.id===c.saidaId)) b.update(doc(db,'frota_checklists',c.saidaId), {retornoId:''});
+      await b.commit(); await logHist('excluido', c.placa, `Checklist de ${c.tipo.toLowerCase()} de ${brData(c.data)} excluído`); toast('Checklist excluído.'); }
+    catch(err){ toast('Não foi possível excluir: '+(err.code||err.message)); } }
+});
+
+/* ---------- modelos por veículo ---------- */
+function renderCkModelos(){
+  const mods = ckModelosOrdem();
+  if(!ckModTpl || !CK_MODELOS[ckModTpl]) ckModTpl = ckModelo || mods[0]?.m;
+  $('ckModTabs').innerHTML = mods.map(o=>`<button type="button" class="mtab${o.m===ckModTpl?' on':''}" role="tab" aria-selected="${o.m===ckModTpl}" data-ckmt="${esc(o.m)}"><span class="th">${svgVeiculo(o.m)}</span><span>${esc(o.m)}<small>${o.itens} itens · ${o.n} veículo${o.n===1?'':'s'}</small></span></button>`).join('');
+  const m = ckModTpl, tpl = ckTpl(m); let n = 0;
+  const feitos = checklists.filter(c=>c.modelo===m).length;
+  $('ckModBody').innerHTML = `<div class="cl-layout">
+    <div class="card">
+      <div class="card-h"><h3>Checklist ${esc(m)}</h3><span class="sub">${ckItens(m).length} itens · ${CK_ROT_NIVEL[tpl.energia].toLowerCase()} · ${feitos} checklist${feitos===1?'':'s'} feito${feitos===1?'':'s'}</span></div>
+      <div class="muted" style="font-size:12px; margin:-6px 0 12px;">${esc(tpl.tipo)}</div>
+      ${tpl.secoes.map(s=>`<div class="eyebrow" style="margin:14px 0 6px;">${esc(s.t)} · ${s.i.length}</div><ul class="ck-tpl-sec">${s.i.map(([,txt])=>`<li><em>${++n}.</em>${esc(txt)}</li>`).join('')}</ul>`).join('')}
+    </div>
+    <div class="card ficha-card">
+      <div class="card-h"><h3>Desenho para avarias</h3></div>
+      <div class="ck-diag"><img src="${CK_DIAG(m)}" alt="Desenho do ${esc(m)}" draggable="false"></div>
+      <div class="note">Cada item é marcado como OK, N/OK ou NA (não se aplica). Na saída e no retorno, o conferente marca no desenho onde houver avaria na lataria.</div>
+      <button type="button" class="btn btn-line" data-ckpb="${esc(m)}" style="width:100%; margin-top:12px;">Imprimir checklist em branco</button>
+      ${canWrite ? `<button type="button" class="btn btn-dark" data-cknovo="${esc(m)}" style="width:100%; margin-top:8px;">Preencher checklist deste modelo</button>` : ''}
+    </div></div>`;
+}
+$('ckModTabs').addEventListener('click', e=>{ const b=e.target.closest('[data-ckmt]'); if(!b) return; ckModTpl=b.dataset.ckmt; renderCkModelos(); });
+$('ckModBody').addEventListener('click', e=>{
+  const p=e.target.closest('[data-ckpb]'); if(p){ imprimirCk(null, p.dataset.ckpb); return; }
+  const nv=e.target.closest('[data-cknovo]'); if(nv){ ckAba='novo'; if(ckModelo!==nv.dataset.cknovo){ if(draftUsado() && !confirm('Descartar o checklist em andamento?')) return; ckModelo=nv.dataset.cknovo; ckAuto=false; ckDraft=novoDraft(''); apagarRascunho(); } renderChecklist(); renderCkNovo(true); window.scrollTo({top:0}); }
+});
+$('ckTabs').addEventListener('click', e=>{ const b=e.target.closest('[data-ckaba]'); if(!b) return; ckAba=b.dataset.ckaba; renderChecklist(); });
+$('ckIrEdicao').addEventListener('click', ()=>showView('edicao'));
+
+/* ---------- impressão (folha para assinatura) ---------- */
+function imprimirCk(c, modelo){
+  const tpl = ckTpl(modelo); if(!tpl){ toast('Modelo sem checklist.'); return; }
+  const abs = u => new URL(u, location.href).href;
+  const X = (id,k) => c && c.itens?.[id]===k ? '✕' : '';
+  let n = 0;
+  const niv = CK_NIVEIS[tpl.energia];
+  const mk = (a,i,old) => `<span class="mk${old?' old':''}" style="left:${a.x}%;top:${a.y}%">${i+1}</span>`;
+  const par = c && c.tipo==='Retorno' ? checklists.find(x=>x.id===c.saidaId) : null;
+  const html = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Checklist ${esc(modelo)}${c?' · '+esc(c.placa):''}</title>
+  <style>
+    @page{size:A4; margin:10mm;} *{box-sizing:border-box;} body{font:10.5px/1.35 Arial,Helvetica,sans-serif; color:#111; margin:0; -webkit-print-color-adjust:exact; print-color-adjust:exact;} .avbox{break-inside:avoid; page-break-inside:avoid; margin-top:4px;}
+    h1{font-size:16px; margin:0;} .top{display:flex; justify-content:space-between; align-items:flex-end; border-bottom:2px solid #111; padding-bottom:6px; margin-bottom:8px;}
+    .top small{display:block; font-size:10px; color:#555;} .tipo span{display:inline-block; border:1px solid #111; padding:2px 10px; margin-left:4px; font-weight:700;} .tipo span.on{background:#111; color:#fff;}
+    table{width:100%; border-collapse:collapse;} .dados td{border:1px solid #999; padding:4px 6px; height:22px;} .dados b{font-size:9px; color:#555; display:block; text-transform:uppercase;}
+    .secs{columns:2; column-gap:10px; margin-top:8px;} .sec{break-inside:avoid; margin-bottom:8px;}
+    .sec th{background:#111; color:#fff; text-align:left; padding:3px 5px; font-size:10px;} .sec th.c{width:30px; text-align:center;}
+    .sec td{border:1px solid #bbb; padding:2px 5px;} .sec td.c{text-align:center; font-weight:700;}
+    .diag{position:relative; width:72%; margin:6px auto 0; break-inside:avoid;} .diag img{width:100%; display:block;}
+    .mk{position:absolute; transform:translate(-50%,-50%); width:16px; height:16px; border-radius:50%; background:#d00; color:#fff; font-size:9px; font-weight:700; display:flex; align-items:center; justify-content:center;} .mk.old{background:#777;}
+    .box{border:1px solid #999; min-height:44px; padding:5px; margin-top:6px;} .ass{display:flex; gap:30px; margin-top:26px;} .ass div{flex:1; border-top:1px solid #111; text-align:center; padding-top:3px;}
+    .nota{font-size:9px; color:#444; margin-top:8px;} .gauge span{display:inline-block; border:1px solid #111; padding:1px 7px; margin-right:3px;} .gauge span.on{background:#111; color:#fff;}
+  </style></head><body>
+  <div class="top"><div><h1>CHECKLIST · ${esc(modelo.toUpperCase())}</h1><small>${esc(tpl.tipo)} · DISDAL-DF</small></div>
+    <div class="tipo">${['Saída','Retorno'].map(t=>`<span class="${c&&c.tipo===t?'on':''}">${t.toUpperCase()}</span>`).join('')}</div></div>
+  <table class="dados"><tr><td><b>Placa</b>${c?esc(c.placa):''}</td><td><b>Data</b>${c?brData(c.data):''}</td><td><b>Hora</b>${c?esc(c.hora||''):''}</td><td><b>KM</b>${c?fmt(c.km):''}</td></tr>
+    <tr><td colspan="2"><b>Motorista</b>${c?esc(titulo(c.condutor)):''}</td><td colspan="2"><b>Conferido por</b>${c?esc(c.conferente||''):''}</td></tr>
+    <tr><td colspan="4"><b>${CK_ROT_NIVEL[tpl.energia]}</b><span class="gauge">${niv.map((r,i)=>`<span class="${c&&c.nivel===i?'on':''}">${r}</span>`).join('')}</span>${par?` &nbsp; KM na saída: ${fmt(par.km)} · rodado: ${fmt(c.kmRodado)} km`:''}</td></tr></table>
+  <div class="secs">${tpl.secoes.map(s=>`<table class="sec"><tr><th>${esc(s.t.toUpperCase())}</th><th class="c">OK</th><th class="c">N/OK</th><th class="c">NA</th></tr>${s.i.map(([id,txt])=>`<tr><td>${++n}. ${esc(txt)}</td><td class="c">${X(id,'ok')}</td><td class="c">${X(id,'nok')}</td><td class="c">${X(id,'na')}</td></tr>`).join('')}</table>`).join('')}</div>
+  <div class="avbox"><b>ASSINALE COM "X" ONDE HOUVER AVARIAS NA LATARIA</b>
+  <div class="diag"><img src="${abs(CK_DIAG(modelo))}" alt="">${(par?.avarias||[]).map((a,i)=>mk(a,i,true)).join('')}${(c?.avarias||[]).map((a,i)=>mk(a,i,false)).join('')}</div></div>
+  ${c && (c.avarias||[]).length ? `<div class="nota">${c.avarias.map((a,i)=>`${i+1}. ${esc(a.t)}${a.obs?' – '+esc(a.obs):''}`).join(' · ')}</div>` : ''}
+  <div class="box"><b>OBSERVAÇÕES E DETALHAMENTOS</b><br>${c?esc(c.obs||''):''}</div>
+  <div class="ass"><div>ASSINATURA DO MOTORISTA</div><div>ASSINATURA COLABORADOR TRANSPORTE</div></div>
+  <div class="nota">1 – Verificar todos os itens da lista. 2 – Item que não se aplica ao veículo: marcar NA. 3 – Detalhes de qualquer item vão no campo de observações, informando qual item está sendo descrito.</div>
+  <script>window.onload=function(){Promise.all([].map.call(document.images,function(i){return i.complete&&i.naturalWidth?1:new Promise(function(r){i.onload=i.onerror=r;});})).then(function(){setTimeout(function(){window.print();},300);});};<\/script></body></html>`;
+  const w = window.open('', '_blank');
+  if(!w){ toast('Libere as janelas pop-up deste site para imprimir.'); return; }
+  w.document.open(); w.document.write(html); w.document.close();
+}
+
 /* ---------------------------- histórico ---------------------------- */
 async function logHist(tipo, placa, resumo){
   try{ await addDoc(histRef, {tipo, placa, resumo, quando:serverTimestamp()}); }catch(e){}
@@ -1964,7 +2541,7 @@ const IC = {
 let notifLidas = new Set(), notifFiltro = '', notifUltimaQtd = null;
 try{ notifLidas = new Set(JSON.parse(localStorage.getItem('frota_notif_lidas')||'[]')); }catch(e){}
 const salvarLidas = () => { try{ localStorage.setItem('frota_notif_lidas', JSON.stringify([...notifLidas].slice(-800))); }catch(e){} };
-const PRAZOS = ['Licenciamento vencido','Revisão vencida','Agendamento atrasado','CNH vencida','CNH vence em breve','Retorno vencido','Na oficina','Alugado parado no pátio','Batida sem orçamento'];
+const PRAZOS = ['Novidade no retorno','Licenciamento vencido','Revisão vencida','Agendamento atrasado','CNH vencida','CNH vence em breve','Retorno vencido','Na oficina','Alugado parado no pátio','Batida sem orçamento'];
 function tempoRel(d){
   if(!d) return '';
   const min = Math.round((Date.now()-d.getTime())/60000);
@@ -1979,7 +2556,7 @@ function montarNotificacoes(){
   calcAlertas().filter(a => PRAZOS.includes(a.alerta)).forEach(a => {
     if(a.alerta==='Na oficina'){ const v=frota.find(x=>x.placa===a.placa); const d=diasDesde(v?.statusDesde); if(d==null || d<7) return; }
     if(a.alerta==='Alugado parado no pátio'){ const v=frota.find(x=>x.placa===a.placa); const d=diasDesde(v?.statusDesde); if(d==null || d<3) return; }
-    const alvo = a.alerta==='Banco a reformar' ? {banco:a.placa} : a.placa!=='—' && (a.alerta.startsWith('Revisão') || a.alerta==='Agendamento atrasado') ? {rev:a.placa} : a.placa!=='—' ? {placa:a.placa} : a.alerta.startsWith('CNH') ? {colab:a.condutor} : a.alerta==='Retorno vencido' ? {view:'afast'} : {view:'alertas'};
+    const alvo = a.ck ? {ck:a.ck} : a.alerta==='Banco a reformar' ? {banco:a.placa} : a.placa!=='—' && (a.alerta.startsWith('Revisão') || a.alerta==='Agendamento atrasado') ? {rev:a.placa} : a.placa!=='—' ? {placa:a.placa} : a.alerta.startsWith('CNH') ? {colab:a.condutor} : a.alerta==='Retorno vencido' ? {view:'afast'} : {view:'alertas'};
     out.push({id:`p|${a.alerta}|${a.placa}|${norm(a.condutor)}`, cat:'prazo', nivel:a.nivel, titulo:`${a.alerta}${a.placa!=='—'?' · '+a.placa:''}`, detalhe:[a.condutor?titulo(a.condutor):'', a.detalhe].filter(Boolean).join(' · '), quando:null, alvo});
   });
   // alterações e cadastros do histórico (últimos 30 dias)
@@ -1997,7 +2574,7 @@ function montarNotificacoes(){
       else ttl='Novo cadastro';
     } else if(h.tipo==='importacao'){ cat='cad'; ttl='Importação de planilha'; alvo={view:'cadastro'}; }
     else if(h.tipo==='excluido'){ ttl = temPlaca ? `Veículo excluído · ${h.placa}` : r.startsWith('Afastamento') ? 'Afastamento encerrado' : 'Cadastro excluído'; if(!temPlaca) alvo = r.startsWith('Afastamento') ? {view:'afast'} : {view:'hist'}; if(temPlaca) alvo={view:'hist'}; }
-    else { const t0 = r.includes(':') ? r.split(':')[0] : (/revis/i.test(r) ? 'Revisão' : 'Alteração'); ttl = temPlaca ? `${t0} · ${h.placa}` : t0; if(temPlaca && /revis|km|agend/i.test(r)) alvo={rev:h.placa}; }
+    else { const t0 = r.includes(':') ? r.split(':')[0] : (/revis/i.test(r) ? 'Revisão' : 'Alteração'); ttl = temPlaca ? `${t0} · ${h.placa}` : t0; if(temPlaca && /^checklist/i.test(r)){ ttl = `${r.split(':')[0]} · ${h.placa}`; alvo={ckPlaca:h.placa}; } else if(temPlaca && /revis|km|agend/i.test(r)) alvo={rev:h.placa}; }
     out.push({id:`h|${d?d.getTime():'x'}|${h.placa}|${r.slice(0,40)}`, cat, titulo:ttl, detalhe:r, quando:d, alvo});
   });
   return out;
@@ -2040,6 +2617,7 @@ $('notifLista').addEventListener('click', e => {
   renderNotificacoes();
 });
 function irPara(alvo){
+  if(alvo.ck || alvo.ckPlaca){ ckAba='hist'; ckFiltro=''; $('ckFModelo').value=''; $('ckBusca').value = alvo.ckPlaca || ''; ckSel = alvo.ck || null; showView('checklist'); renderChecklist(); return; }
   if(alvo.banco){ rvAba='bancos'; bcFiltro=''; $('bcBusca').value=''; bcSel=alvo.banco; showView('revisao'); renderRevisao(); return; }
   if(alvo.rev){ rvFiltro=''; $('rvBusca').value=''; $('rvModelo').value=''; rvSel=alvo.rev; showView('revisao'); renderRevisao(); return; }
   if(alvo.placa){
@@ -2058,12 +2636,12 @@ function irPara(alvo){
 
 function renderAll(){
   const al = calcAlertas();
-  renderPainel(al); renderAlertas(al); renderVeiculosSeguro(); renderCadastro(); renderAfast(); renderHist(); renderCadastros(); renderColaboradores(); renderRevisaoSeguro(); renderNotificacoes();
+  renderPainel(al); renderAlertas(al); renderVeiculosSeguro(); renderCadastro(); renderAfast(); renderHist(); renderCadastros(); renderColaboradores(); renderRevisaoSeguro(); renderChecklist(); renderNotificacoes();
   $('seedBox').style.display = (canWrite && carregou && !frota.length) ? '' : 'none';
 }
 
 /* ---------------------------- navegação ---------------------------- */
-const VIEWS = {revisao:['viewRevisao','Revisão'], colaboradores:['viewColaboradores','Colaboradores'], cadastros:['viewCadastros','Cadastros'], painel:['viewPainel','Painel da frota'], veiculos:['viewVeiculos','Veículos por modelo'], alertas:['viewAlertas','Alertas'], cadastro:['viewCadastro','Cadastro completo'], afast:['viewAfast','Férias e afastamentos'], hist:['viewHist','Histórico de alterações'], edicao:['viewEdicao','Modo edição']};
+const VIEWS = {checklist:['viewChecklist','Checklist de saída e retorno'], revisao:['viewRevisao','Revisão'], colaboradores:['viewColaboradores','Colaboradores'], cadastros:['viewCadastros','Cadastros'], painel:['viewPainel','Painel da frota'], veiculos:['viewVeiculos','Veículos por modelo'], alertas:['viewAlertas','Alertas'], cadastro:['viewCadastro','Cadastro completo'], afast:['viewAfast','Férias e afastamentos'], hist:['viewHist','Histórico de alterações'], edicao:['viewEdicao','Modo edição']};
 function showView(v){
   if(!VIEWS[v]) v='painel';
   Object.entries(VIEWS).forEach(([k,[id]]) => $(id).style.display = k===v ? '' : 'none');
@@ -2106,6 +2684,7 @@ function falhou(err){ $('statusTxt').textContent='sem conexão'; $('statusTag').
 onSnapshot(frotaRef, snap => { frota = snap.docs.map(d => ({placa:d.id, ...d.data()})).map(v => ({...v, modelo: v.modelo || modeloDe(v.tipo)})); carregou = true; online(); renderAll(); }, falhou);
 onSnapshot(colabRef, snap => { colabs = snap.docs.map(d => ({id:d.id, ...d.data()})); colabsErro=false; renderAll(); }, err => { colabsErro = true; console.warn('frota_colaboradores:', err.code||err); renderCadastros(); });
 onSnapshot(afRef, snap => { afast = snap.docs.map(d => ({id:d.id, ...d.data()})); renderAll(); }, falhou);
+onSnapshot(query(ckRef, orderBy('criadoEm','desc'), limit(600)), snap => { checklists = snap.docs.map(d => ({id:d.id, ...d.data()})); ckErro=false; renderAll(); }, err => { ckErro = true; console.warn('frota_checklists:', err.code||err); renderChecklist(); });
 onSnapshot(query(histRef, orderBy('quando','desc'), limit(200)), snap => { hist = snap.docs.map(d => d.data()); renderHist(); renderVeiculosSeguro(); renderNotificacoes(); }, falhou);
 </script>
 </body>
