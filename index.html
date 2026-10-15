@@ -2387,34 +2387,42 @@ function imprimirCk(c, modelo){
   const X = (id,k) => c && c.itens?.[id]===k ? '✕' : '';
   let n = 0;
   const niv = CK_NIVEIS[tpl.energia];
+  const ncol = ckItens(modelo).length > 50 ? 3 : 2;
   const mk = (a,i,old) => `<span class="mk${old?' old':''}" style="left:${a.x}%;top:${a.y}%">${i+1}</span>`;
   const par = c && c.tipo==='Retorno' ? checklists.find(x=>x.id===c.saidaId) : null;
   const html = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Checklist ${esc(modelo)}${c?' · '+esc(c.placa):''}</title>
   <style>
-    @page{size:A4; margin:10mm;} *{box-sizing:border-box;} body{font:10.5px/1.35 Arial,Helvetica,sans-serif; color:#111; margin:0; -webkit-print-color-adjust:exact; print-color-adjust:exact;} .avbox{break-inside:avoid; page-break-inside:avoid; margin-top:4px;}
-    h1{font-size:16px; margin:0;} .top{display:flex; justify-content:space-between; align-items:flex-end; border-bottom:2px solid #111; padding-bottom:6px; margin-bottom:8px;}
-    .top small{display:block; font-size:10px; color:#555;} .tipo span{display:inline-block; border:1px solid #111; padding:2px 10px; margin-left:4px; font-weight:700;} .tipo span.on{background:#111; color:#fff;}
-    table{width:100%; border-collapse:collapse;} .dados td{border:1px solid #999; padding:4px 6px; height:22px;} .dados b{font-size:9px; color:#555; display:block; text-transform:uppercase;}
-    .secs{columns:2; column-gap:10px; margin-top:8px;} .sec{break-inside:avoid; margin-bottom:8px;}
-    .sec th{background:#111; color:#fff; text-align:left; padding:3px 5px; font-size:10px;} .sec th.c{width:30px; text-align:center;}
-    .sec td{border:1px solid #bbb; padding:2px 5px;} .sec td.c{text-align:center; font-weight:700;}
-    .diag{position:relative; width:72%; margin:6px auto 0; break-inside:avoid;} .diag img{width:100%; display:block;}
-    .mk{position:absolute; transform:translate(-50%,-50%); width:16px; height:16px; border-radius:50%; background:#d00; color:#fff; font-size:9px; font-weight:700; display:flex; align-items:center; justify-content:center;} .mk.old{background:#777;}
-    .box{border:1px solid #999; min-height:44px; padding:5px; margin-top:6px;} .ass{display:flex; gap:30px; margin-top:26px;} .ass div{flex:1; border-top:1px solid #111; text-align:center; padding-top:3px;}
-    .nota{font-size:9px; color:#444; margin-top:8px;} .gauge span{display:inline-block; border:1px solid #111; padding:1px 7px; margin-right:3px;} .gauge span.on{background:#111; color:#fff;}
+    @page{size:A4; margin:8mm;} *{box-sizing:border-box;} html,body{margin:0;} body{font:9px/1.25 Arial,Helvetica,sans-serif; color:#111; -webkit-print-color-adjust:exact; print-color-adjust:exact;}
+    h1{font-size:14px; margin:0;} .top{display:flex; justify-content:space-between; align-items:flex-end; border-bottom:2px solid #111; padding-bottom:4px; margin-bottom:5px;}
+    .top small{display:block; font-size:9px; color:#555;} .tipo span{display:inline-block; border:1px solid #111; padding:2px 9px; margin-left:4px; font-weight:700; font-size:10px;} .tipo span.on{background:#111; color:#fff;}
+    table{width:100%; border-collapse:collapse;} .dados td{border:1px solid #999; padding:2px 5px; height:19px;} .dados b{font-size:7.5px; color:#555; display:block; text-transform:uppercase;}
+    .secs{columns:${ncol}; column-gap:7px; margin-top:5px;} .sec{break-inside:avoid; margin-bottom:5px;} .sec.longa{break-inside:auto;}
+    .sec th{background:#111; color:#fff; text-align:left; padding:2px 4px; font-size:8px;} .sec th.c{width:${ncol>2?20:24}px; text-align:center; padding:2px 0;}
+    .sec td{border:1px solid #bbb; padding:1px 4px; height:${ncol>2?13:14}px;} .sec td.c{text-align:center; font-weight:700; padding:0;}
+    .fim{display:grid; grid-template-columns:44% 1fr; gap:10px; margin-top:4px; break-inside:avoid; page-break-inside:avoid;}
+    .fim h4{margin:0 0 3px; font-size:8.5px;}
+    .diag{position:relative; border:1px solid #bbb;} .diag img{display:block; width:100%; max-height:58mm; object-fit:contain;}
+    .mk{position:absolute; transform:translate(-50%,-50%); width:13px; height:13px; border-radius:50%; background:#d00; color:#fff; font-size:7.5px; font-weight:700; display:flex; align-items:center; justify-content:center;} .mk.old{background:#777;}
+    .lado{display:flex; flex-direction:column; gap:6px;}
+    .box{border:1px solid #999; min-height:26mm; padding:4px; flex:1;} .ass{display:flex; gap:16px; margin-top:16px;} .ass div{flex:1; border-top:1px solid #111; text-align:center; padding-top:2px; font-size:8px;}
+    .nota{font-size:7.5px; color:#444;} .gauge span{display:inline-block; border:1px solid #111; padding:0 6px; margin-right:3px;} .gauge span.on{background:#111; color:#fff;}
   </style></head><body>
   <div class="top"><div><h1>CHECKLIST · ${esc(modelo.toUpperCase())}</h1><small>${esc(tpl.tipo)} · DISDAL-DF</small></div>
     <div class="tipo">${['Saída','Retorno'].map(t=>`<span class="${c&&c.tipo===t?'on':''}">${t.toUpperCase()}</span>`).join('')}</div></div>
   <table class="dados"><tr><td><b>Placa</b>${c?esc(c.placa):''}</td><td><b>Data</b>${c?brData(c.data):''}</td><td><b>Hora</b>${c?esc(c.hora||''):''}</td><td><b>KM</b>${c?fmt(c.km):''}</td></tr>
     <tr><td colspan="2"><b>Motorista</b>${c?esc(titulo(c.condutor)):''}</td><td colspan="2"><b>Conferido por</b>${c?esc(c.conferente||''):''}</td></tr>
     <tr><td colspan="4"><b>${CK_ROT_NIVEL[tpl.energia]}</b><span class="gauge">${niv.map((r,i)=>`<span class="${c&&c.nivel===i?'on':''}">${r}</span>`).join('')}</span>${par?` &nbsp; KM na saída: ${fmt(par.km)} · rodado: ${fmt(c.kmRodado)} km`:''}</td></tr></table>
-  <div class="secs">${tpl.secoes.map(s=>`<table class="sec"><tr><th>${esc(s.t.toUpperCase())}</th><th class="c">OK</th><th class="c">N/OK</th><th class="c">NA</th></tr>${s.i.map(([id,txt])=>`<tr><td>${++n}. ${esc(txt)}</td><td class="c">${X(id,'ok')}</td><td class="c">${X(id,'nok')}</td><td class="c">${X(id,'na')}</td></tr>`).join('')}</table>`).join('')}</div>
-  <div class="avbox"><b>ASSINALE COM "X" ONDE HOUVER AVARIAS NA LATARIA</b>
-  <div class="diag"><img src="${abs(CK_DIAG(modelo))}" alt="">${(par?.avarias||[]).map((a,i)=>mk(a,i,true)).join('')}${(c?.avarias||[]).map((a,i)=>mk(a,i,false)).join('')}</div></div>
-  ${c && (c.avarias||[]).length ? `<div class="nota">${c.avarias.map((a,i)=>`${i+1}. ${esc(a.t)}${a.obs?' – '+esc(a.obs):''}`).join(' · ')}</div>` : ''}
-  <div class="box"><b>OBSERVAÇÕES E DETALHAMENTOS</b><br>${c?esc(c.obs||''):''}</div>
-  <div class="ass"><div>ASSINATURA DO MOTORISTA</div><div>ASSINATURA COLABORADOR TRANSPORTE</div></div>
-  <div class="nota">1 – Verificar todos os itens da lista. 2 – Item que não se aplica ao veículo: marcar NA. 3 – Detalhes de qualquer item vão no campo de observações, informando qual item está sendo descrito.</div>
+  <div class="secs">${tpl.secoes.map(s=>`<table class="sec${s.i.length>18?' longa':''}"><tr><th>${esc(s.t.toUpperCase())}</th><th class="c">OK</th><th class="c">N/OK</th><th class="c">NA</th></tr>${s.i.map(([id,txt])=>`<tr><td>${++n}. ${esc(txt)}</td><td class="c">${X(id,'ok')}</td><td class="c">${X(id,'nok')}</td><td class="c">${X(id,'na')}</td></tr>`).join('')}</table>`).join('')}</div>
+  <div class="fim">
+    <div><h4>ASSINALE COM "X" AS AVARIAS NA LATARIA</h4>
+      <div class="diag"><img src="${abs(CK_DIAG(modelo))}" alt="">${(par?.avarias||[]).map((a,i)=>mk(a,i,true)).join('')}${(c?.avarias||[]).map((a,i)=>mk(a,i,false)).join('')}</div>
+      ${c && (c.avarias||[]).length ? `<div class="nota" style="margin-top:3px">${c.avarias.map((a,i)=>`${i+1}. ${esc(a.t)}${a.obs?' – '+esc(a.obs):''}`).join(' · ')}</div>` : ''}</div>
+    <div class="lado">
+      <div class="box"><h4>OBSERVAÇÕES E DETALHAMENTOS</h4>${c?esc(c.obs||''):''}</div>
+      <div class="ass"><div>ASSINATURA DO MOTORISTA</div><div>ASSINATURA COLABORADOR TRANSPORTE</div></div>
+      <div class="nota">1 – Verificar todos os itens da lista. 2 – Item que não se aplica ao veículo: marcar NA. 3 – Detalhes de qualquer item vão no campo de observações, informando qual item está sendo descrito.</div>
+    </div>
+  </div>
   <script>window.onload=function(){Promise.all([].map.call(document.images,function(i){return i.complete&&i.naturalWidth?1:new Promise(function(r){i.onload=i.onerror=r;});})).then(function(){setTimeout(function(){window.print();},300);});};<\/script></body></html>`;
   const w = window.open('', '_blank');
   if(!w){ toast('Libere as janelas pop-up deste site para imprimir.'); return; }
