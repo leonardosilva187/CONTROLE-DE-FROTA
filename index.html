@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#eef0f4">
+<title>Controle de Frota — Disdal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Layout: trilho preto de ícones + área clara com cartões brancos (referência "fleet manager") */
+:root{
+  --bg:#e9ecf1; --canvas:#f6f7f9; --card:#ffffff; --line:#e6e8ee; --line2:#f0f1f5;
+  --ink:#14161b; --ink2:#3c4150; --muted:#8a90a0; --rail:#0d0e11;
+  --blue:#3478f6; --blue-soft:#e6efff; --lav:#dfe3f7; --orange:#f5a524; --orange-soft:#fff4e0;
+  --black:#14161b; --red:#e5484d; --red-soft:#fdecec; --green:#22a861; --green-soft:#e6f6ee;
+  --font:"Plus Jakarta Sans",-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --r:14px; --r-sm:9px;
+  --shadow:0 1px 2px rgba(20,22,27,.04), 0 6px 24px rgba(20,22,27,.05);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;}
+body{font-family:var(--font); color:var(--ink); background:var(--bg); font-size:13.5px; -webkit-font-smoothing:antialiased; min-height:100vh;}
+button{font-family:inherit; cursor:pointer;}
+input,select,textarea{font-family:inherit;}
+:focus-visible{outline:2px solid var(--blue); outline-offset:2px;}
+
+/* ---------- trilho de ícones ---------- */
+#rail{position:fixed; inset:0 auto 0 0; width:68px; background:var(--rail); display:flex; flex-direction:column; align-items:center; gap:6px; padding:18px 0; z-index:20;}
+.rail-logo{width:38px; height:38px; border-radius:11px; background:#1d1f25; color:#fff; display:grid; place-items:center; margin-bottom:14px;}
+.rail-btn{width:44px; height:44px; border-radius:11px; border:0; background:transparent; color:#8b909c; display:grid; place-items:center; position:relative;}
+.rail-btn:hover{color:#fff; background:#1b1d22;}
+.rail-btn.on{background:var(--blue); color:#fff; box-shadow:0 6px 16px rgba(52,120,246,.45);}
+.rail-btn .tt{position:absolute; left:54px; top:50%; transform:translateY(-50%); background:var(--black); color:#fff; font-size:12px; font-weight:600; padding:5px 9px; border-radius:7px; white-space:nowrap; opacity:0; pointer-events:none; transition:opacity .12s;}
+.rail-btn:hover .tt{opacity:1;}
+.rail-sep{width:28px; height:1px; background:#24262c; margin:8px 0;}
+.rail-foot{margin-top:auto; width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,var(--blue),#7aa7ff); color:#fff; font-weight:800; font-size:12px; display:grid; place-items:center;}
+
+/* ---------- área principal ---------- */
+.main{margin-left:68px; padding:22px 26px 32px; min-height:100vh;}
+.topbar{display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:18px;}
+.topbar h1{margin:0; font-size:20px; font-weight:800; letter-spacing:-.2px;}
+.topbar h1 small{display:block; font-size:12px; font-weight:500; color:var(--muted); letter-spacing:0; margin-top:2px;}
+.tb-right{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+.pill{display:inline-flex; align-items:center; gap:7px; height:32px; padding:0 12px; border-radius:999px; background:var(--card); border:1px solid var(--line); font-size:12px; font-weight:600; color:var(--ink2);}
+.pill .dot{width:7px; height:7px; border-radius:50%; background:var(--muted);}
+.pill.live .dot{background:var(--green); box-shadow:0 0 0 3px var(--green-soft);}
+.pill.bad{color:var(--red);} .pill.bad .dot{background:var(--red);}
+#clock{font-variant-numeric:tabular-nums;}
+
+.card{background:var(--card); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow); padding:18px 20px; min-width:0;}
+.card-h{display:flex; align-items:center; justify-content:space-between; gap:10px; margin:0 0 14px;}
+.card-h h3{margin:0; font-size:14.5px; font-weight:700;}
+.card-h .sub{font-size:11.5px; color:var(--muted); font-weight:500;}
+.eyebrow{font-size:10.5px; font-weight:700; letter-spacing:.7px; text-transform:uppercase; color:var(--muted);}
+.link{background:none; border:0; padding:0; color:var(--ink2); font-size:12px; font-weight:600; text-decoration:underline; text-underline-offset:3px; text-decoration-color:var(--line);}
+.link:hover{color:var(--blue);}
+.empty{color:var(--muted); font-size:13px; padding:22px 0; text-align:center;}
+.muted{color:var(--muted);}
+
+/* status */
+.st{display:inline-flex; align-items:center; gap:5px; font-size:10.5px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; white-space:nowrap; color:var(--muted);}
+.st i{width:6px; height:6px; border-radius:50%; background:currentColor;}
+.st.uso{color:#9aa0ad;} .st.uso i{background:var(--green);}
+.st.patio{color:var(--orange);} .st.ofic{color:var(--red);} .st.dev{color:#b3b8c3;}
+.badge{display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:700; padding:3px 9px; border-radius:999px; white-space:nowrap;}
+.badge.crit{background:var(--red-soft); color:var(--red);} .badge.aten{background:var(--orange-soft); color:#b77400;}
+.badge.uso{background:var(--green-soft); color:var(--green);} .badge.patio{background:var(--orange-soft); color:#b77400;}
+.badge.ofic{background:var(--red-soft); color:var(--red);} .badge.dev{background:var(--line2); color:var(--muted);}
+
+/* ---------- painel ---------- */
+.resumo{font-size:14px; line-height:1.6; color:var(--ink2); margin:0 0 16px; max-width:115ch;}
+.resumo b{color:var(--ink);}
+.kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin-bottom:16px;}
+.kpi{background:var(--card); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow); padding:15px 16px;}
+.kpi .t{display:flex; align-items:center; gap:7px; font-size:12px; color:var(--muted); font-weight:600;}
+.kpi .t i{width:8px; height:8px; border-radius:3px; background:var(--c,var(--blue));}
+.kpi .n{font-size:28px; font-weight:800; letter-spacing:-.5px; margin:6px 0 2px; font-variant-numeric:tabular-nums;}
+.kpi .p{font-size:11.5px; color:var(--muted);}
+.grid2{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr)); gap:16px; margin-bottom:16px;}
+.lg{display:flex; flex-wrap:wrap; gap:6px 14px; font-size:11.5px; color:var(--muted); margin:-6px 0 8px;}
+.lg em{display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:5px; vertical-align:-1px;}
+.c-uso{background:var(--blue);} .c-patio{background:var(--orange);} .c-ofic{background:var(--black);}
+.c-prop{background:var(--blue);} .c-alug{background:var(--lav);}
+.hbar{display:grid; grid-template-columns:minmax(90px,128px) 1fr 30px; align-items:center; gap:10px; margin:10px 0; font-size:12.5px;}
+.hbar .nm{color:var(--ink2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:500;}
+.hbar .tr{display:flex; height:12px; gap:2px; border-radius:4px; overflow:hidden;}
+.hbar .tr i{display:block; height:100%; border-radius:3px;}
+.hbar .vl{text-align:right; font-variant-numeric:tabular-nums; font-weight:700;}
+.cols{display:flex; align-items:flex-end; gap:16px; height:180px; padding-top:10px;}
+.cols .cl{flex:1; height:100%; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; gap:6px; position:relative;}
+.cols .cl::before{content:""; position:absolute; inset:0 calc(50% - 22px) 0; background:var(--line2); border-radius:6px; z-index:0;}
+.cols .cl b{position:relative; z-index:1; font-size:13px; font-variant-numeric:tabular-nums;}
+.cols .cl i{position:relative; z-index:1; display:block; width:20px; background:var(--black); border-radius:5px;}
+.cols .cl.old i{background:var(--orange);}
+.cols-lab{display:flex; gap:16px; padding-top:8px;}
+.cols-lab span{flex:1; text-align:center; font-size:11px; color:var(--muted); font-weight:500;}
+.alert-mini{display:flex; justify-content:space-between; gap:10px; align-items:center; padding:10px 0; border-bottom:1px solid var(--line2);}
+.alert-mini:last-child{border-bottom:0;}
+.alert-mini b{font-weight:700;} .alert-mini small{display:block; color:var(--muted); font-size:11.5px; margin-top:2px;}
+.scroll{max-height:330px; overflow-y:auto;}
+
+/* ---------- veículos (frota por modelo) ---------- */
+.fleet{display:grid; grid-template-columns:290px minmax(0,1fr); gap:16px; align-items:start;}
+.fleet-list{padding:0; overflow:hidden; position:sticky; top:16px;}
+.fl-search{padding:14px 14px 10px; border-bottom:1px solid var(--line2);}
+.fl-search input{width:100%; height:36px; border:1px solid var(--line); border-radius:9px; padding:0 12px 0 34px; font-size:13px; background:var(--canvas) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%238a90a0' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='7' cy='7' r='5'/%3E%3Cpath d='M11 11l3.5 3.5'/%3E%3C/svg%3E") 11px 50% no-repeat; color:var(--ink);}
+.fl-search input:focus{outline:none; border-color:var(--blue); background-color:#fff;}
+.fl-filt{display:flex; gap:5px; flex-wrap:wrap; margin-top:9px;}
+.fl-filt button{border:1px solid var(--line); background:#fff; color:var(--ink2); font-size:11px; font-weight:600; padding:4px 9px; border-radius:999px;}
+.fl-filt button.on{background:var(--black); color:#fff; border-color:var(--black);}
+.fl-body{max-height:calc(100vh - 170px); overflow-y:auto; padding:4px 8px 12px;}
+.fl-group{margin-top:8px;}
+.fl-gh{width:100%; display:flex; align-items:center; justify-content:space-between; gap:8px; background:none; border:0; padding:8px 8px 6px; font-size:10.5px; font-weight:800; letter-spacing:.7px; text-transform:uppercase; color:var(--ink2);}
+.fl-gh span{color:var(--muted); font-weight:700;}
+.fl-gh .chev{transition:transform .15s; color:var(--muted);}
+.fl-group.closed .chev{transform:rotate(180deg);} .fl-group.closed .fl-items{display:none;}
+.fl-item{width:100%; display:grid; grid-template-columns:34px minmax(0,1fr) auto; align-items:center; gap:10px; text-align:left; background:none; border:0; padding:8px; border-radius:10px; color:var(--ink);}
+.fl-item:hover{background:var(--canvas);}
+.fl-item.on{background:var(--blue-soft);}
+.av{width:34px; height:34px; border-radius:50%; display:grid; place-items:center; font-size:11.5px; font-weight:800; color:#fff; position:relative; flex-shrink:0;}
+.av::after{content:""; position:absolute; right:-1px; bottom:-1px; width:10px; height:10px; border-radius:50%; border:2px solid #fff; background:var(--s,var(--green));}
+.fl-item .nm{font-size:12.5px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.fl-item .sm{font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:1px;}
+
+.hero-wrap{display:flex; flex-direction:column; gap:16px;}
+.vh{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:2px 2px 0;}
+.vh-who{display:flex; align-items:center; gap:12px; min-width:0;}
+.vh-who .av{width:42px; height:42px; font-size:13.5px;}
+.vh-who b{display:block; font-size:15px; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.vh-who small{display:block; font-size:12px; color:var(--muted); margin-top:1px;}
+.vh-act{display:flex; gap:8px;}
+.icon-btn{width:36px; height:36px; border-radius:10px; border:1px solid var(--line); background:#fff; color:var(--ink2); display:grid; place-items:center;}
+.icon-btn:hover{border-color:var(--blue); color:var(--blue);}
+.hero{position:relative; overflow:hidden; background:linear-gradient(135deg,#f4f6fa 0%,#eef1f6 60%,#e8ecf3 100%); border:1px solid var(--line); border-radius:var(--r); padding:24px 26px 20px; display:grid; grid-template-columns:minmax(220px,.9fr) minmax(280px,1.4fr); gap:10px 24px; align-items:center;}
+.hero::after{content:""; position:absolute; right:-60px; top:-40px; width:340px; height:340px; border-radius:50%; border:46px solid rgba(255,255,255,.55); pointer-events:none;}
+.hero h2{margin:0 0 4px; font-size:17px; font-weight:800; letter-spacing:-.2px;}
+.hero .tipo{font-size:11.5px; color:var(--muted); margin-bottom:18px;}
+.specs{display:grid; grid-template-columns:1fr 1fr; gap:16px 22px;}
+.specs div span{display:block; font-size:11.5px; color:var(--muted); font-weight:500;}
+.specs div b{display:block; font-size:16px; font-weight:800; margin-top:3px; font-variant-numeric:tabular-nums;}
+.hero-foot{display:flex; align-items:center; gap:14px; margin-top:20px;}
+.placa{display:inline-flex; flex-direction:column; border:1.5px solid #20232b; border-radius:5px; overflow:hidden; background:#fff; min-width:96px; box-shadow:0 1px 0 rgba(0,0,0,.06);}
+.placa i{display:block; background:#1d4fb5; color:#fff; font-style:normal; font-size:6.5px; font-weight:800; letter-spacing:1.4px; text-align:center; padding:1.5px 0;}
+.placa b{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; font-size:16px; font-weight:800; letter-spacing:1.6px; text-align:center; padding:2px 8px 3px; color:#15171c;}
+.hero-img{position:relative; z-index:1; display:flex; justify-content:center; align-items:flex-end; min-height:170px;}
+.hero-img svg{width:100%; max-width:470px; height:auto; filter:drop-shadow(0 18px 18px rgba(20,22,27,.12));}
+.hero-img img{display:block; width:auto; max-width:100%; max-height:230px; object-fit:contain; filter:drop-shadow(0 22px 16px rgba(20,22,27,.16));}
+.chips-wrap{grid-column:1/-1; position:relative; z-index:1; border-top:1px solid rgba(20,22,27,.07); margin-top:10px; padding-top:14px;}
+.chips-wrap .eyebrow{display:block; margin-bottom:9px;}
+.pchips{display:flex; flex-wrap:wrap; gap:7px;}
+.pchip{display:inline-flex; align-items:center; gap:7px; border:1px solid var(--line); background:#fff; border-radius:9px; padding:6px 10px; font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; font-size:12.5px; font-weight:700; letter-spacing:.6px; color:var(--ink);}
+.pchip i{width:7px; height:7px; border-radius:50%; background:var(--s,var(--green));}
+.pchip:hover{border-color:var(--blue);}
+.pchip.on{background:var(--black); color:#fff; border-color:var(--black);}
+.vgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr)); gap:16px;}
+.ficha{display:grid; grid-template-columns:1fr 1fr; gap:0 18px;}
+.ficha div{padding:9px 0; border-bottom:1px solid var(--line2); min-width:0;}
+.ficha div span{display:block; font-size:11px; color:var(--muted); font-weight:600;}
+.ficha div b{display:block; font-size:13px; font-weight:700; margin-top:2px; overflow-wrap:anywhere;}
+.ficha .full{grid-column:1/-1;}
+.stackbar{display:flex; height:34px; border-radius:7px; overflow:hidden; gap:2px; margin:6px 0 4px;}
+.stackbar div{display:flex; align-items:center; padding:0 9px; font-size:11.5px; font-weight:700; min-width:0; white-space:nowrap; overflow:hidden;}
+.sb-uso{background:var(--lav); color:var(--ink);} .sb-patio{background:var(--orange); color:#fff;} .sb-ofic{background:var(--black); color:#fff;}
+.sb-lab{display:flex; justify-content:space-between; font-size:11px; color:var(--muted); font-weight:600; margin-top:6px;}
+.mtable{width:100%; border-collapse:collapse; margin-top:10px; font-size:12.5px;}
+.mtable td{padding:9px 0; border-bottom:1px solid var(--line2);}
+.mtable td:last-child,.mtable td:nth-child(2){text-align:right; font-weight:700; font-variant-numeric:tabular-nums;}
+.mtable td:nth-child(2){color:var(--muted); font-weight:600; padding-right:14px;}
+.tl{list-style:none; margin:0; padding:0;}
+.tl li{position:relative; padding:0 0 14px 18px; font-size:12.5px;}
+.tl li::before{content:""; position:absolute; left:3px; top:5px; width:7px; height:7px; border-radius:50%; background:var(--blue);}
+.tl li::after{content:""; position:absolute; left:6px; top:14px; bottom:0; width:1px; background:var(--line);}
+.tl li:last-child::after{display:none;}
+.tl li b{font-weight:700;} .tl li small{display:block; color:var(--muted); font-size:11px; margin-top:2px;}
+.tl li.al::before{background:var(--red);}
+
+/* ---------- tabelas e formulários ---------- */
+.ftools{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:10px; margin-bottom:12px;}
+.ftools input,.ftools select,.form input,.form select,.form textarea{width:100%; padding:9px 11px; background:var(--canvas); border:1px solid var(--line); color:var(--ink); border-radius:9px; font-size:13px;}
+.ftools input:focus,.ftools select:focus,.form input:focus,.form select:focus,.form textarea:focus{outline:none; border-color:var(--blue); background:#fff;}
+.form label{display:block; font-size:11.5px; color:var(--muted); font-weight:600; margin:12px 0 5px;}
+.tablewrap{overflow:auto; max-height:calc(100vh - 290px); min-height:300px; border:1px solid var(--line2); border-radius:10px;}
+table.tb{width:100%; border-collapse:collapse; font-size:12.5px;}
+.tb th{position:sticky; top:0; background:#fafbfc; text-align:left; font-size:10.5px; font-weight:700; letter-spacing:.6px; text-transform:uppercase; color:var(--muted); padding:10px 11px; border-bottom:1px solid var(--line); white-space:nowrap; z-index:1;}
+.tb td{padding:9px 11px; border-bottom:1px solid var(--line2); vertical-align:middle;}
+.tb tbody tr:hover{background:#fafbff;}
+th.sortable{cursor:pointer; user-select:none;} th.sortable:hover{color:var(--blue);}
+th[aria-sort="ascending"]::after{content:" ▲"; font-size:9px;} th[aria-sort="descending"]::after{content:" ▼"; font-size:9px;}
+.obs-cell{max-width:230px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.st-edit{padding:5px 8px; border-radius:999px; font-size:12px; font-weight:700; border:1px solid var(--line); background:#fff; color:var(--ink);}
+.st-edit.uso{color:var(--green); background:var(--green-soft); border-color:transparent;}
+.st-edit.patio{color:#b77400; background:var(--orange-soft); border-color:transparent;}
+.st-edit.ofic{color:var(--red); background:var(--red-soft); border-color:transparent;}
+.st-edit.dev{color:var(--muted); background:var(--line2); border-color:transparent;}
+.dias{font-size:11.5px; color:var(--muted); white-space:nowrap;} .dias.alto{color:var(--red); font-weight:700;}
+.fchips{display:flex; flex-wrap:wrap; gap:6px; margin:0 0 12px;}
+.fchip{border:1px solid var(--line); background:#fff; color:var(--ink2); font-size:12px; font-weight:600; padding:6px 11px; border-radius:999px;}
+.fchip:hover{border-color:var(--blue);}
+.fchip.on{background:var(--black); color:#fff; border-color:var(--black);}
+.btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; height:40px; padding:0 16px; border-radius:10px; border:0; font-size:13px; font-weight:700;}
+.btn-dark{background:var(--black); color:#fff;} .btn-dark:hover{background:#2a2d35;}
+.btn-dark:disabled{opacity:.55; cursor:wait;}
+.btn-line{background:#fff; color:var(--ink2); border:1px solid var(--line);} .btn-line:hover{border-color:var(--blue); color:var(--blue);}
+.btn-del{background:#fff; color:var(--red); border:1px solid #f4c7c8;}
+.btn-mini{height:30px; padding:0 11px; border-radius:8px; font-size:12px; font-weight:700; border:1px solid var(--line); background:#fff; color:var(--ink2);}
+.btn-mini:hover{border-color:var(--blue); color:var(--blue);}
+.btn-x{border:1px solid #f4c7c8; background:#fff; color:var(--red); font-size:12px; font-weight:700; padding:5px 10px; border-radius:8px;}
+.note{font-size:12px; color:var(--muted); line-height:1.55; margin-top:10px;}
+.form-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:0 16px;}
+.form-grid .full{grid-column:1/-1;}
+.box{border:1px dashed #cfd4de; border-radius:12px; padding:14px; margin:12px 0;}
+.box h4{margin:0 0 6px; font-size:13px;}
+.box.warn{border:1px solid #f7d79a; background:var(--orange-soft); border-style:solid;}
+#bulkInput{min-height:110px; font:12px ui-monospace,Menlo,Consolas,monospace; white-space:pre; overflow:auto; resize:vertical;}
+.afs-row{display:grid; grid-template-columns:1.6fr 1fr 1.2fr 1.2fr auto; gap:10px; align-items:center; padding:11px 0; border-bottom:1px solid var(--line2); font-size:13px;}
+.afs-row:last-child{border-bottom:0;}
+.afs-row.head{font-size:10.5px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.6px;}
+.venc{color:var(--red); font-weight:700;}
+.hist-item{padding:11px 0; border-bottom:1px solid var(--line2); font-size:13px;}
+.hist-item:last-child{border-bottom:0;}
+.hist-tipo{font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.5px; padding:3px 8px; border-radius:999px; background:var(--line2); color:var(--ink2); margin-right:7px;}
+.hist-tipo.criado{background:var(--green-soft); color:var(--green);} .hist-tipo.atualizado{background:var(--blue-soft); color:var(--blue);}
+.hist-tipo.excluido{background:var(--red-soft); color:var(--red);} .hist-tipo.importacao{background:var(--lav); color:#4a52a8;}
+.hist-data{float:right; color:var(--muted); font-size:11.5px;}
+.hist-resumo{color:var(--ink2); margin-top:5px; font-size:12.5px; overflow-wrap:anywhere;}
+
+/* modais e toast */
+.modal{position:fixed; inset:0; z-index:40; background:rgba(13,14,17,.45); display:none; align-items:flex-start; justify-content:center; padding:28px 12px; overflow-y:auto;}
+.modal.on{display:flex;}
+.modal-box{width:min(1100px,100%); background:#fff; border-radius:16px; box-shadow:0 24px 60px rgba(13,14,17,.25); padding:20px 22px;}
+.modal-box.sm{width:min(780px,100%);}
+.modal-box h3{margin:0 0 6px; font-size:16px; font-weight:800;}
+.edit-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px;}
+.bulk-summary{font-size:13px; line-height:1.7; margin:6px 0 10px;}
+.flag{font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px; display:inline-block;}
+.flag.n{background:var(--green-soft); color:var(--green);} .flag.u{background:var(--blue-soft); color:var(--blue);} .flag.d{background:var(--line2); color:var(--muted);}
+.bulk-errors{font-size:12px; color:var(--red); background:var(--red-soft); border-radius:9px; padding:9px 11px; margin-bottom:10px; max-height:110px; overflow:auto;}
+.bulk-preview{max-height:52vh; overflow:auto; border:1px solid var(--line); border-radius:10px;}
+#toast{position:fixed; right:20px; bottom:20px; z-index:50; max-width:340px; padding:11px 15px; background:var(--black); color:#fff; border-radius:11px; font-size:13px; font-weight:600; opacity:0; transform:translateY(8px); transition:opacity .2s, transform .2s; pointer-events:none;}
+#toast.on{opacity:1; transform:none;}
+
+@media (max-width:1100px){ .fleet{grid-template-columns:1fr;} .fleet-list{position:static;} .fl-body{max-height:340px;} }
+@media (max-width:760px){
+  #rail{inset:auto 0 0 0; width:auto; height:62px; flex-direction:row; justify-content:space-around; padding:0 6px; gap:0;}
+  .rail-logo,.rail-sep,.rail-foot,.rail-btn .tt{display:none;}
+  .main{margin-left:0; padding:16px 14px 86px;}
+  .hero{grid-template-columns:1fr; padding:18px;}
+  .hero-img{order:-1; min-height:0;}
+  .ficha{grid-template-columns:1fr;}
+  .afs-row{grid-template-columns:1fr 1fr;} .afs-row.head{display:none;}
+  .hide-sm{display:none;}
+}
+@media (prefers-reduced-motion:no-preference){
+  .hero-img svg,.hero-img img{animation:drive .45s cubic-bezier(.2,.8,.2,1);}
+  @keyframes drive{from{opacity:0; transform:translateX(-26px);} to{opacity:1; transform:none;}}
+}
+</style>
+</head>
+<body>
+
+<nav id="rail" aria-label="Menu principal">
+  <div class="rail-logo" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16V9l2-4h10l4 4h2v7"/><path d="M3 16h18"/><circle cx="7.5" cy="17" r="2"/><circle cx="16.5" cy="17" r="2"/></svg></div>
+  <button type="button" class="rail-btn" data-view="painel" aria-label="Painel"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span class="tt">Painel</span></button>
+  <button type="button" class="rail-btn" data-view="veiculos" aria-label="Veículos"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 15V8h12v7"/><path d="M14 10h4l3 3v2h-7"/><circle cx="6.5" cy="16.5" r="1.8"/><circle cx="17" cy="16.5" r="1.8"/></svg><span class="tt">Veículos</span></button>
+  <button type="button" class="rail-btn" data-view="alertas" aria-label="Alertas"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9.5 17h-19z"/><path d="M12 10v4M12 17.5v.5"/></svg><span class="tt">Alertas</span></button>
+  <button type="button" class="rail-btn" data-view="cadastro" aria-label="Cadastro"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span class="tt">Cadastro completo</span></button>
+  <div class="rail-sep"></div>
+  <button type="button" class="rail-btn" data-view="afast" aria-label="Férias e afastamentos"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span class="tt">Férias e afastamentos</span></button>
+  <button type="button" class="rail-btn" data-view="hist" aria-label="Histórico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span class="tt">Histórico de alterações</span></button>
+  <button type="button" class="rail-btn" data-view="edicao" aria-label="Modo edição"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span class="tt">Modo edição</span></button>
+  <div class="rail-foot" aria-hidden="true">DS</div>
+</nav>
+
+<main class="main">
+  <div class="topbar">
+    <h1 id="pageTitle">Painel da frota<small id="dateTag"></small></h1>
+    <div class="tb-right">
+      <span class="pill" id="statusTag"><span class="dot"></span><span id="statusTxt">conectando…</span></span>
+      <span class="pill"><span id="clock">--:--</span></span>
+      <span class="pill" id="editPill" style="display:none;"><span class="dot" style="background:var(--blue)"></span>Modo edição</span>
+    </div>
+  </div>
+
+  <!-- ===================== PAINEL ===================== -->
+  <section id="viewPainel" class="view">
+    <p class="resumo" id="resumo">Carregando a frota…</p>
+    <div class="kpis" id="kpis"></div>
+    <div class="grid2">
+      <div class="card">
+        <div class="card-h"><h3>Situação por modelo</h3><span class="sub">veículos ativos</span></div>
+        <div class="lg"><span><em class="c-uso"></em>Em uso</span><span><em class="c-patio"></em>Pátio</span><span><em class="c-ofic"></em>Oficina</span></div>
+        <div id="chModelo"></div>
+      </div>
+      <div class="card">
+        <div class="card-h"><h3>Alertas críticos</h3><button type="button" class="link" id="verAlertas">Ver todos</button></div>
+        <div id="alertasTop" class="scroll"></div>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <div class="card-h"><h3>Idade da frota</h3><span class="sub">pelo ano do modelo</span></div>
+        <div class="cols" id="chIdade"></div>
+        <div class="cols-lab" id="chIdadeLab"></div>
+      </div>
+      <div class="card">
+        <div class="card-h"><h3>Por departamento</h3><span class="sub">próprios × alugados</span></div>
+        <div class="lg"><span><em class="c-prop"></em>Própria</span><span><em class="c-alug"></em>Alugada (Lets)</span></div>
+        <div id="chDepto"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== VEÍCULOS ===================== -->
+  <section id="viewVeiculos" class="view" style="display:none;">
+    <div class="fleet">
+      <aside class="card fleet-list" aria-label="Veículos por modelo">
+        <div class="fl-search">
+          <input id="flBusca" type="search" placeholder="Buscar placa ou condutor…" aria-label="Buscar placa ou condutor">
+          <div class="fl-filt" id="flFilt">
+            <button type="button" data-f="" class="on">Ativos</button>
+            <button type="button" data-f="Em uso">Em uso</button>
+            <button type="button" data-f="Pátio">Pátio</button>
+            <button type="button" data-f="Oficina">Oficina</button>
+            <button type="button" data-f="Devolvido">Devolvidos</button>
+          </div>
+        </div>
+        <div class="fl-body" id="flBody"></div>
+      </aside>
+      <div class="hero-wrap" id="vDetail"></div>
+    </div>
+  </section>
+
+  <!-- ===================== ALERTAS ===================== -->
+  <section id="viewAlertas" class="view" style="display:none;">
+    <div class="card">
+      <div class="card-h"><h3>O que pede ação</h3><span class="sub">recalculado a cada alteração</span></div>
+      <div class="fchips" id="alChips"></div>
+      <div class="tablewrap">
+        <table class="tb">
+          <thead><tr><th>Nível</th><th>Placa</th><th>Modelo</th><th>Alerta</th><th class="hide-sm">Detalhe</th><th class="hide-sm">Condutor</th></tr></thead>
+          <tbody id="alBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CADASTRO ===================== -->
+  <section id="viewCadastro" class="view" style="display:none;">
+    <div class="card">
+      <div class="card-h"><h3>Cadastro completo</h3><span class="sub" id="vCount"></span></div>
+      <div class="ftools">
+        <input id="fBusca" type="search" placeholder="Buscar placa, condutor, observação…" aria-label="Buscar">
+        <select id="fStatus" aria-label="Situação"><option value="">Situação: todas</option><option>Em uso</option><option>Pátio</option><option>Oficina</option><option>Devolvido</option></select>
+        <select id="fModelo" aria-label="Modelo"><option value="">Modelo: todos</option></select>
+        <select id="fDepto" aria-label="Departamento"><option value="">Departamento: todos</option></select>
+        <select id="fProp" aria-label="Proprietário"><option value="">Própria e alugada</option><option>Própria</option><option>Alugada</option></select>
+      </div>
+      <div class="tablewrap">
+        <table class="tb">
+          <thead><tr id="vHead">
+            <th class="sortable" data-k="placa">Placa</th>
+            <th class="sortable" data-k="modelo">Modelo</th>
+            <th class="sortable" data-k="condutor">Condutor</th>
+            <th class="sortable" data-k="status">Situação</th>
+            <th class="sortable hide-sm" data-k="dias">Há</th>
+            <th class="sortable hide-sm" data-k="departamento">Depto.</th>
+            <th class="sortable hide-sm" data-k="proprietario">Prop.</th>
+            <th class="sortable hide-sm" data-k="ano">Ano</th>
+            <th class="sortable hide-sm" data-k="revisao">Revisão</th>
+            <th class="sortable hide-sm" data-k="docAno">Licenc.</th>
+            <th class="hide-sm">Observação</th>
+            <th class="edit-col" style="display:none;"></th>
+          </tr></thead>
+          <tbody id="vBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== AFASTAMENTOS ===================== -->
+  <section id="viewAfast" class="view" style="display:none;">
+    <div class="card">
+      <div class="card-h"><h3>Férias e afastamentos</h3><span class="sub">condutores fora e o carro de cada um</span></div>
+      <div id="afList"></div>
+      <div id="afForm" class="form" style="display:none; margin-top:10px; border-top:1px solid var(--line2); padding-top:4px;">
+        <div class="form-grid">
+          <div><label for="af_condutor">Condutor</label><input id="af_condutor" list="dlCondutores" placeholder="Nome do condutor"></div>
+          <div><label for="af_motivo">Motivo</label><select id="af_motivo"><option>Férias</option><option>Atestado</option><option>Afastamento</option><option>Desligamento</option><option>Outro</option></select></div>
+          <div><label for="af_saida">Data de saída</label><input id="af_saida" type="date"></div>
+          <div><label for="af_retorno">Data de retorno</label><input id="af_retorno" type="date"></div>
+        </div>
+        <button class="btn btn-dark" id="btnAfSalvar" type="button" style="margin-top:14px;">Registrar afastamento</button>
+        <div id="afMsg" class="note"></div>
+      </div>
+      <div class="note" id="afNote">Entre no Modo edição para registrar ou encerrar afastamentos.</div>
+    </div>
+  </section>
+
+  <!-- ===================== HISTÓRICO ===================== -->
+  <section id="viewHist" class="view" style="display:none;">
+    <div class="card">
+      <div class="card-h"><h3>Histórico de alterações</h3><span class="sub">últimas 200</span></div>
+      <div id="histList"></div>
+    </div>
+  </section>
+
+  <!-- ===================== EDIÇÃO ===================== -->
+  <section id="viewEdicao" class="view" style="display:none;">
+    <div class="card form" style="max-width:860px;">
+      <div class="card-h"><h3>Modo edição</h3></div>
+      <div id="gateLocked">
+        <input id="emailInput" type="email" autocomplete="username" placeholder="E-mail do editor" style="display:none; margin-bottom:6px;">
+        <label id="pinLabel" for="pinInput">PIN de edição</label>
+        <input id="pinInput" type="password" placeholder="••••" style="max-width:260px;">
+        <div><button class="btn btn-dark" id="btnUnlock" type="button" style="margin-top:12px;">Entrar</button></div>
+      </div>
+      <div id="formPanel" style="display:none;">
+        <div class="box warn" id="seedBox" style="display:none;">
+          <h4>Banco da frota vazio</h4>
+          <div class="note" style="margin-top:0;">Carregue o cadastro inicial com os 95 veículos e os 2 afastamentos da planilha "Controle de Frotas" (sem a coluna de senha do cartão).</div>
+          <button class="btn btn-dark" id="btnSeed" type="button" style="margin-top:10px;">Carregar cadastro inicial</button>
+        </div>
+        <div class="box">
+          <h4>Atualizar pela planilha (colar)</h4>
+          <div class="note" style="margin-top:0;">Na planilha "Controle de Frotas", selecione as colunas de <b>A até M</b> (Tipo de Veículo até Documento Ano), copie e cole aqui. Não copie a coluna N (senha do cartão). Pode incluir o cabeçalho. Placas novas são criadas e as existentes atualizadas; KM e data de revisão lançados no painel são mantidos.</div>
+          <textarea id="bulkInput" placeholder="Cole aqui as linhas copiadas da planilha…" spellcheck="false" style="margin-top:10px;"></textarea>
+          <button class="btn btn-dark" id="btnBulkAnalyze" type="button" style="margin-top:10px;">Analisar e pré-visualizar</button>
+          <div id="bulkMsg" class="note"></div>
+        </div>
+        <button class="btn btn-line" id="btnNovo" type="button">+ Cadastrar veículo novo</button>
+        <div class="note">Para editar um veículo, abra a aba Veículos, selecione a placa e use o botão de lápis. A situação também pode ser trocada direto no Cadastro completo.</div>
+      </div>
+      <div class="note">Link público: qualquer pessoa vê o painel ao vivo. Só quem tiver o PIN consegue editar a frota.</div>
+    </div>
+  </section>
+</main>
+
+<datalist id="dlCondutores"></datalist>
+
+<!-- Modal de edição -->
+<div class="modal" id="editModal" role="dialog" aria-modal="true" aria-labelledby="emTitle">
+  <div class="modal-box sm form">
+    <h3 id="emTitle">Editar veículo</h3>
+    <div class="form-grid">
+      <div><label for="e_placa">Placa</label><input id="e_placa" type="text" maxlength="8" style="text-transform:uppercase"></div>
+      <div><label for="e_tipo">Tipo de veículo</label><input id="e_tipo" type="text" placeholder="Ex: I/FIAT SCUDO CARGO TD"></div>
+      <div><label for="e_status">Situação</label><select id="e_status"><option>Em uso</option><option>Pátio</option><option>Oficina</option><option>Devolvido</option></select></div>
+      <div><label for="e_condutor">Condutor atual</label><input id="e_condutor" type="text" list="dlCondutores"></div>
+      <div><label for="e_departamento">Departamento</label><select id="e_departamento"><option>Vendedores</option><option>Comercial</option><option>Merchandising</option><option>Diretoria</option><option>Sem dado</option></select></div>
+      <div><label for="e_funcao">Função</label><input id="e_funcao" type="text"></div>
+      <div><label for="e_proprietario">Proprietário</label><select id="e_proprietario"><option>Própria</option><option>Alugada</option><option>Sem dado</option></select></div>
+      <div><label for="e_ano">Ano (fab./modelo)</label><input id="e_ano" type="text" placeholder="2025/2025"></div>
+      <div><label for="e_renavam">RENAVAM</label><input id="e_renavam" type="text" inputmode="numeric"></div>
+      <div><label for="e_cor">Cor</label><input id="e_cor" type="text"></div>
+      <div><label for="e_retirada">Retirada do veículo</label><input id="e_retirada" type="text" placeholder="dd/mm/aaaa"></div>
+      <div><label for="e_docAno">Licenciamento (ano do documento)</label><input id="e_docAno" type="number" min="2000" max="2100"></div>
+      <div><label for="e_revisao">Revisão</label><select id="e_revisao"><option>Sem registro</option><option>Feita</option><option>Pendente</option></select></div>
+      <div><label for="e_ultimaRevisao">Data da última revisão</label><input id="e_ultimaRevisao" type="date"></div>
+      <div><label for="e_km">KM atual</label><input id="e_km" type="number" min="0" step="1"></div>
+      <div class="full"><label for="e_observacao">Observação</label><textarea id="e_observacao" rows="2"></textarea></div>
+    </div>
+    <div class="edit-actions">
+      <button class="btn btn-dark" id="btnEmSalvar" type="button">Salvar</button>
+      <button class="btn btn-line" id="btnEmCancelar" type="button">Cancelar</button>
+      <button class="btn btn-del" id="btnEmExcluir" type="button">Excluir veículo</button>
+    </div>
+    <div id="emMsg" class="note"></div>
+  </div>
+</div>
+
+<!-- Modal de importação -->
+<div class="modal" id="bulkModal" role="dialog" aria-modal="true" aria-label="Pré-visualização da importação">
+  <div class="modal-box">
+    <h3>Pré-visualização da importação</h3>
+    <div id="bulkPreviewWrap"></div>
+  </div>
+</div>
+
+<div id="toast" role="status"></div>
+
+<script type="module">
+/* ======================================================================
+   CONFIGURAÇÃO DO FIREBASE (mesmo projeto do Rastreamento de Cargas)
+   ====================================================================== */
+const firebaseConfig = {
+  apiKey: "AIzaSyAYcAWcV_iDJNJiZpQsAbTP93WwF_JOQfE",
+  authDomain: "rastreamento-de-cargas-d20d0.firebaseapp.com",
+  projectId: "rastreamento-de-cargas-d20d0",
+  storageBucket: "rastreamento-de-cargas-d20d0.firebasestorage.app",
+  messagingSenderId: "114429895544",
+  appId: "1:114429895544:web:62609ed30c7c190dd6de8d",
+  measurementId: "G-JY8E8BJT16"
+};
+
+// PIN simples só para esconder a edição de quem não deveria editar.
+// A proteção real de escrita fica nas Regras do Firestore.
+const EDIT_PIN = "1507";
+// Mesmo esquema do outro painel: troque para true depois de ativar login por e-mail/senha no Firebase.
+const USE_EMAIL_LOGIN = false;
+
+// FOTOS DOS MODELOS: para trocar a ilustração por uma foto, coloque o arquivo na pasta img/
+// do repositório e informe o caminho aqui. Modelo sem foto usa a ilustração desenhada.
+const FOTOS = {
+  'Citroën Jumpy':  'img/jumpy.webp',
+  'Peugeot Expert': 'img/expert.webp',
+  'Fiat Scudo':     'img/scudo.webp',
+  'Fiat Argo':      'img/argo.webp',
+  'Fiat Fiorino':   'img/fiorino.webp',
+  'Nissan Sentra':  'img/sentra.webp',
+  'Renault Master': 'img/master.webp',
+  'VW Gol':         'img/gol.webp',
+  'VW Kombi':       'img/kombi.webp',
+};
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+import { getAuth, signInAnonymously, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+import {
+  getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, serverTimestamp, updateDoc,
+  addDoc, query, orderBy, limit, writeBatch
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const frotaRef = collection(db, "frota");
+const histRef = collection(db, "frota_historico");
+const afRef = collection(db, "frota_afastamentos");
+
+const SEED = {"veiculos":[["CITROEN JUMPY CARGO","GAZ2E95","OALAS DAMASCENO VIEIRA","","1299935930","2022/2023","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","09/07/2024","2026"],["CITROEN JUMPY CARGO","RUE1C31","MARCOS VINICIUS PEREIRA DE OLIVEIRA","","1298070780","2022/2023","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","24/01/2023",""],["CITROEN JUMPY CARGO","RUE1C37","ADAILTON DA SILVA VIANA","","1298070853","2022/2023","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","25/09/2024",""],["CITROEN JUMPY CARGO","RUE1C14","PAULO HENRIQUE GONÇALVES SABINO","","1298070594","2022/2023","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","25/09/2024",""],["CITROEN JUMPY CARGO","RUE1C16","ANTONIO ALVES DA MOTA FILHO","","1298070608","2022/2023","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","15/07/2022",""],["CITROEN JUMPY CARGO","RUE1C11","RAFAEL FRANCELINO DE QUEIROZ","","1298070543","2022/2023","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","26/01/2023",""],["CITROEN JUMPY CARGO","RUE1C19","EULER JUNIOR FERREIRA DA SILVA","","1298070659","2022/2023","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","25/09/2024",""],["CITROEN JUMPY CARGO","RUE1C35","JHENIS RODRIGUES DOS SANTOS","ESTAVA COM IMAVAN","1298070837","2022/2023","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","25/09/2024",""],["CITROEN JUMPY CARGO","RUE1C38","SERGIO HENRIQUE DE JESES ARAUJO","","1298070870","2022/2023","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","03/10/2022",""],["CITROEN JUMPY CARGO","RTX1E69","JEFERSON ABRANTES DA SILVA","","1292456954","2022/2023","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","25/09/2024",""],["I/ PEUGEOT E EXPERT CARGO","RTW8H85","WESCLEY CLAUDINO DE SOUSA","","1292684817","2022/2022","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","09/07/2024",""],["I/ PEUGEOT E EXPERT CARGO","RTX1E59","DARLAN PEREIRA DE OLIVEIRA","","1292456750","2022/2022","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","21/11/2022",""],["I/ PEUGEOT E EXPERT CARGO","RTX1E43","GABRIEL BRENER DA SILVA","","1292456571","2022/2022","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","06/12/2022",""],["I/ PEUGEOT E EXPERT CARGO","RUE1C04","DIONAI MARTINS DA CUNHA","","1298070462","2022/2022","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","25/09/2024",""],["I/FIAT SCUDO CARGO TD","OVO5A15","BRUCE MARTINS DA SILVA","REVISÃO FEITA","1454904019","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","12/09/2025",""],["I/FIAT SCUDO CARGO TD","OVO5B39","RONALDO FABRIZIO COELHO DA SILVA","FAZER REVISÃO","1454790757","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","12/09/2025",""],["I/FIAT SCUDO CARGO TD","OVO4J10","CARLOS ELIAS ALVES","REVISÃO FEITA","1454790803","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","12/09/2025",""],["I/FIAT SCUDO CARGO TD","OVO4J22","RIEDE BATISTA LOBO","FAZER ORÇAMENTO BATIDA","1454784463","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","12/09/2025",""],["I/FIAT SCUDO CARGO TD","OZX7G43","JHEYSSON GENESIO SOARES PANUNCIO","REVISÃO FEITA","1458682789","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","12/09/2025",""],["I/FIAT SCUDO CARGO TD","RER6F92","VICTOR SECUNDO DIAS","REVISÃO FEITA","1463293809","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","08/10/2025",""],["I/FIAT SCUDO CARGO TD","RER2H90","WOSHINGTON BARCELOS FAGUNDES DE ARAUJO","","1463058397","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","08/10/2025",""],["I/FIAT SCUDO CARGO TD","RER2H98","WILLIAM DE CARVALHO DIAS","","1463061282","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","08/10/2025",""],["I/FIAT SCUDO CARGO TD","RER6F94","JORGE ANTONIO MATOS NETO","","1463153829","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","08/10/2025",""],["I/FIAT SCUDO CARGO TD","RER6F93","MATHEUS ROBERTO PEREIRA DE OLIVEIRA","","1463385563","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","08/10/2025",""],["I/FIAT SCUDO CARGO TD","RER6F91","WHAGNO MARTINS DOS SANTOS","REVISÃO OK","1463295011","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","08/10/2025",""],["I/FIAT SCUDO CARGO TD","RER6F83","OFICINA","OFICINA","1463297227","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","08/10/2025",""],["I/FIAT SCUDO CARGO TD","RER6F90","GILFERSON GIBEON LOPES DE SENA","FAZER REVISÃO","1463295810","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","08/10/2025",""],["I/FIAT SCUDO CARGO TD","RER6F89","JOAO PEDRO DA SILVA GONÇALVES","","1463296379","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","10/11/2025",""],["I/FIAT SCUDO CARGO TD","RER6F87","ANTONIO FRANCISCO DA SILVA CUNHA","REVISÃO FEITA","1463296891","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","10/11/2025",""],["FIAT/ARGO 1.0 FLEX (Alugado)","GMF9F20","RUBENS DA CRUZ GARCIA","","","2024/2024","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","25/04/2024",""],["FIAT/ARGO 1.0 FLEX (Alugado)","GMF9F29","WENDEL WANDO DO NASCIMENTO LOPES","","1387088570","2024/2024","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","-",""],["FIAT/ARGO 1.0 FLEX (Alugado)","GMF9F27","ROMEU ALVES DA NATIVIDADE","","1387088553","2024/2024","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","-",""],["FIAT/ARGO 1.0 FLEX (Alugado)","SIP6E45","LILIAN CASTORINA PIGNATA DE MELO","","1357907718","2023/2024","COMERCIAL","DIRETOR","BRANCA","LETS","DISDAL","22/11/2023",""],["FIAT/ARGO 1.0 FLEX (Alugado)","TCH8J02","PRISCILA PEREIRA CANDIDO","","1404097098","2024/2025","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","08/10/2024",""],["FIAT/ARGO 1.0 FLEX (Alugado)","TCY8C71","JANAINA APARECIDA DE JESUS SOUSA","","1410063663","2024/2025","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","22/11/2024",""],["FIAT/ARGO 1.0 FLEX (Alugado)","TCY8C78","JOSE IVALDO DA CRUZ SILVA","","1410063736","2024/2025","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","22/11/2024",""],["FIAT/ARGO 1.0 FLEX (Alugado)","TZY0A05","SILVIO FERREIRA DOS SANTOS","","1501363040","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","04/09/2026","2026"],["FIAT/ARGO 1.0 FLEX (Alugado)","TZZ3J55","LUCAS RIBEIRO ALVES PEREIRA","","1502492900","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","10/09/2026",""],["FIAT/ARGO 1.0 FLEX (Alugado)","TZZ3J58","JULIO GLESSON TORRES ROCHA","","1502492978","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","04/09/2026","2026"],["FIAT/ARGO 1.0 FLEX (Alugado)","TZZ3J59","WALLISON PEREIRA DIAS DE MESQUITA","","1502492994","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","04/09/2026",""],["FIAT/ARGO 1.0 FLEX (Alugado)","TZZ3J61","RAFAEL BEZERRA DOS SANTOS","","1502493028","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","04/09/2026",""],["FIAT/ARGO 1.0 FLEX (Alugado)","TZZ3J62","LUCAS NERES MONCUETH","","1502493036","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","04/09/2026",""],["FIAT/ARGO 1.0 FLEX (Alugado)","UAE5F07","RENATO FERNANDES SOUSA SILVA","","1503947308","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","04/09/2026","2026"],["FIAT/ARGO 1.0 FLEX (Alugado)","UAE5F09","JOAO FABIANO GOMES FERREIRA","","1503947324","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","04/09/2026","2026"],["FIAT/ARGO 1.0 FLEX (Alugado)","UAE5F10","FLAVIO AUGUSTO TREVIZOLO","","1503947332","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","04/09/2026","2026"],["FIAT/ARGO 1.0 FLEX (Alugado)","UAE5F12","MATHEUS DE SOUSA CRUZ","","1503947340","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","04/09/2026","2026"],["FIAT/ARGO 1.0 FLEX (Alugado)","UAE5F13","RACHEL STELLA ROCHA CAETANO","","1503947359","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","04/09/2026","2026"],["FIAT/ARGO 1.0 FLEX (Alugado)","UVM8J14","ELIANE GOMES DE SOUZA","","1509887390","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","04/09/2026","2026"],["FIAT/ARGO 1.0 FLEX (Alugado)","UVM8J17","BRUNA CAROLINE SILVA","","1509887463","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","10/09/2026",""],["FIAT/ARGO 1.0 FLEX (Alugado)","TZZ3J60","PATIO","","1502493001","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","","2026"],["FIAT/ARGO 1.0 FLEX (Alugado)","TZZ3J57","PATIO","","1502492960","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","","2026"],["FIAT/ARGO 1.0 FLEX (Alugado)","UVV7I62","PATIO","","1519078398","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","","2026"],["FIAT/FIORINO ENDURANCE","SGP1E32","GIVALDO FERNANDES","","1324344390","2022/2023","MERCHANDISING","COORDENADOR","BRANCA","FERRARI","DISDAL","04/11/2022",""],["FIAT/FIORINO ENDURANCE","UIZ0B25","PATIO","FÉRIAS","1489497371","2026/2026","MERCHANDISING","COORDENADOR","BRANCA","FERRARI","DISDAL","19/05/2026",""],["FIAT/FIORINO ENDURANCE","UJD3A97","EDUARDO HENRIQUE SILVA TEIXEIRA","","1506563128","2026/2027","MERCHANDISING","COORDENADOR","BRANCA","FERRARI","DISDAL","",""],["FIAT/FIORINO ENDURANCE","UJD3A80","SIMONE DA SILVA SANTOS","","1506562288","2026/2027","MERCHANDISING","COORDENADOR","BRANCA","FERRARI","DISDAL","",""],["FIAT/FIORINO ENDURANCE","UJD4G72","LUIZ FERNANDO SOUZA SANTANA","","","","","","","","","",""],["Kombi Furgão 1.4 Flex","AVU4773","NILVAN PEREIRA DO NASCIMENTO","","480484562","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","08/09/2022","2026"],["Kombi Furgão 1.4 Flex","AWN3981","RODRIGO HORNORIO CASSIANO","","509492290","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","","2026"],["Kombi Furgão 1.4 Flex","AWR7018","MARCIO VICENTE DA SILVA JUNIOR","","528520261","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","13/10/2022","2026"],["Kombi Furgão 1.4 Flex","AWR7022","OFICINA","FALTA ARRUAMR BANCO","528516485","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","","2026"],["Kombi Furgão 1.4 Flex","EQY4215","PATIO","","329686444","2011/2012","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","04/03/2024","2026"],["Kombi Furgão 1.4 Flex","EZC2997","ANGELO ZENOLY ALI FIGUEIREDO","","538956780","2013/2014","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","04/03/2024","2026"],["Kombi Furgão 1.4 Flex","FGC0279","EDSON ROCHA COELHO","FALTA ARRUAMR BANCO","529739569","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","12/07/2022","2026"],["Kombi Furgão 1.4 Flex","IVD2J92","PATIO","ANDRE","598570608","2013/2014","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","16/07/2022","2026"],["Kombi Furgão 1.4 Flex","JEH8392","OFICINA","ANDRE","505684551","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","20/01/2023","2026"],["Kombi Furgão 1.4 Flex","JEH8632","JARBAS GUTEMBERG DE SOUZA","","505778718","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","11/01/2023","2026"],["Kombi Furgão 1.4 Flex","JEH9282","OFICINA","IMAVAN LANTERNAGEM","505808820","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","12/09/2022","2026"],["Kombi Furgão 1.4 Flex","JEH9302","OFICINA","","505808730","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","22/08/2022","2026"],["Kombi Furgão 1.4 Flex","JEN3311","LUCAS BRAIAN DOS SANTOS RODRIGUES BISPO","","504371550","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","","2026"],["Kombi Furgão 1.4 Flex","JER0A17","OFICINA","","509413056","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","19/09/2022","2026"],["Kombi Furgão 1.4 Flex","JEU0130","PATIO","","509284469","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","","2026"],["Kombi Furgão 1.4 Flex","NDL9307","RYAN SANTOS PEREIRA DA SILVA","","589781936","2013/2014","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","26/09/2022",""],["Kombi Furgão 1.4 Flex","OHA8F85","ADENILSON LOPES DE SOUZA","","480018995","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","","2026"],["Kombi Furgão 1.4 Flex","OVQ9450","FERNANDO JULIO NOBREGA DA SILVA","MANDAR PARA OFICINA","597918210","2013/2014","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","21/05/2022",""],["I/NISSAN SENTRA EXC CVT","SGZ7E39","GUSTAVO PEREIRA ALVES","","1433877705","2025/2025","DIRETORIA COMERCIAL","DIRETOR","BRANCA","FERRARI","DISDAL","15/04/2025",""],["I/NISSAN SENTRA EXC CVT","SGZ6J52","CLAUDIONOR BATISTA DA SILVA JUNIOR","","1433700740","2025/2025","DIRETORIA OPERACIONAL","DIRETOR","BRANCA","FERRARI","DISDAL","15/04/2025",""],["RENAULT/MASTER 13M3 25DCI","EPG2G94","JOSE LUIZ RODRIGUES DA COSTA","","472055909","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","26/01/2026",""],["RENAULT/MASTER 13M3 25DCI","JKF5A04","ISLEI JOSÉ TAVARES","","480323887","2012/2013","FLEX","VENDEDORES","PRATA","FERRARI","DISDAL","05/08/2022","2026"],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH1F85","","DEVOLVIDO","1324838741","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH6I96","","DEVOLVIDO","1325123118","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH8E23","","DEVOLVIDO","1325215519","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH9J20","","DEVOLVIDO","1325314320","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVI1B90","","DEVOLVIDO","1304930260","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","11/04/2024",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVI4B76","","DEVOLVIDO","1325428814","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","14/12/2022",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH1F90","","DEVOLVIDO","1324838814","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","-",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH6I97","DAVI SOARES DE LIMA","SERÁ RENOVADO","1325123126","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","-",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH1F88","","DEVOLVIDO","1324838784","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH1F89","","DEVOLVIDO","1324838806","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","26/11/2022",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH1F81","","DEVOLVIDO","1324838695","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH1F82","","DEVOLVIDO","1324838709","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH8E24","","DEVOLVIDO","1325215535","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","26/11/2022",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH8E25","","DEVOLVIDO","1325215551","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVL5H60","","DEVOLVIDO","1326299767","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","",""],["VW/GOL MPI (ALUGADO)","RVT5C82","PATIO","","1330441696","2023/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","",""]],"afastamentos":[["DIONAI MARTINS DA CUNHA","FERIAS","",""],["CRISTIANO DOS SANTOS FERREIRA","FERIAS","14/10/2026",""]]};
+
+/* ---------------------------- utilidades ---------------------------- */
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt = n => Number(n||0).toLocaleString('pt-BR');
+const pct = (a,b) => b ? Math.round(a/b*100)+'%' : '0%';
+const hojeISO = () => { const d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); };
+const ANO_ATUAL = new Date().getFullYear();
+const diasDesde = iso => { if(!iso) return null; const d=(new Date(hojeISO())-new Date(iso))/864e5; return Math.max(0, Math.round(d)); };
+const brData = iso => iso ? iso.split('-').reverse().join('/') : '';
+const isoDeBr = br => { const m=String(br||'').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/); return m ? `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}` : ''; };
+function toast(t){ const el=$('toast'); el.textContent=t; el.classList.add('on'); clearTimeout(toast._t); toast._t=setTimeout(()=>el.classList.remove('on'),3200); }
+const norm = s => String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toUpperCase().trim();
+const titulo = s => String(s||'').toLowerCase().replace(/(^|\s)(\S)/g,(m,a,b)=>a+b.toUpperCase()).replace(/\b(Da|De|Do|Dos|Das|E)\b/g,w=>w.toLowerCase());
+const iniciais = s => { const p=String(s||'').trim().split(/\s+/).filter(w=>!/^(da|de|do|dos|das|e)$/i.test(w)); return p.length ? (p[0][0]+(p.length>1?p[p.length-1][0]:'')).toUpperCase() : '—'; };
+const AV_CORES = ['#3478f6','#14161b','#f5a524','#6b5bd6','#22a861','#e5484d','#0ea5b7','#8a5a2b'];
+const avCor = s => { let h=0; for(const c of String(s||'')) h=(h*31+c.charCodeAt(0))>>>0; return AV_CORES[h%AV_CORES.length]; };
+
+function modeloDe(tipo){
+  const t = norm(tipo);
+  for(const [k,v] of [['JUMPY','Citroën Jumpy'],['EXPERT','Peugeot Expert'],['SCUDO','Fiat Scudo'],['ARGO','Fiat Argo'],['FIORINO','Fiat Fiorino'],['KOMBI','VW Kombi'],['SENTRA','Nissan Sentra'],['MASTER','Renault Master'],['GOL','VW Gol']]) if(t.includes(k)) return v;
+  return tipo ? tipo.trim() : 'Sem modelo';
+}
+function deptoDe(dep){
+  const d = norm(dep);
+  if(d==='FLEX' || d==='VENDEDORES') return 'Vendedores';
+  if(d.startsWith('DIRETORIA')) return 'Diretoria';
+  if(d==='COMERCIAL') return 'Comercial';
+  if(d==='MERCHANDISING') return 'Merchandising';
+  return d ? dep.trim() : 'Sem dado';
+}
+function propDe(desc){ const d=norm(desc); return d==='LETS' ? 'Alugada' : d==='FERRARI' ? 'Própria' : (d==='PROPRIA'?'Própria':d==='ALUGADA'?'Alugada':'Sem dado'); }
+const anoModelo = ano => { const p=String(ano||'').split('/').pop(); const n=parseInt(p,10); return Number.isFinite(n)?n:null; };
+const idadeDe = v => { const a=anoModelo(v.ano); return a==null ? null : Math.max(0, ANO_ATUAL-a); };
+const ST = {'Em uso':'uso','Pátio':'patio','Oficina':'ofic','Devolvido':'dev'};
+const ST_COR = {'Em uso':'var(--green)','Pátio':'var(--orange)','Oficina':'var(--red)','Devolvido':'#c4c8d0'};
+const ST_LABEL = {'Em uso':'Em uso','Pátio':'No pátio','Oficina':'Oficina','Devolvido':'Devolvido'};
+
+// Converte uma linha da planilha (colunas A–M) em veículo
+function linhaParaVeiculo(c){
+  const [tipo,placa,condutor,obs,renavam,ano,dep,funcao,cor,desc,unidade,retirada,docAno] = c.map(x=>String(x??'').replace(/​/g,'').trim());
+  const cond = norm(condutor), o = norm(obs);
+  let status = 'Em uso', condFinal = condutor;
+  if(o.includes('DEVOLVIDO')){ status='Devolvido'; }
+  else if(cond==='OFICINA'){ status='Oficina'; condFinal=''; }
+  else if(cond==='PATIO'){ status='Pátio'; condFinal=''; }
+  else if(!condutor){ status='Pátio'; }
+  let revisao = 'Sem registro';
+  if(o.includes('REVISAO FEITA') || o.includes('REVISAO OK')) revisao='Feita';
+  else if(o.includes('FAZER REVISAO')) revisao='Pendente';
+  return {
+    placa: norm(placa).replace(/[^A-Z0-9]/g,''), tipo, modelo: modeloDe(tipo), condutor: status==='Devolvido'?'':condFinal, status,
+    observacao: obs, renavam, ano, departamento: deptoDe(dep), funcao, cor, proprietario: propDe(desc), unidade,
+    retirada: retirada==='-'?'':retirada, docAno: docAno ? parseInt(docAno,10)||'' : '', revisao
+  };
+}
+
+/* ---------------------------- ilustrações dos modelos ---------------------------- */
+// Vista lateral desenhada em SVG, uma silhueta por tipo de carroceria.
+const CARROCERIA = {
+  'Citroën Jumpy':'van', 'Peugeot Expert':'van', 'Fiat Scudo':'van', 'Renault Master':'vanG', 'VW Kombi':'kombi',
+  'Fiat Fiorino':'furgao', 'Fiat Argo':'hatch', 'VW Gol':'hatch', 'Nissan Sentra':'sedan'
+};
+const SIL = {
+  van:   {wr:105, wf:318, top:'M28,148 L28,62 Q28,44 46,42 L268,40 Q282,40 290,48 L334,92 Q340,98 352,100 L382,108 Q392,111 392,124 L392,148', win:['M262,50 L284,50 L322,92 L262,94 Z'], doors:[258,186], lamp:[372,108], tail:[28,70], front:392, rear:28},
+  vanG:  {wr:110, wf:322, top:'M24,148 L24,40 Q24,22 44,22 L282,20 Q296,20 302,30 L338,86 Q344,94 356,96 L384,104 Q394,107 394,122 L394,148', win:['M278,30 L294,30 L330,86 L278,88 Z'], doors:[274,190], lamp:[374,104], tail:[24,58], front:394, rear:24},
+  kombi: {wr:98,  wf:310, top:'M30,148 L30,58 Q30,38 54,38 L340,38 Q368,38 374,62 L380,100 Q382,112 382,124 L382,148', win:['M316,46 L352,46 Q362,46 364,56 L370,88 L316,88 Z'], doors:[312,206], lamp:[366,104], tail:[30,70], front:382, rear:30},
+  furgao:{wr:104, wf:318, top:'M30,148 L30,60 Q30,44 46,44 L250,42 Q262,42 268,52 L300,92 Q306,98 318,100 L374,110 Q388,113 390,126 L390,148', win:['M246,52 L262,52 L294,94 L246,96 Z'], doors:[242], lamp:[372,112], tail:[30,72], front:390, rear:30},
+  hatch: {wr:110, wf:310, top:'M34,148 L34,104 Q34,92 44,86 L96,62 Q104,56 116,56 L232,54 Q246,54 256,62 L290,90 Q296,96 308,98 L372,108 Q388,111 390,126 L390,148', win:['M110,66 L170,62 L170,94 L94,94 Z','M178,62 L236,62 Q244,62 250,68 L278,94 L178,94 Z'], doors:[174,256], lamp:[372,110], tail:[34,100], front:390, rear:34},
+  sedan: {wr:108, wf:316, top:'M26,148 L26,110 Q26,100 38,98 L90,94 Q104,64 132,58 L230,56 Q250,56 264,66 L296,92 Q302,98 316,100 L378,108 Q392,111 394,126 L394,148', win:['M108,92 Q118,70 136,66 L184,64 L184,94 Z','M192,64 L232,64 Q246,64 256,72 L282,94 L192,94 Z'], doors:[188,262], lamp:[376,110], tail:[26,104], front:394, rear:26},
+};
+let svgSeq = 0;
+function svgVeiculo(modelo, cor){
+  if(FOTOS[modelo]) return `<img src="${esc(FOTOS[modelo])}" alt="${esc(modelo)}" decoding="async" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:''}))">`;
+  const s = SIL[CARROCERIA[modelo] || 'van'], id = 'g'+(++svgSeq), Y=148, R=31;
+  const prata = norm(cor)==='PRATA';
+  const c1 = prata ? '#dfe3e9' : '#ffffff', c2 = prata ? '#a9b0bb' : '#cfd5de';
+  const bottom = `L${s.front},${Y} L${s.wf+R},${Y} A${R},${R} 0 0 0 ${s.wf-R},${Y} L${s.wr+R},${Y} A${R},${R} 0 0 0 ${s.wr-R},${Y} L${s.rear},${Y} Z`;
+  const body = s.top.replace(/L(\d+),148$/, '') ;
+  const roda = x => `<g><circle cx="${x}" cy="${Y}" r="25" fill="#1b1d22"/><circle cx="${x}" cy="${Y}" r="16" fill="url(#${id}r)"/><circle cx="${x}" cy="${Y}" r="5" fill="#5b6170"/>${[0,72,144,216,288].map(a=>`<rect x="${x-1.6}" y="${Y-15}" width="3.2" height="9" rx="1.5" fill="#7a808d" transform="rotate(${a} ${x} ${Y})"/>`).join('')}</g>`;
+  return `<svg viewBox="0 0 420 190" role="img" aria-label="Ilustração ${esc(modelo)}">
+  <defs>
+    <linearGradient id="${id}b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset=".55" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient>
+    <linearGradient id="${id}w" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3a4250"/><stop offset="1" stop-color="#151920"/></linearGradient>
+    <radialGradient id="${id}r"><stop offset="0" stop-color="#e9ecf0"/><stop offset="1" stop-color="#9aa1ad"/></radialGradient>
+  </defs>
+  <ellipse cx="210" cy="176" rx="190" ry="9" fill="#14161b" opacity=".12"/>
+  <path d="${s.top} ${bottom}" fill="url(#${id}b)" stroke="#b9c0ca" stroke-width="1.2" stroke-linejoin="round"/>
+  <path d="M${s.rear+4},128 L${s.front-4},128" stroke="#ffffff" stroke-width="2" opacity=".8"/>
+  <path d="M${s.rear},134 L${s.front},134" stroke="#c3c9d2" stroke-width="1"/>
+  ${s.win.map(w=>`<path d="${w}" fill="url(#${id}w)"/><path d="${w}" fill="none" stroke="#0d0f13" stroke-width="1"/>`).join('')}
+  ${s.doors.map(x=>`<path d="M${x},${50} L${x},${138}" stroke="#aeb5c0" stroke-width="1.2"/>`).join('')}
+  <rect x="${s.lamp[0]}" y="${s.lamp[1]}" width="16" height="7" rx="3" fill="#f3f5f8" stroke="#9ba3af"/>
+  <rect x="${s.tail[0]}" y="${s.tail[1]}" width="5" height="24" rx="2" fill="#d6454b"/>
+  <path d="M${s.front-26},${Y-8} L${s.front+2},${Y-8} L${s.front+2},${Y+2} Q${s.front+2},${Y+6} ${s.front-4},${Y+6} L${s.front-26},${Y+6} Z" fill="#2a2e36"/>
+  <path d="M${s.rear-2},${Y-8} L${s.rear+22},${Y-8} L${s.rear+22},${Y+6} L${s.rear+2},${Y+6} Q${s.rear-2},${Y+6} ${s.rear-2},${Y+2} Z" fill="#2a2e36"/>
+  ${roda(s.wr)}${roda(s.wf)}
+</svg>`;
+}
+
+/* ---------------------------- estado ---------------------------- */
+let frota = [], afast = [], hist = [], canWrite = false, carregou = false;
+const ativos = () => frota.filter(v => v.status !== 'Devolvido');
+let selModelo = null, selPlaca = null, flFiltro = '';
+try{ selModelo = localStorage.getItem('frota_modelo'); selPlaca = localStorage.getItem('frota_placa'); }catch(e){}
+
+/* ---------------------------- alertas ---------------------------- */
+function calcAlertas(){
+  const out = [];
+  const add = (v,nivel,alerta,detalhe) => out.push({placa:v.placa, modelo:v.modelo, condutor:v.condutor||'', nivel, alerta, detalhe:detalhe||''});
+  const hoje = hojeISO();
+  const fora = new Map();
+  afast.forEach(a => { if(!a.retorno || a.retorno >= hoje) fora.set(norm(a.condutor), a); });
+  ativos().forEach(v => {
+    const o = norm(v.observacao), d = diasDesde(v.statusDesde);
+    const ha = d!=null ? ` · há ${d} dia${d===1?'':'s'}` : '';
+    if(v.status==='Pátio' && v.proprietario==='Alugada') add(v,'Crítico','Alugado parado no pátio','Pagando locação sem uso'+ha);
+    if(v.status==='Oficina') add(v,'Crítico','Na oficina',(v.observacao||'Sem motivo registrado')+ha);
+    if(v.revisao==='Pendente') add(v,'Crítico','Revisão pendente',v.observacao);
+    if(o.includes('BATIDA')) add(v,'Crítico','Batida sem orçamento',v.observacao);
+    if(v.docAno && Number(v.docAno) < ANO_ATUAL) add(v,'Crítico','Licenciamento vencido','Documento de '+v.docAno);
+    if(v.status!=='Oficina' && (o.includes('OFICINA') || o.includes('BANCO') || o.includes('ORCAMENTO')) && !o.includes('BATIDA')) add(v,'Atenção','Precisa de reparo',v.observacao);
+    if(v.modelo==='Fiat Scudo' && v.revisao==='Sem registro' && v.status!=='Oficina') add(v,'Atenção','Revisão sem registro','Veículo novo, ainda na garantia');
+    if(v.status==='Pátio' && v.proprietario!=='Alugada') add(v,'Atenção','Próprio parado no pátio',(v.observacao||'Sem condutor')+ha);
+    if(v.condutor && fora.has(norm(v.condutor))){ const a=fora.get(norm(v.condutor)); add(v,'Atenção','Condutor afastado',`${a.motivo}${a.retorno?' até '+brData(a.retorno):''} · carro pode ser remanejado`); }
+    if(!v.docAno) add(v,'Atenção','Licenciamento sem registro','Ano do documento vazio');
+  });
+  afast.forEach(a => { if(a.retorno && a.retorno < hoje) out.push({placa:'—', modelo:'—', condutor:a.condutor, nivel:'Atenção', alerta:'Retorno vencido', detalhe:`${a.motivo} terminou em ${brData(a.retorno)} · encerrar ou atualizar`}); });
+  return out.sort((a,b) => (a.nivel===b.nivel?0:a.nivel==='Crítico'?-1:1) || a.alerta.localeCompare(b.alerta) || a.placa.localeCompare(b.placa));
+}
+
+/* ---------------------------- painel ---------------------------- */
+function renderPainel(alertas){
+  const at = ativos(), c = s => at.filter(v=>v.status===s).length;
+  const emUso=c('Em uso'), patio=c('Pátio'), ofic=c('Oficina');
+  const alugParados = at.filter(v=>v.status==='Pátio' && v.proprietario==='Alugada').length;
+  const semLic = at.filter(v=>!v.docAno).length, licVenc = at.filter(v=>v.docAno && Number(v.docAno)<ANO_ATUAL).length;
+  const kombis = at.filter(v=>v.modelo==='VW Kombi'), kombisUso = kombis.filter(v=>v.status==='Em uso').length;
+  const oficKombi = at.filter(v=>v.status==='Oficina' && v.modelo==='VW Kombi').length;
+  const criticos = alertas.filter(a=>a.nivel==='Crítico').length;
+  const cards = [
+    ['Frota ativa', fmt(at.length), `de ${fmt(frota.length)} cadastrados`, 'var(--blue)'],
+    ['Em uso', fmt(emUso), `${pct(emUso,at.length)} da frota ativa`, 'var(--green)'],
+    ['Parados no pátio', fmt(patio), 'sem condutor', 'var(--orange)'],
+    ['Na oficina', fmt(ofic), `${oficKombi} são Kombis`, 'var(--black)'],
+    ['Alugados parados', fmt(alugParados), 'pagando sem uso', 'var(--red)'],
+    ['Licenciamento', fmt(semLic+licVenc), `${semLic} sem registro · ${licVenc} vencido${licVenc===1?'':'s'}`, 'var(--orange)'],
+  ];
+  $('kpis').innerHTML = cards.map(([t,n,p,c])=>`<div class="kpi" style="--c:${c}"><div class="t"><i></i>${t}</div><div class="n">${n}</div><div class="p">${esc(p)}</div></div>`).join('');
+  $('resumo').innerHTML = at.length
+    ? `<b>${emUso}</b> de ${at.length} veículos ativos estão rodando. ${kombis.length?`Só <b>${kombisUso}</b> das ${kombis.length} Kombis rodam hoje, e elas respondem por ${oficKombi} das ${ofic} idas à oficina. `:''}${alugParados?`Há <b>${alugParados}</b> carro${alugParados>1?'s':''} alugado${alugParados>1?'s':''} parado${alugParados>1?'s':''} no pátio gerando custo. `:''}<b>${criticos}</b> alerta${criticos===1?'':'s'} crítico${criticos===1?'':'s'} no momento.`
+    : (carregou ? 'Nenhum veículo cadastrado ainda. Entre no Modo edição para carregar o cadastro inicial.' : 'Carregando a frota…');
+
+  const mm = {};
+  at.forEach(v => { const m = mm[v.modelo] ||= {modelo:v.modelo, uso:0, patio:0, ofic:0, t:0}; m[v.status==='Em uso'?'uso':v.status==='Pátio'?'patio':'ofic']++; m.t++; });
+  const mods = Object.values(mm).sort((a,b)=>b.t-a.t), maxM = Math.max(1,...mods.map(m=>m.t));
+  $('chModelo').innerHTML = mods.map(m => `<div class="hbar" title="${esc(m.modelo)}: ${m.uso} em uso, ${m.patio} no pátio, ${m.ofic} na oficina"><span class="nm">${esc(m.modelo)}</span><span class="tr" style="width:${m.t/maxM*100}%">${m.uso?`<i class="c-uso" style="flex:${m.uso}"></i>`:''}${m.patio?`<i class="c-patio" style="flex:${m.patio}"></i>`:''}${m.ofic?`<i class="c-ofic" style="flex:${m.ofic}"></i>`:''}</span><span class="vl">${m.t}</span></div>`).join('') || '<div class="empty">Sem dados.</div>';
+
+  const faixas = [['0 a 2 anos',0,2],['3 a 5 anos',3,5],['6 a 10 anos',6,10],['Mais de 10',11,99]];
+  const fx = faixas.map(([n,a,b]) => ({n, q: at.filter(v=>{const i=idadeDe(v); return i!=null && i>=a && i<=b;}).length, old:a>10}));
+  const maxF = Math.max(1,...fx.map(f=>f.q));
+  $('chIdade').innerHTML = fx.map(f=>`<div class="cl${f.old?' old':''}" title="${f.n}: ${f.q} veículos"><b>${f.q}</b><i style="height:${Math.max(2,f.q/maxF*80)}%"></i></div>`).join('');
+  $('chIdadeLab').innerHTML = fx.map(f=>`<span>${f.n}</span>`).join('');
+
+  const dd = {};
+  at.forEach(v => { const d = dd[v.departamento] ||= {d:v.departamento, p:0, a:0, t:0}; v.proprietario==='Alugada'?d.a++:d.p++; d.t++; });
+  const deps = Object.values(dd).sort((a,b)=>b.t-a.t), maxD = Math.max(1,...deps.map(d=>d.t));
+  $('chDepto').innerHTML = deps.map(d => `<div class="hbar" title="${esc(d.d)}: ${d.p} próprios, ${d.a} alugados"><span class="nm">${esc(d.d)}</span><span class="tr" style="width:${d.t/maxD*100}%">${d.p?`<i class="c-prop" style="flex:${d.p}"></i>`:''}${d.a?`<i class="c-alug" style="flex:${d.a}"></i>`:''}</span><span class="vl">${d.t}</span></div>`).join('') || '<div class="empty">Sem dados.</div>';
+
+  const crit = alertas.filter(a=>a.nivel==='Crítico');
+  $('alertasTop').innerHTML = crit.length ? crit.map(a=>`<div class="alert-mini"><div><b>${esc(a.placa)}</b> · ${esc(a.alerta)}<small>${esc(a.modelo)}${a.detalhe?' · '+esc(a.detalhe):''}</small></div><span class="badge crit">Crítico</span></div>`).join('') : '<div class="empty">Nenhum alerta crítico no momento.</div>';
+}
+
+/* ---------------------------- veículos por modelo ---------------------------- */
+function gruposModelo(){
+  const q = norm($('flBusca').value);
+  const base = frota.filter(v => flFiltro==='Devolvido' ? v.status==='Devolvido' : flFiltro ? v.status===flFiltro : v.status!=='Devolvido');
+  const lista = base.filter(v => !q || norm([v.placa,v.condutor,v.modelo].join(' ')).includes(q));
+  const g = {};
+  lista.forEach(v => (g[v.modelo] ||= []).push(v));
+  const ord = {'Em uso':0,'Pátio':1,'Oficina':2,'Devolvido':3};
+  Object.values(g).forEach(a => a.sort((x,y)=> ord[x.status]-ord[y.status] || x.placa.localeCompare(y.placa)));
+  return Object.entries(g).sort((a,b)=> b[1].length-a[1].length || a[0].localeCompare(b[0]));
+}
+const fechados = new Set();
+function nomeExibicao(v){ return v.condutor ? titulo(v.condutor) : (v.status==='Oficina' ? 'Na oficina' : v.status==='Pátio' ? 'No pátio' : v.status==='Devolvido' ? 'Devolvido à locadora' : 'Sem condutor'); }
+function avatar(v, extra=''){
+  const nome = v.condutor || '';
+  const bg = nome ? avCor(nome) : (v.status==='Oficina' ? '#14161b' : v.status==='Pátio' ? '#f5a524' : '#c4c8d0');
+  const ini = nome ? iniciais(nome) : (v.status==='Oficina' ? 'OF' : v.status==='Pátio' ? 'PT' : '—');
+  return `<span class="av ${extra}" style="background:${bg}; --s:${ST_COR[v.status]}">${esc(ini)}</span>`;
+}
+function renderVeiculosModelo(){
+  const grupos = gruposModelo();
+  const todas = grupos.flatMap(([,vs])=>vs);
+  if(!todas.find(v=>v.placa===selPlaca)){
+    const g = grupos.find(([m])=>m===selModelo) || grupos[0];
+    selModelo = g ? g[0] : null; selPlaca = g ? g[1][0].placa : null;
+  } else selModelo = todas.find(v=>v.placa===selPlaca).modelo;
+  $('flBody').innerHTML = grupos.length ? grupos.map(([m,vs]) => `
+    <div class="fl-group${fechados.has(m)?' closed':''}">
+      <button type="button" class="fl-gh" data-grp="${esc(m)}" aria-expanded="${!fechados.has(m)}">${esc(m)} <span>${vs.length} <svg class="chev" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 6.5L5 3.5 8 6.5"/></svg></span></button>
+      <div class="fl-items">${vs.map(v => `
+        <button type="button" class="fl-item${v.placa===selPlaca?' on':''}" data-placa="${esc(v.placa)}">
+          ${avatar(v)}
+          <span style="min-width:0"><div class="nm">${esc(nomeExibicao(v))}</div><div class="sm">${esc(v.placa)} · ${esc(v.modelo)}</div></span>
+          <span class="st ${ST[v.status]}">${v.status==='Em uso'?'':'<i></i>'}${ST_LABEL[v.status]}</span>
+        </button>`).join('')}</div>
+    </div>`).join('') : '<div class="empty">Nenhum veículo encontrado.</div>';
+  renderDetalhe(grupos);
+}
+function renderDetalhe(grupos){
+  const el = $('vDetail');
+  const v = frota.find(x=>x.placa===selPlaca);
+  if(!v){ el.innerHTML = `<div class="card empty">${carregou ? 'Nenhum veículo para mostrar com esse filtro.' : 'Carregando a frota…'}</div>`; return; }
+  const doModelo = frota.filter(x=>x.modelo===v.modelo);
+  const doGrupo = (grupos.find(([m])=>m===v.modelo)||[null,[v]])[1];
+  const at = doModelo.filter(x=>x.status!=='Devolvido');
+  const n = s => at.filter(x=>x.status===s).length;
+  const uso=n('Em uso'), pat=n('Pátio'), of=n('Oficina'), tot=at.length||1;
+  const idades = at.map(idadeDe).filter(x=>x!=null);
+  const idadeMed = idades.length ? (idades.reduce((a,b)=>a+b,0)/idades.length) : null;
+  const revFeita = at.filter(x=>x.revisao==='Feita').length, revPend = at.filter(x=>x.revisao==='Pendente').length;
+  const d = diasDesde(v.statusDesde);
+  const alertasV = calcAlertas().filter(a=>a.placa===v.placa);
+  const histV = hist.filter(h=>h.placa===v.placa).slice(0,8);
+  const lic = v.docAno ? (Number(v.docAno)<ANO_ATUAL ? `${v.docAno} · vencido` : String(v.docAno)) : 'Sem registro';
+  const km = v.km ? fmt(v.km)+' km' : '—';
+  el.innerHTML = `
+    <div class="vh">
+      <div class="vh-who">${avatar(v)}<div style="min-width:0"><b>${esc(nomeExibicao(v))}</b><small>${esc(v.funcao ? titulo(v.funcao) : '')}${v.funcao?' · ':''}${esc(v.departamento)}</small></div></div>
+      <div class="vh-act">
+        <span class="badge ${ST[v.status]}" style="align-self:center">${ST_LABEL[v.status]}${(v.status==='Pátio'||v.status==='Oficina')&&d!=null?` · ${d} d`:''}</span>
+        ${canWrite ? `<button type="button" class="icon-btn" data-edit="${esc(v.placa)}" aria-label="Editar ${esc(v.placa)}" title="Editar veículo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg></button>` : ''}
+      </div>
+    </div>
+    <div class="hero">
+      <div style="position:relative; z-index:1; min-width:0;">
+        <h2>${esc(v.modelo)}</h2>
+        <div class="tipo">${esc(v.tipo)} · ${esc(v.proprietario==='Alugada'?'Alugado (Lets)':v.proprietario==='Própria'?'Frota própria':'Proprietário sem dado')}</div>
+        <div class="specs">
+          <div><span>Ano</span><b>${esc(v.ano||'—')}</b></div>
+          <div><span>KM atual</span><b>${km}</b></div>
+          <div><span>Licenciamento</span><b>${esc(lic)}</b></div>
+          <div><span>Revisão</span><b>${esc(v.revisao==='Feita' && v.ultimaRevisao ? 'Feita '+brData(v.ultimaRevisao) : v.revisao)}</b></div>
+        </div>
+        <div class="hero-foot">
+          <span class="placa" aria-label="Placa ${esc(v.placa)}"><i>BRASIL</i><b>${esc(v.placa)}</b></span>
+          <span class="muted" style="font-size:12px;">RENAVAM ${esc(v.renavam||'—')}</span>
+        </div>
+      </div>
+      <div class="hero-img">${svgVeiculo(v.modelo, v.cor)}</div>
+      <div class="chips-wrap">
+        <span class="eyebrow">Placas deste modelo · ${doGrupo.length}${flFiltro||$('flBusca').value?' no filtro':''}</span>
+        <div class="pchips">${doGrupo.map(x=>`<button type="button" class="pchip${x.placa===v.placa?' on':''}" data-placa="${esc(x.placa)}" style="--s:${ST_COR[x.status]}" title="${esc(nomeExibicao(x))} · ${x.status}"><i></i>${esc(x.placa)}</button>`).join('')}</div>
+      </div>
+    </div>
+    <div class="vgrid">
+      <div class="card">
+        <div class="card-h"><h3>Ficha do veículo</h3>${canWrite?`<button type="button" class="link" data-edit="${esc(v.placa)}">Editar</button>`:''}</div>
+        <div class="ficha">
+          <div><span>Condutor</span><b>${esc(v.condutor ? titulo(v.condutor) : '—')}</b></div>
+          <div><span>Situação</span><b>${esc(v.status)}${d!=null&&v.status!=='Em uso'?` desde ${brData(v.statusDesde)}`:''}</b></div>
+          <div><span>Departamento</span><b>${esc(v.departamento)}</b></div>
+          <div><span>Função</span><b>${esc(v.funcao?titulo(v.funcao):'—')}</b></div>
+          <div><span>Proprietário</span><b>${esc(v.proprietario)}</b></div>
+          <div><span>Cor</span><b>${esc(v.cor?titulo(v.cor):'—')}</b></div>
+          <div><span>Retirada do veículo</span><b>${esc(v.retirada||'—')}</b></div>
+          <div><span>Unidade</span><b>${esc(v.unidade||'—')}</b></div>
+          <div class="full"><span>Observação</span><b>${esc(v.observacao||'—')}</b></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h"><h3>${esc(v.modelo)} na frota</h3><span class="sub">${at.length} ativo${at.length===1?'':'s'}</span></div>
+        <div class="eyebrow">Situação dos veículos do modelo</div>
+        <div class="stackbar">
+          ${uso?`<div class="sb-uso" style="flex:${uso}">${pct(uso,tot)}</div>`:''}${pat?`<div class="sb-patio" style="flex:${pat}">${pct(pat,tot)}</div>`:''}${of?`<div class="sb-ofic" style="flex:${of}">${pct(of,tot)}</div>`:''}
+        </div>
+        <table class="mtable"><tbody>
+          <tr><td>Em uso</td><td>${pct(uso,tot)}</td><td>${uso}</td></tr>
+          <tr><td>No pátio</td><td>${pct(pat,tot)}</td><td>${pat}</td></tr>
+          <tr><td>Na oficina</td><td>${pct(of,tot)}</td><td>${of}</td></tr>
+          <tr><td>Idade média</td><td></td><td>${idadeMed==null?'—':idadeMed.toFixed(1).replace('.',',')+' anos'}</td></tr>
+          <tr><td>Revisões feitas · pendentes</td><td></td><td>${revFeita} · ${revPend}</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h"><h3>Alertas e histórico da placa</h3><span class="sub">${esc(v.placa)}</span></div>
+      ${alertasV.length || histV.length ? `<ul class="tl">
+        ${alertasV.map(a=>`<li class="al"><b>${esc(a.alerta)}</b><small>${esc(a.nivel)}${a.detalhe?' · '+esc(a.detalhe):''}</small></li>`).join('')}
+        ${histV.map(h=>{ const dt=h.quando?.toDate?h.quando.toDate():null; return `<li><b>${esc(h.resumo)}</b><small>${esc(h.tipo)}${dt?' · '+dt.toLocaleString('pt-BR'):''}</small></li>`; }).join('')}
+      </ul>` : '<div class="empty">Nenhum alerta nem alteração registrada para esta placa.</div>'}
+    </div>`;
+}
+$('flBody').addEventListener('click', e => {
+  const g = e.target.closest('[data-grp]');
+  if(g){ const m=g.dataset.grp; fechados.has(m)?fechados.delete(m):fechados.add(m); renderVeiculosModelo(); return; }
+  const it = e.target.closest('[data-placa]'); if(it) selecionar(it.dataset.placa, true);
+});
+$('vDetail').addEventListener('click', e => {
+  const ed = e.target.closest('[data-edit]'); if(ed){ abrirEdicao(ed.dataset.edit); return; }
+  const c = e.target.closest('[data-placa]'); if(c) selecionar(c.dataset.placa, false);
+});
+function selecionar(placa, rolar){
+  selPlaca = placa; const v=frota.find(x=>x.placa===placa); if(v) selModelo=v.modelo;
+  try{ localStorage.setItem('frota_placa', selPlaca); localStorage.setItem('frota_modelo', selModelo); }catch(e){}
+  renderVeiculosModelo();
+  if(rolar && window.innerWidth<=1100) $('vDetail').scrollIntoView({behavior:'smooth', block:'start'});
+}
+$('flBusca').addEventListener('input', renderVeiculosModelo);
+$('flFilt').addEventListener('click', e => { const b=e.target.closest('[data-f]'); if(!b) return; flFiltro=b.dataset.f; document.querySelectorAll('#flFilt button').forEach(x=>x.classList.toggle('on', x===b)); renderVeiculosModelo(); });
+
+/* ---------------------------- alertas (tela) ---------------------------- */
+let alFiltro = 'Todos';
+function renderAlertas(alertas){
+  const cont = {Todos: alertas.length};
+  alertas.forEach(a => cont[a.alerta] = (cont[a.alerta]||0)+1);
+  if(!(alFiltro in cont)) alFiltro='Todos';
+  $('alChips').innerHTML = Object.entries(cont).map(([n,q])=>`<button type="button" class="fchip${n===alFiltro?' on':''}" data-al="${esc(n)}">${esc(n)} · ${q}</button>`).join('');
+  const rows = alertas.filter(a => alFiltro==='Todos' || a.alerta===alFiltro);
+  $('alBody').innerHTML = rows.length ? rows.map(a=>`<tr><td><span class="badge ${a.nivel==='Crítico'?'crit':'aten'}">${a.nivel}</span></td><td><b>${a.placa!=='—'?`<button type="button" class="link" data-ver="${esc(a.placa)}">${esc(a.placa)}</button>`:'—'}</b></td><td>${esc(a.modelo)}</td><td>${esc(a.alerta)}</td><td class="hide-sm">${esc(a.detalhe)}</td><td class="hide-sm">${esc(a.condutor?titulo(a.condutor):'')}</td></tr>`).join('') : '<tr><td colspan="6" class="empty">Nenhum alerta.</td></tr>';
+}
+$('alChips').addEventListener('click', e => { const b=e.target.closest('[data-al]'); if(!b) return; alFiltro=b.dataset.al; renderAll(); });
+document.addEventListener('click', e => { const b=e.target.closest('[data-ver]'); if(!b) return; flFiltro=''; document.querySelectorAll('#flFilt button').forEach(x=>x.classList.toggle('on', x.dataset.f==='')); $('flBusca').value=''; selPlaca=b.dataset.ver; showView('veiculos'); renderVeiculosModelo(); });
+
+/* ---------------------------- cadastro completo ---------------------------- */
+let vSort = {k:'status', dir:1};
+const ST_ORD = {'Oficina':0,'Pátio':1,'Em uso':2,'Devolvido':3};
+function preencherSelect(id, vals, rot){
+  const el=$(id), atual=el.value;
+  el.innerHTML = `<option value="">${rot}</option>` + vals.map(v=>`<option>${esc(v)}</option>`).join('');
+  if(vals.includes(atual)) el.value=atual;
+}
+function renderCadastro(){
+  preencherSelect('fModelo', [...new Set(frota.map(v=>v.modelo))].sort(), 'Modelo: todos');
+  preencherSelect('fDepto', [...new Set(frota.map(v=>v.departamento))].sort(), 'Departamento: todos');
+  $('dlCondutores').innerHTML = [...new Set(frota.map(v=>v.condutor).filter(Boolean))].sort().map(n=>`<option value="${esc(n)}">`).join('');
+  const q = norm($('fBusca').value), fs=$('fStatus').value, fm=$('fModelo').value, fd=$('fDepto').value, fp=$('fProp').value;
+  let rows = frota.filter(v => (!fs||v.status===fs) && (!fm||v.modelo===fm) && (!fd||v.departamento===fd) && (!fp||v.proprietario===fp)
+    && (!q || norm([v.placa,v.condutor,v.modelo,v.tipo,v.observacao,v.departamento].join(' ')).includes(q)));
+  const {k,dir} = vSort;
+  const val = v => k==='status' ? ST_ORD[v.status] : k==='dias' ? (v.status==='Em uso'||v.status==='Devolvido' ? -1 : (diasDesde(v.statusDesde)??-1)) : k==='docAno' ? Number(v.docAno||0) : norm(v[k]);
+  rows.sort((a,b)=> (val(a)>val(b)?1:val(a)<val(b)?-1:0)*dir || a.placa.localeCompare(b.placa));
+  document.querySelectorAll('#vHead th.sortable').forEach(th => th.setAttribute('aria-sort', th.dataset.k===k ? (dir>0?'ascending':'descending') : 'none'));
+  $('vCount').textContent = `${rows.length} de ${frota.length}`;
+  document.querySelectorAll('.edit-col').forEach(el => el.style.display = canWrite ? '' : 'none');
+  $('vBody').innerHTML = rows.length ? rows.map(v => {
+    const d = diasDesde(v.statusDesde), mostra = v.status==='Pátio'||v.status==='Oficina';
+    const st = canWrite
+      ? `<select class="st-edit ${ST[v.status]}" data-placa="${esc(v.placa)}" aria-label="Situação de ${esc(v.placa)}">${['Em uso','Pátio','Oficina','Devolvido'].map(s=>`<option${s===v.status?' selected':''}>${s}</option>`).join('')}</select>`
+      : `<span class="badge ${ST[v.status]}">${v.status}</span>`;
+    const rev = v.revisao==='Pendente' ? '<span class="badge aten">Pendente</span>' : v.revisao==='Feita' ? `<span class="muted">Feita${v.ultimaRevisao?' '+brData(v.ultimaRevisao):''}</span>` : '<span class="muted">—</span>';
+    const lic = v.docAno ? (Number(v.docAno)<ANO_ATUAL ? `<span class="badge crit">${v.docAno}</span>` : esc(v.docAno)) : '<span class="muted">—</span>';
+    return `<tr><td><b><button type="button" class="link" data-ver="${esc(v.placa)}">${esc(v.placa)}</button></b></td><td>${esc(v.modelo)}</td><td>${v.condutor?esc(titulo(v.condutor)):'<span class="muted">—</span>'}</td><td>${st}</td>
+      <td class="hide-sm"><span class="dias${mostra&&d>=7?' alto':''}">${mostra&&d!=null?d+' d':''}</span></td>
+      <td class="hide-sm">${esc(v.departamento)}</td><td class="hide-sm">${esc(v.proprietario)}</td><td class="hide-sm">${esc(v.ano)}</td>
+      <td class="hide-sm">${rev}</td><td class="hide-sm">${lic}</td><td class="hide-sm"><div class="obs-cell" title="${esc(v.observacao)}">${esc(v.observacao)}</div></td>
+      <td class="edit-col" style="${canWrite?'':'display:none'}"><button type="button" class="btn-mini" data-edit="${esc(v.placa)}">Editar</button></td></tr>`;
+  }).join('') : '<tr><td colspan="12" class="empty">Nenhum veículo com esse filtro.</td></tr>';
+}
+['fBusca','fStatus','fModelo','fDepto','fProp'].forEach(id => $(id).addEventListener('input', renderCadastro));
+document.querySelectorAll('#vHead th.sortable').forEach(th => th.addEventListener('click', () => { const k=th.dataset.k; vSort = {k, dir: vSort.k===k ? -vSort.dir : 1}; renderCadastro(); }));
+$('vBody').addEventListener('click', e => { const b=e.target.closest('[data-edit]'); if(b) abrirEdicao(b.dataset.edit); });
+$('vBody').addEventListener('change', async e => {
+  const s = e.target.closest('select.st-edit'); if(!s || !canWrite) return;
+  const v = frota.find(x=>x.placa===s.dataset.placa); if(!v) return;
+  const novo = s.value; if(novo===v.status) return;
+  s.disabled = true;
+  const dados = {status:novo, statusDesde:hojeISO(), atualizadoEm:serverTimestamp()};
+  if(novo==='Pátio' || novo==='Oficina' || novo==='Devolvido') dados.condutorAnterior = v.condutor||'';
+  try{
+    await updateDoc(doc(db,'frota',v.placa), dados);
+    await logHist('atualizado', v.placa, `Situação: ${v.status} → ${novo}`);
+    toast(`${v.placa}: ${novo}`);
+  }catch(err){ toast('Não foi possível salvar: '+(err.code||err.message)); s.value=v.status; }
+  s.disabled = false;
+});
+
+/* ---------------------------- afastamentos ---------------------------- */
+function renderAfast(){
+  const hoje = hojeISO();
+  const lista = afast.slice().sort((a,b)=>(a.retorno||'9999').localeCompare(b.retorno||'9999'));
+  const carro = n => frota.find(v=>v.status!=='Devolvido' && norm(v.condutor)===norm(n));
+  $('afList').innerHTML = lista.length ? `<div class="afs-row head"><span>Condutor</span><span>Motivo</span><span>Saída → retorno</span><span>Veículo</span><span></span></div>` + lista.map(a => {
+    const v = carro(a.condutor), venc = a.retorno && a.retorno < hoje;
+    return `<div class="afs-row"><span><b>${esc(titulo(a.condutor))}</b></span><span>${esc(a.motivo)}</span>
+      <span>${a.saida?brData(a.saida):'<span class="muted">sem data</span>'} → ${a.retorno?`<span class="${venc?'venc':''}">${brData(a.retorno)}</span>`:'<span class="muted">sem data</span>'}</span>
+      <span>${v?`<button type="button" class="link" data-ver="${esc(v.placa)}">${esc(v.placa)}</button> <span class="muted">· ${esc(v.status)}</span>`:'<span class="muted">nenhum no nome</span>'}</span>
+      <span>${canWrite?`<button type="button" class="btn-x" data-af="${esc(a.id)}">Encerrar</button>`:''}</span></div>`;
+  }).join('') : '<div class="empty">Nenhum condutor afastado.</div>';
+  $('afForm').style.display = canWrite ? '' : 'none';
+  $('afNote').style.display = canWrite ? 'none' : '';
+}
+$('afList').addEventListener('click', async e => {
+  const b = e.target.closest('[data-af]'); if(!b || !canWrite) return;
+  const a = afast.find(x=>x.id===b.dataset.af); if(!a) return;
+  if(!confirm(`Encerrar o afastamento de ${a.condutor}?`)) return;
+  try{ await deleteDoc(doc(db,'frota_afastamentos',a.id)); await logHist('excluido','—',`Afastamento encerrado: ${a.condutor} (${a.motivo})`); toast('Afastamento encerrado.'); }
+  catch(err){ toast('Erro: '+(err.code||err.message)); }
+});
+$('btnAfSalvar').addEventListener('click', async () => {
+  const condutor = $('af_condutor').value.trim(); if(!condutor){ $('afMsg').textContent='Informe o condutor.'; return; }
+  const body = {condutor, motivo:$('af_motivo').value, saida:$('af_saida').value, retorno:$('af_retorno').value, criadoEm:serverTimestamp()};
+  try{ await addDoc(afRef, body); await logHist('criado','—',`Afastamento: ${condutor} (${body.motivo}${body.retorno?' até '+brData(body.retorno):''})`);
+    $('af_condutor').value=''; $('af_saida').value=''; $('af_retorno').value=''; $('afMsg').textContent=''; toast('Afastamento registrado.'); }
+  catch(err){ $('afMsg').textContent='Erro: '+(err.code||err.message); }
+});
+
+/* ---------------------------- histórico ---------------------------- */
+async function logHist(tipo, placa, resumo){
+  try{ await addDoc(histRef, {tipo, placa, resumo, quando:serverTimestamp()}); }catch(e){}
+}
+function renderHist(){
+  $('histList').innerHTML = hist.length ? hist.map(h => {
+    const d = h.quando?.toDate ? h.quando.toDate() : null;
+    return `<div class="hist-item"><span class="hist-tipo ${esc(h.tipo)}">${esc(h.tipo)}</span><b>${esc(h.placa)}</b><span class="hist-data">${d?d.toLocaleString('pt-BR'):''}</span><div class="hist-resumo">${esc(h.resumo)}</div></div>`;
+  }).join('') : '<div class="empty">Nenhuma alteração registrada ainda.</div>';
+}
+
+/* ---------------------------- edição de veículo ---------------------------- */
+const CAMPOS = ['placa','tipo','status','condutor','departamento','funcao','proprietario','ano','renavam','cor','retirada','docAno','revisao','ultimaRevisao','km','observacao'];
+const ROTULO = {placa:'Placa',tipo:'Tipo',status:'Situação',condutor:'Condutor',departamento:'Departamento',funcao:'Função',proprietario:'Proprietário',ano:'Ano',renavam:'RENAVAM',cor:'Cor',retirada:'Retirada',docAno:'Licenciamento',revisao:'Revisão',ultimaRevisao:'Última revisão',km:'KM',observacao:'Observação'};
+let editando = null;
+function abrirEdicao(placa){
+  if(!canWrite){ toast('Entre no Modo edição para editar.'); return; }
+  const v = placa ? frota.find(x=>x.placa===placa) : null;
+  editando = v ? v.placa : null;
+  $('emTitle').textContent = v ? `Editar ${v.placa}` : 'Cadastrar veículo';
+  CAMPOS.forEach(c => { const el=$('e_'+c); el.value = v ? (v[c] ?? '') : (c==='status'?'Em uso':c==='revisao'?'Sem registro':c==='departamento'?'Vendedores':c==='proprietario'?'Própria':''); });
+  $('e_placa').readOnly = !!v; $('btnEmExcluir').style.display = v ? '' : 'none'; $('emMsg').textContent='';
+  $('editModal').classList.add('on');
+}
+function fecharEdicao(){ $('editModal').classList.remove('on'); editando=null; }
+$('btnEmCancelar').addEventListener('click', fecharEdicao);
+$('editModal').addEventListener('click', e => { if(e.target.id==='editModal') fecharEdicao(); });
+document.addEventListener('keydown', e => { if(e.key==='Escape'){ fecharEdicao(); $('bulkModal').classList.remove('on'); } });
+$('btnNovo').addEventListener('click', () => abrirEdicao(null));
+$('btnEmSalvar').addEventListener('click', async () => {
+  const d = {}; CAMPOS.forEach(c => d[c] = $('e_'+c).value.trim());
+  d.placa = norm(d.placa).replace(/[^A-Z0-9]/g,'');
+  if(!/^[A-Z0-9]{7}$/.test(d.placa)){ $('emMsg').textContent='Placa inválida. Use 7 letras e números, ex: RER6F92.'; return; }
+  d.docAno = d.docAno ? parseInt(d.docAno,10) : ''; d.km = d.km ? parseInt(d.km,10) : '';
+  d.modelo = modeloDe(d.tipo);
+  const antigo = frota.find(x=>x.placa===d.placa);
+  if(!editando && antigo){ $('emMsg').textContent='Essa placa já está cadastrada. Use Editar na ficha do veículo.'; return; }
+  if(!antigo || antigo.status!==d.status) d.statusDesde = hojeISO();
+  const mud = antigo ? CAMPOS.filter(c => String(antigo[c]??'')!==String(d[c]??'')).map(c=>`${ROTULO[c]}: ${antigo[c]||'—'} → ${d[c]||'—'}`) : [];
+  if(antigo && !mud.length){ fecharEdicao(); return; }
+  $('btnEmSalvar').disabled = true;
+  try{
+    await setDoc(doc(db,'frota',d.placa), {...d, atualizadoEm:serverTimestamp()}, {merge:true});
+    await logHist(antigo?'atualizado':'criado', d.placa, antigo ? mud.join(' · ') : `${d.modelo} cadastrado (${d.status})`);
+    toast('Veículo salvo.'); fecharEdicao();
+  }catch(err){ $('emMsg').textContent='Não foi possível salvar: '+(err.code||err.message); }
+  $('btnEmSalvar').disabled = false;
+});
+$('btnEmExcluir').addEventListener('click', async () => {
+  if(!editando || !confirm(`Excluir ${editando} do cadastro? Para carros que voltaram à locadora, prefira marcar a situação como Devolvido.`)) return;
+  try{ await deleteDoc(doc(db,'frota',editando)); await logHist('excluido', editando, 'Veículo excluído do cadastro'); toast('Veículo excluído.'); fecharEdicao(); }
+  catch(err){ $('emMsg').textContent='Erro: '+(err.code||err.message); }
+});
+
+/* ---------------------------- importação colada ---------------------------- */
+let pendente = [];
+$('btnBulkAnalyze').addEventListener('click', () => {
+  const linhas = $('bulkInput').value.split(/\r?\n/).filter(l=>l.trim());
+  const erros = []; const vistos = new Set(); pendente = [];
+  linhas.forEach((l,i) => {
+    const c = l.split('\t');
+    if(i===0 && norm(c[0]).startsWith('TIPO')) return;
+    if(c.length < 2 || !c[1].trim()){ erros.push(`Linha ${i+1}: sem placa na coluna B.`); return; }
+    const v = linhaParaVeiculo([...c.slice(0,13), ...Array(13).fill('')].slice(0,13));
+    if(!/^[A-Z0-9]{7}$/.test(v.placa)){ erros.push(`Linha ${i+1}: placa "${c[1].trim()}" inválida.`); return; }
+    if(vistos.has(v.placa)){ erros.push(`Linha ${i+1}: placa ${v.placa} repetida, mantida a primeira.`); return; }
+    vistos.add(v.placa);
+    const a = frota.find(x=>x.placa===v.placa);
+    let acao = 'novo', mud = [];
+    if(a){
+      mud = ['tipo','status','condutor','observacao','renavam','ano','departamento','funcao','cor','proprietario','retirada','docAno','revisao'].filter(k => String(a[k]??'')!==String(v[k]??''));
+      if(a.revisao && a.revisao!=='Sem registro' && v.revisao==='Sem registro') mud = mud.filter(k=>k!=='revisao');
+      acao = mud.length ? 'atualizar' : 'igual';
+    }
+    pendente.push({v, a, acao, mud});
+  });
+  if(!pendente.length){ $('bulkMsg').textContent = erros[0] || 'Nada para importar. Confira se copiou as colunas A até M.'; return; }
+  const q = k => pendente.filter(p=>p.acao===k).length;
+  $('bulkPreviewWrap').innerHTML = `
+    <div class="bulk-summary"><b>${pendente.length}</b> placas lidas: <span class="flag n">${q('novo')} novas</span> <span class="flag u">${q('atualizar')} com mudanças</span> <span class="flag d">${q('igual')} sem mudança</span></div>
+    ${erros.length?`<div class="bulk-errors">${erros.map(esc).join('<br>')}</div>`:''}
+    <div class="bulk-preview"><table class="tb"><thead><tr><th>Placa</th><th>Ação</th><th>Situação</th><th>Condutor</th><th>O que muda</th></tr></thead><tbody>
+    ${pendente.filter(p=>p.acao!=='igual').map(p=>`<tr><td><b>${esc(p.v.placa)}</b></td><td><span class="flag ${p.acao==='novo'?'n':'u'}">${p.acao==='novo'?'Novo':'Atualizar'}</span></td><td>${esc(p.v.status)}</td><td>${esc(p.v.condutor)}</td><td>${p.acao==='novo'?esc(p.v.modelo):p.mud.map(k=>`${ROTULO[k]||k}: ${esc(p.a[k]||'—')} → ${esc(p.v[k]||'—')}`).join('<br>')}</td></tr>`).join('') || '<tr><td colspan="5" class="empty">Tudo igual ao que já está no painel.</td></tr>'}
+    </tbody></table></div>
+    <div class="edit-actions" style="justify-content:flex-end;"><button class="btn btn-line" id="bulkCancel" type="button">Cancelar</button><button class="btn btn-dark" id="bulkConfirm" type="button"${q('novo')+q('atualizar')?'':' disabled'}>Gravar ${q('novo')+q('atualizar')} alterações</button></div>`;
+  $('bulkModal').classList.add('on');
+  $('bulkCancel').onclick = () => $('bulkModal').classList.remove('on');
+  $('bulkConfirm').onclick = gravarImportacao;
+});
+async function gravarImportacao(){
+  const alvo = pendente.filter(p=>p.acao!=='igual');
+  $('bulkConfirm').disabled = true;
+  try{
+    for(let i=0;i<alvo.length;i+=400){
+      const b = writeBatch(db);
+      alvo.slice(i,i+400).forEach(p => {
+        const d = {...p.v, atualizadoEm:serverTimestamp()};
+        if(p.a && p.a.revisao && p.a.revisao!=='Sem registro' && p.v.revisao==='Sem registro') delete d.revisao;
+        if(!p.a || p.a.status!==p.v.status) d.statusDesde = hojeISO();
+        b.set(doc(db,'frota',p.v.placa), d, {merge:true});
+      });
+      await b.commit();
+    }
+    const n = alvo.filter(p=>p.acao==='novo').length;
+    await logHist('importacao','—',`Planilha colada: ${n} novos, ${alvo.length-n} atualizados`);
+    $('bulkModal').classList.remove('on'); $('bulkInput').value=''; $('bulkMsg').textContent=''; toast(`${alvo.length} veículos gravados.`);
+  }catch(err){ toast('Erro ao gravar: '+(err.code||err.message)); $('bulkConfirm').disabled=false; }
+}
+
+/* ---------------------------- cadastro inicial ---------------------------- */
+$('btnSeed').addEventListener('click', async () => {
+  if(frota.length){ toast('O banco já tem veículos.'); return; }
+  $('btnSeed').disabled = true;
+  try{
+    const b = writeBatch(db), hoje = hojeISO();
+    SEED.veiculos.forEach(c => { const v = linhaParaVeiculo(c); b.set(doc(db,'frota',v.placa), {...v, km:'', ultimaRevisao:'', statusDesde:hoje, atualizadoEm:serverTimestamp()}); });
+    SEED.afastamentos.forEach(([condutor,motivo,saida,retorno]) => b.set(doc(afRef), {condutor, motivo: (!motivo || norm(motivo)==='FERIAS') ? 'Férias' : motivo.charAt(0)+motivo.slice(1).toLowerCase(), saida:isoDeBr(saida), retorno:isoDeBr(retorno), criadoEm:serverTimestamp()}));
+    await b.commit();
+    await logHist('importacao','—',`Cadastro inicial: ${SEED.veiculos.length} veículos e ${SEED.afastamentos.length} afastamentos`);
+    toast('Cadastro inicial carregado.');
+  }catch(err){ toast('Erro ao carregar: '+(err.code||err.message)+'. Confira se as regras do Firestore foram publicadas.'); $('btnSeed').disabled=false; }
+});
+
+/* ---------------------------- render geral ---------------------------- */
+function renderAll(){
+  const al = calcAlertas();
+  renderPainel(al); renderAlertas(al); renderVeiculosModelo(); renderCadastro(); renderAfast(); renderHist();
+  $('seedBox').style.display = (canWrite && carregou && !frota.length) ? '' : 'none';
+}
+
+/* ---------------------------- navegação ---------------------------- */
+const VIEWS = {painel:['viewPainel','Painel da frota'], veiculos:['viewVeiculos','Veículos por modelo'], alertas:['viewAlertas','Alertas'], cadastro:['viewCadastro','Cadastro completo'], afast:['viewAfast','Férias e afastamentos'], hist:['viewHist','Histórico de alterações'], edicao:['viewEdicao','Modo edição']};
+function showView(v){
+  if(!VIEWS[v]) v='painel';
+  Object.entries(VIEWS).forEach(([k,[id]]) => $(id).style.display = k===v ? '' : 'none');
+  document.querySelectorAll('.rail-btn').forEach(b => { b.classList.toggle('on', b.dataset.view===v); b.toggleAttribute('aria-current', b.dataset.view===v); });
+  $('pageTitle').firstChild.textContent = VIEWS[v][1];
+  try{ localStorage.setItem('frota_view', v); }catch(e){}
+  if(location.hash.slice(1)!==v) history.replaceState(null,'','#'+v);
+  window.scrollTo({top:0});
+}
+document.querySelectorAll('.rail-btn').forEach(b => b.addEventListener('click', () => showView(b.dataset.view)));
+$('verAlertas').addEventListener('click', () => showView('alertas'));
+let inicial = location.hash.slice(1); try{ inicial = inicial || localStorage.getItem('frota_view') || 'painel'; }catch(e){ inicial = inicial || 'painel'; }
+showView(inicial);
+
+/* ---------------------------- relógio ---------------------------- */
+function tick(){ const d=new Date(); $('clock').textContent=d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}); $('dateTag').textContent=d.toLocaleDateString('pt-BR',{weekday:'long', day:'2-digit', month:'long', year:'numeric'}); }
+tick(); setInterval(tick, 15000);
+
+/* ---------------------------- login de edição ---------------------------- */
+if(USE_EMAIL_LOGIN){ $('emailInput').style.display='block'; $('pinLabel').textContent='Senha'; }
+async function entrar(){
+  if(USE_EMAIL_LOGIN){
+    try{ await signInWithEmailAndPassword(auth, $('emailInput').value.trim(), $('pinInput').value); }
+    catch(e){ alert('Login não autorizado: '+(e.code||e.message)); return; }
+  } else {
+    if($('pinInput').value !== EDIT_PIN){ alert('PIN incorreto.'); return; }
+    try{ await signInAnonymously(auth); }catch(e){ alert('Erro ao autenticar: '+e.message); return; }
+  }
+  canWrite = true;
+  $('gateLocked').style.display='none'; $('formPanel').style.display='block'; $('editPill').style.display='';
+  toast('Modo edição liberado.');
+  renderAll();
+}
+$('btnUnlock').addEventListener('click', entrar);
+$('pinInput').addEventListener('keydown', e => { if(e.key==='Enter') entrar(); });
+
+/* ---------------------------- tempo real ---------------------------- */
+function online(){ $('statusTxt').textContent='ao vivo'; $('statusTag').className='pill live'; }
+function falhou(err){ $('statusTxt').textContent='sem conexão'; $('statusTag').className='pill bad'; console.error(err); if(String(err.code).includes('permission')) toast('Sem permissão para ler a frota. Publique as regras do Firestore (arquivo firestore.rules).'); }
+onSnapshot(frotaRef, snap => { frota = snap.docs.map(d => ({placa:d.id, ...d.data()})).map(v => ({...v, modelo: v.modelo || modeloDe(v.tipo)})); carregou = true; online(); renderAll(); }, falhou);
+onSnapshot(afRef, snap => { afast = snap.docs.map(d => ({id:d.id, ...d.data()})); renderAll(); }, falhou);
+onSnapshot(query(histRef, orderBy('quando','desc'), limit(200)), snap => { hist = snap.docs.map(d => d.data()); renderHist(); renderVeiculosModelo(); }, falhou);
+</script>
+</body>
+</html>
