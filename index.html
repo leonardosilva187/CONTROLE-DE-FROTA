@@ -241,6 +241,46 @@ th[aria-sort="ascending"]::after{content:" ▲"; font-size:9px;} th[aria-sort="d
 #toast{position:fixed; right:20px; bottom:20px; z-index:50; max-width:340px; padding:11px 15px; background:var(--black); color:#fff; border-radius:11px; font-size:13px; font-weight:600; opacity:0; transform:translateY(8px); transition:opacity .2s, transform .2s; pointer-events:none;}
 #toast.on{opacity:1; transform:none;}
 
+
+/* ---------- abas por modelo ---------- */
+.mtabs{display:flex; gap:8px; overflow-x:auto; padding:2px 2px 12px; margin-bottom:6px; scrollbar-width:thin;}
+.mtab{flex:0 0 auto; display:flex; align-items:center; gap:10px; background:#fff; border:1px solid var(--line); border-radius:12px; padding:6px 14px 6px 6px; font-size:13px; font-weight:700; color:var(--ink2); text-align:left; box-shadow:var(--shadow);}
+.mtab:hover{border-color:var(--blue);}
+.mtab .th{width:60px; height:36px; border-radius:8px; background:var(--canvas); display:grid; place-items:center; overflow:hidden; flex-shrink:0;}
+.mtab .th img,.mtab .th svg{max-width:56px; max-height:32px; width:auto; height:auto;}
+.mtab .th.ic{color:var(--ink2);}
+.mtab small{display:block; font-size:11px; color:var(--muted); font-weight:600; margin-top:1px;}
+.mtab.on{background:var(--black); color:#fff; border-color:var(--black);}
+.mtab.on small{color:#a9adb8;} .mtab.on .th{background:#fff;}
+.mgrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,270px),1fr)); gap:14px;}
+.mcard{background:var(--card); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow); padding:16px; text-align:left; display:flex; flex-direction:column; gap:10px; color:var(--ink);}
+.mcard:hover{border-color:var(--blue);}
+.mcard .ph{height:120px; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#f4f6fa,#e9edf3); border-radius:10px;}
+.mcard .ph img,.mcard .ph svg{max-height:104px; max-width:92%; width:auto; height:auto; filter:drop-shadow(0 10px 8px rgba(20,22,27,.12));}
+.mcard .ttl{display:flex; justify-content:space-between; align-items:baseline; gap:8px;}
+.mcard .ttl b{font-size:15px; font-weight:800;} .mcard .ttl span{font-size:12px; color:var(--muted); font-weight:600;}
+.mcard .cnt{display:flex; gap:12px; font-size:12px; color:var(--ink2); font-weight:600; flex-wrap:wrap;}
+.mcard .cnt i{display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:5px; vertical-align:1px;}
+.stackbar.sm{height:8px; border-radius:4px; margin:0;}
+.stackbar.sm div{padding:0;}
+.mlayout{display:grid; grid-template-columns:minmax(0,1fr) 360px; gap:16px; align-items:start; margin-top:16px;}
+.ficha-card{position:sticky; top:16px;}
+.ficha-card .ficha{grid-template-columns:1fr 1fr;}
+.vtools{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:12px;}
+.vtools input{flex:1 1 200px; min-width:0; height:36px; border:1px solid var(--line); border-radius:9px; padding:0 12px; font-size:13px; background:var(--canvas); color:var(--ink);}
+.vtools input:focus{outline:none; border-color:var(--blue); background:#fff;}
+.vt tbody tr{cursor:pointer;}
+.vt tbody tr.on{background:var(--blue-soft);}
+.vt tbody tr.on:hover{background:var(--blue-soft);}
+.who{display:flex; align-items:center; gap:10px; min-width:0;}
+.who .av{width:30px; height:30px; font-size:10.5px;}
+.who b{display:block; font-size:12.5px; font-weight:700; white-space:nowrap;}
+.who small{display:block; font-size:11px; color:var(--muted);}
+.placa.sm{min-width:76px;} .placa.sm i{font-size:5px; padding:1px 0;} .placa.sm b{font-size:12px; letter-spacing:1px; padding:1px 6px 2px;}
+.legend-row{display:flex; gap:14px; flex-wrap:wrap; font-size:11.5px; color:var(--muted); font-weight:600; margin-top:8px;}
+.legend-row em{display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:5px; vertical-align:-1px;}
+@media (max-width:1180px){ .mlayout{grid-template-columns:1fr;} .ficha-card{position:static;} }
+
 @media (max-width:1100px){ .fleet{grid-template-columns:1fr;} .fleet-list{position:static;} .fl-body{max-height:340px;} }
 @media (max-width:760px){
   #rail{inset:auto 0 0 0; width:auto; height:62px; flex-direction:row; justify-content:space-around; padding:0 6px; gap:0;}
@@ -314,22 +354,8 @@ th[aria-sort="ascending"]::after{content:" ▲"; font-size:9px;} th[aria-sort="d
 
   <!-- ===================== VEÍCULOS ===================== -->
   <section id="viewVeiculos" class="view" style="display:none;">
-    <div class="fleet">
-      <aside class="card fleet-list" aria-label="Veículos por modelo">
-        <div class="fl-search">
-          <input id="flBusca" type="search" placeholder="Buscar placa ou condutor…" aria-label="Buscar placa ou condutor">
-          <div class="fl-filt" id="flFilt">
-            <button type="button" data-f="" class="on">Ativos</button>
-            <button type="button" data-f="Em uso">Em uso</button>
-            <button type="button" data-f="Pátio">Pátio</button>
-            <button type="button" data-f="Oficina">Oficina</button>
-            <button type="button" data-f="Devolvido">Devolvidos</button>
-          </div>
-        </div>
-        <div class="fl-body" id="flBody"></div>
-      </aside>
-      <div class="hero-wrap" id="vDetail"></div>
-    </div>
+    <div class="mtabs" id="mTabs" role="tablist" aria-label="Modelos da frota"></div>
+    <div id="mBody"></div>
   </section>
 
   <!-- ===================== ALERTAS ===================== -->
@@ -430,7 +456,7 @@ th[aria-sort="ascending"]::after{content:" ▲"; font-size:9px;} th[aria-sort="d
           <div id="bulkMsg" class="note"></div>
         </div>
         <button class="btn btn-line" id="btnNovo" type="button">+ Cadastrar veículo novo</button>
-        <div class="note">Para editar um veículo, abra a aba Veículos, selecione a placa e use o botão de lápis. A situação também pode ser trocada direto no Cadastro completo.</div>
+        <div class="note">Para editar um veículo, abra a aba do modelo em Veículos, selecione a placa e use o botão de lápis. A situação também pode ser trocada direto no Cadastro completo.</div>
       </div>
       <div class="note">Link público: qualquer pessoa vê o painel ao vivo. Só quem tiver o PIN consegue editar a frota.</div>
     </div>
@@ -632,8 +658,8 @@ function svgVeiculo(modelo, cor){
 /* ---------------------------- estado ---------------------------- */
 let frota = [], afast = [], hist = [], canWrite = false, carregou = false;
 const ativos = () => frota.filter(v => v.status !== 'Devolvido');
-let selModelo = null, selPlaca = null, flFiltro = '';
-try{ selModelo = localStorage.getItem('frota_modelo'); selPlaca = localStorage.getItem('frota_placa'); }catch(e){}
+let selModelo = null, selPlaca = null, flFiltro = '', vBuscaTxt = '';
+try{ selModelo = localStorage.getItem('frota_modelo') || '__geral'; selPlaca = localStorage.getItem('frota_placa'); }catch(e){ selModelo='__geral'; }
 
 /* ---------------------------- alertas ---------------------------- */
 function calcAlertas(){
@@ -702,145 +728,162 @@ function renderPainel(alertas){
   $('alertasTop').innerHTML = crit.length ? crit.map(a=>`<div class="alert-mini"><div><b>${esc(a.placa)}</b> · ${esc(a.alerta)}<small>${esc(a.modelo)}${a.detalhe?' · '+esc(a.detalhe):''}</small></div><span class="badge crit">Crítico</span></div>`).join('') : '<div class="empty">Nenhum alerta crítico no momento.</div>';
 }
 
-/* ---------------------------- veículos por modelo ---------------------------- */
-function gruposModelo(){
-  const q = norm($('flBusca').value);
-  const base = frota.filter(v => flFiltro==='Devolvido' ? v.status==='Devolvido' : flFiltro ? v.status===flFiltro : v.status!=='Devolvido');
-  const lista = base.filter(v => !q || norm([v.placa,v.condutor,v.modelo].join(' ')).includes(q));
-  const g = {};
-  lista.forEach(v => (g[v.modelo] ||= []).push(v));
-  const ord = {'Em uso':0,'Pátio':1,'Oficina':2,'Devolvido':3};
-  Object.values(g).forEach(a => a.sort((x,y)=> ord[x.status]-ord[y.status] || x.placa.localeCompare(y.placa)));
-  return Object.entries(g).sort((a,b)=> b[1].length-a[1].length || a[0].localeCompare(b[0]));
-}
-const fechados = new Set();
+/* ---------------------------- veículos: abas por modelo ---------------------------- */
+const GERAL = '__geral';
+const ST_ORDEM = {'Em uso':0,'Pátio':1,'Oficina':2,'Devolvido':3};
 function nomeExibicao(v){ return v.condutor ? titulo(v.condutor) : (v.status==='Oficina' ? 'Na oficina' : v.status==='Pátio' ? 'No pátio' : v.status==='Devolvido' ? 'Devolvido à locadora' : 'Sem condutor'); }
-function avatar(v, extra=''){
+function avatar(v){
   const nome = v.condutor || '';
   const bg = nome ? avCor(nome) : (v.status==='Oficina' ? '#14161b' : v.status==='Pátio' ? '#f5a524' : '#c4c8d0');
   const ini = nome ? iniciais(nome) : (v.status==='Oficina' ? 'OF' : v.status==='Pátio' ? 'PT' : '—');
-  return `<span class="av ${extra}" style="background:${bg}; --s:${ST_COR[v.status]}">${esc(ini)}</span>`;
+  return `<span class="av" style="background:${bg}; --s:${ST_COR[v.status]}">${esc(ini)}</span>`;
+}
+const placaHTML = (p, sm) => `<span class="placa${sm?' sm':''}" aria-label="Placa ${esc(p)}"><i>BRASIL</i><b>${esc(p)}</b></span>`;
+function modelosDaFrota(){
+  const g = {};
+  frota.forEach(v => (g[v.modelo] ||= []).push(v));
+  return Object.entries(g).map(([m,vs]) => {
+    const at = vs.filter(v=>v.status!=='Devolvido');
+    const n = s => at.filter(v=>v.status===s).length;
+    const idades = at.map(idadeDe).filter(x=>x!=null);
+    return {m, vs, at, uso:n('Em uso'), pat:n('Pátio'), of:n('Oficina'), dev:vs.length-at.length,
+      alug:at.filter(v=>v.proprietario==='Alugada').length, prop:at.filter(v=>v.proprietario==='Própria').length,
+      idade: idades.length ? idades.reduce((a,b)=>a+b,0)/idades.length : null,
+      revF: at.filter(v=>v.revisao==='Feita').length, revP: at.filter(v=>v.revisao==='Pendente').length};
+  }).sort((a,b)=> b.at.length-a.at.length || b.vs.length-a.vs.length || a.m.localeCompare(b.m));
+}
+const corPred = v => (v.vs.find(x=>x.status!=='Devolvido')||v.vs[0]||{}).cor;
+function barra(o, sm){
+  const t = (o.uso+o.pat+o.of)||1;
+  return `<div class="stackbar${sm?' sm':''}">${o.uso?`<div class="sb-uso" style="flex:${o.uso}">${sm?'':pct(o.uso,t)}</div>`:''}${o.pat?`<div class="sb-patio" style="flex:${o.pat}">${sm?'':pct(o.pat,t)}</div>`:''}${o.of?`<div class="sb-ofic" style="flex:${o.of}">${sm?'':pct(o.of,t)}</div>`:''}${!(o.uso+o.pat+o.of)?`<div style="flex:1; background:var(--line2)"></div>`:''}</div>`;
 }
 function renderVeiculosModelo(){
-  const grupos = gruposModelo();
-  const todas = grupos.flatMap(([,vs])=>vs);
-  if(!todas.find(v=>v.placa===selPlaca)){
-    const g = grupos.find(([m])=>m===selModelo) || grupos[0];
-    selModelo = g ? g[0] : null; selPlaca = g ? g[1][0].placa : null;
-  } else selModelo = todas.find(v=>v.placa===selPlaca).modelo;
-  $('flBody').innerHTML = grupos.length ? grupos.map(([m,vs]) => `
-    <div class="fl-group${fechados.has(m)?' closed':''}">
-      <button type="button" class="fl-gh" data-grp="${esc(m)}" aria-expanded="${!fechados.has(m)}">${esc(m)} <span>${vs.length} <svg class="chev" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 6.5L5 3.5 8 6.5"/></svg></span></button>
-      <div class="fl-items">${vs.map(v => `
-        <button type="button" class="fl-item${v.placa===selPlaca?' on':''}" data-placa="${esc(v.placa)}">
-          ${avatar(v)}
-          <span style="min-width:0"><div class="nm">${esc(nomeExibicao(v))}</div><div class="sm">${esc(v.placa)} · ${esc(v.modelo)}</div></span>
-          <span class="st ${ST[v.status]}">${v.status==='Em uso'?'':'<i></i>'}${ST_LABEL[v.status]}</span>
-        </button>`).join('')}</div>
-    </div>`).join('') : '<div class="empty">Nenhum veículo encontrado.</div>';
-  renderDetalhe(grupos);
+  const mods = modelosDaFrota();
+  if(selModelo!==GERAL && !mods.find(o=>o.m===selModelo)) selModelo = mods.length ? GERAL : null;
+  if(!selModelo) selModelo = GERAL;
+  $('mTabs').innerHTML = `<button type="button" class="mtab${selModelo===GERAL?' on':''}" role="tab" aria-selected="${selModelo===GERAL}" data-mod="${GERAL}"><span class="th ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span><span>Visão geral<small>${mods.length} modelos · ${ativos().length} ativos</small></span></button>`
+    + mods.map(o => `<button type="button" class="mtab${o.m===selModelo?' on':''}" role="tab" aria-selected="${o.m===selModelo}" data-mod="${esc(o.m)}"><span class="th">${svgVeiculo(o.m, corPred(o))}</span><span>${esc(o.m)}<small>${o.at.length} ativo${o.at.length===1?'':'s'}${o.dev?` · ${o.dev} dev.`:''}</small></span></button>`).join('');
+  if(!frota.length){ $('mBody').innerHTML = `<div class="card empty">${carregou ? 'Nenhum veículo cadastrado ainda. Entre no Modo edição para carregar o cadastro inicial.' : 'Carregando a frota…'}</div>`; return; }
+  if(selModelo===GERAL) renderGeral(mods); else renderModelo(mods.find(o=>o.m===selModelo));
 }
-function renderDetalhe(grupos){
-  const el = $('vDetail');
-  const v = frota.find(x=>x.placa===selPlaca);
-  if(!v){ el.innerHTML = `<div class="card empty">${carregou ? 'Nenhum veículo para mostrar com esse filtro.' : 'Carregando a frota…'}</div>`; return; }
-  const doModelo = frota.filter(x=>x.modelo===v.modelo);
-  const doGrupo = (grupos.find(([m])=>m===v.modelo)||[null,[v]])[1];
-  const at = doModelo.filter(x=>x.status!=='Devolvido');
-  const n = s => at.filter(x=>x.status===s).length;
-  const uso=n('Em uso'), pat=n('Pátio'), of=n('Oficina'), tot=at.length||1;
-  const idades = at.map(idadeDe).filter(x=>x!=null);
-  const idadeMed = idades.length ? (idades.reduce((a,b)=>a+b,0)/idades.length) : null;
-  const revFeita = at.filter(x=>x.revisao==='Feita').length, revPend = at.filter(x=>x.revisao==='Pendente').length;
-  const d = diasDesde(v.statusDesde);
-  const alertasV = calcAlertas().filter(a=>a.placa===v.placa);
-  const histV = hist.filter(h=>h.placa===v.placa).slice(0,8);
-  const lic = v.docAno ? (Number(v.docAno)<ANO_ATUAL ? `${v.docAno} · vencido` : String(v.docAno)) : 'Sem registro';
-  const km = v.km ? fmt(v.km)+' km' : '—';
-  el.innerHTML = `
-    <div class="vh">
-      <div class="vh-who">${avatar(v)}<div style="min-width:0"><b>${esc(nomeExibicao(v))}</b><small>${esc(v.funcao ? titulo(v.funcao) : '')}${v.funcao?' · ':''}${esc(v.departamento)}</small></div></div>
-      <div class="vh-act">
-        <span class="badge ${ST[v.status]}" style="align-self:center">${ST_LABEL[v.status]}${(v.status==='Pátio'||v.status==='Oficina')&&d!=null?` · ${d} d`:''}</span>
-        ${canWrite ? `<button type="button" class="icon-btn" data-edit="${esc(v.placa)}" aria-label="Editar ${esc(v.placa)}" title="Editar veículo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg></button>` : ''}
-      </div>
-    </div>
+function renderGeral(mods){
+  $('mBody').innerHTML = `<div class="mgrid">${mods.map(o => `
+    <button type="button" class="mcard" data-mod="${esc(o.m)}" aria-label="Abrir ${esc(o.m)}">
+      <div class="ph">${svgVeiculo(o.m, corPred(o))}</div>
+      <div class="ttl"><b>${esc(o.m)}</b><span>${o.at.length} ativo${o.at.length===1?'':'s'}</span></div>
+      ${barra(o,true)}
+      <div class="cnt"><span><i style="background:var(--green)"></i>${o.uso} em uso</span><span><i style="background:var(--orange)"></i>${o.pat} pátio</span><span><i style="background:var(--black)"></i>${o.of} oficina</span>${o.dev?`<span class="muted">${o.dev} devolvido${o.dev===1?'':'s'}</span>`:''}</div>
+    </button>`).join('')}</div>`;
+}
+function renderModelo(o){
+  if(!o){ $('mBody').innerHTML=''; return; }
+  const q = norm(vBuscaTxt);
+  const lista = o.vs.filter(v => (flFiltro==='Devolvido' ? v.status==='Devolvido' : flFiltro ? v.status===flFiltro : v.status!=='Devolvido'))
+    .filter(v => !q || norm([v.placa,v.condutor,v.departamento,v.observacao].join(' ')).includes(q))
+    .sort((a,b)=> ST_ORDEM[a.status]-ST_ORDEM[b.status] || nomeExibicao(a).localeCompare(nomeExibicao(b)));
+  if(!lista.find(v=>v.placa===selPlaca)) selPlaca = lista[0]?.placa || null;
+  const tipos = [...new Set(o.vs.map(v=>v.tipo).filter(Boolean))].join(' · ');
+  const filtros = [['','Ativos',o.at.length],['Em uso','Em uso',o.uso],['Pátio','Pátio',o.pat],['Oficina','Oficina',o.of],['Devolvido','Devolvidos',o.dev]];
+  $('mBody').innerHTML = `
     <div class="hero">
       <div style="position:relative; z-index:1; min-width:0;">
-        <h2>${esc(v.modelo)}</h2>
-        <div class="tipo">${esc(v.tipo)} · ${esc(v.proprietario==='Alugada'?'Alugado (Lets)':v.proprietario==='Própria'?'Frota própria':'Proprietário sem dado')}</div>
+        <h2>${esc(o.m)}</h2>
+        <div class="tipo">${esc(tipos)}</div>
         <div class="specs">
-          <div><span>Ano</span><b>${esc(v.ano||'—')}</b></div>
-          <div><span>KM atual</span><b>${km}</b></div>
-          <div><span>Licenciamento</span><b>${esc(lic)}</b></div>
-          <div><span>Revisão</span><b>${esc(v.revisao==='Feita' && v.ultimaRevisao ? 'Feita '+brData(v.ultimaRevisao) : v.revisao)}</b></div>
-        </div>
-        <div class="hero-foot">
-          <span class="placa" aria-label="Placa ${esc(v.placa)}"><i>BRASIL</i><b>${esc(v.placa)}</b></span>
-          <span class="muted" style="font-size:12px;">RENAVAM ${esc(v.renavam||'—')}</span>
+          <div><span>Veículos ativos</span><b>${o.at.length}</b></div>
+          <div><span>Com condutor</span><b>${o.uso}</b></div>
+          <div><span>Próprios · alugados</span><b>${o.prop} · ${o.alug}</b></div>
+          <div><span>Idade média</span><b>${o.idade==null?'—':o.idade.toFixed(1).replace('.',',')+' anos'}</b></div>
         </div>
       </div>
-      <div class="hero-img">${svgVeiculo(v.modelo, v.cor)}</div>
+      <div class="hero-img">${svgVeiculo(o.m, corPred(o))}</div>
       <div class="chips-wrap">
-        <span class="eyebrow">Placas deste modelo · ${doGrupo.length}${flFiltro||$('flBusca').value?' no filtro':''}</span>
-        <div class="pchips">${doGrupo.map(x=>`<button type="button" class="pchip${x.placa===v.placa?' on':''}" data-placa="${esc(x.placa)}" style="--s:${ST_COR[x.status]}" title="${esc(nomeExibicao(x))} · ${x.status}"><i></i>${esc(x.placa)}</button>`).join('')}</div>
+        <span class="eyebrow">Situação dos veículos do modelo</span>
+        ${barra(o,false)}
+        <div class="legend-row"><span><em class="sb-uso"></em>Em uso ${o.uso}</span><span><em class="sb-patio"></em>Pátio ${o.pat}</span><span><em class="sb-ofic"></em>Oficina ${o.of}</span><span>Revisões feitas ${o.revF} · pendentes ${o.revP}</span></div>
       </div>
     </div>
-    <div class="vgrid">
-      <div class="card">
-        <div class="card-h"><h3>Ficha do veículo</h3>${canWrite?`<button type="button" class="link" data-edit="${esc(v.placa)}">Editar</button>`:''}</div>
-        <div class="ficha">
-          <div><span>Condutor</span><b>${esc(v.condutor ? titulo(v.condutor) : '—')}</b></div>
-          <div><span>Situação</span><b>${esc(v.status)}${d!=null&&v.status!=='Em uso'?` desde ${brData(v.statusDesde)}`:''}</b></div>
-          <div><span>Departamento</span><b>${esc(v.departamento)}</b></div>
-          <div><span>Função</span><b>${esc(v.funcao?titulo(v.funcao):'—')}</b></div>
-          <div><span>Proprietário</span><b>${esc(v.proprietario)}</b></div>
-          <div><span>Cor</span><b>${esc(v.cor?titulo(v.cor):'—')}</b></div>
-          <div><span>Retirada do veículo</span><b>${esc(v.retirada||'—')}</b></div>
-          <div><span>Unidade</span><b>${esc(v.unidade||'—')}</b></div>
-          <div class="full"><span>Observação</span><b>${esc(v.observacao||'—')}</b></div>
+    <div class="mlayout">
+      <div class="card" style="padding-bottom:12px;">
+        <div class="card-h"><h3>Veículos e condutores</h3><span class="sub">${lista.length} de ${o.vs.length}</span></div>
+        <div class="vtools">
+          <input id="vBusca" type="search" placeholder="Buscar placa, condutor, departamento…" aria-label="Buscar neste modelo" value="${esc(vBuscaTxt)}">
+          <div class="fchips" style="margin:0;">${filtros.map(([f,l,n])=>`<button type="button" class="fchip${flFiltro===f?' on':''}" data-f="${esc(f)}">${l} · ${n}</button>`).join('')}</div>
+        </div>
+        <div class="tablewrap" style="max-height:none; min-height:0;">
+          <table class="tb vt">
+            <thead><tr><th>Placa</th><th>Condutor</th><th>Situação</th><th class="hide-sm">Departamento</th><th class="hide-sm">Ano</th><th class="hide-sm">Licenc.</th><th class="hide-sm">Revisão</th><th class="hide-sm">Observação</th></tr></thead>
+            <tbody>${lista.length ? lista.map(v => {
+              const d = diasDesde(v.statusDesde), mostra = v.status==='Pátio'||v.status==='Oficina';
+              const lic = v.docAno ? (Number(v.docAno)<ANO_ATUAL ? `<span class="badge crit">${v.docAno}</span>` : esc(v.docAno)) : '<span class="muted">—</span>';
+              const rev = v.revisao==='Pendente' ? '<span class="badge aten">Pendente</span>' : v.revisao==='Feita' ? `<span class="muted">Feita${v.ultimaRevisao?' '+brData(v.ultimaRevisao):''}</span>` : '<span class="muted">—</span>';
+              return `<tr class="${v.placa===selPlaca?'on':''}" data-placa="${esc(v.placa)}" tabindex="0" aria-selected="${v.placa===selPlaca}">
+                <td>${placaHTML(v.placa,true)}</td>
+                <td><div class="who">${avatar(v)}<span style="min-width:0"><b>${esc(nomeExibicao(v))}</b><small>${esc(v.funcao?titulo(v.funcao):'—')}</small></span></div></td>
+                <td><span class="badge ${ST[v.status]}">${ST_LABEL[v.status]}</span>${mostra&&d!=null?`<div class="dias${d>=7?' alto':''}" style="margin-top:3px">há ${d} d</div>`:''}</td>
+                <td class="hide-sm">${esc(v.departamento)}</td><td class="hide-sm">${esc(v.ano||'—')}</td><td class="hide-sm">${lic}</td><td class="hide-sm">${rev}</td>
+                <td class="hide-sm"><div class="obs-cell" title="${esc(v.observacao)}">${esc(v.observacao)||'<span class="muted">—</span>'}</div></td></tr>`;
+            }).join('') : '<tr><td colspan="8" class="empty">Nenhum veículo deste modelo com esse filtro.</td></tr>'}</tbody>
+          </table>
         </div>
       </div>
-      <div class="card">
-        <div class="card-h"><h3>${esc(v.modelo)} na frota</h3><span class="sub">${at.length} ativo${at.length===1?'':'s'}</span></div>
-        <div class="eyebrow">Situação dos veículos do modelo</div>
-        <div class="stackbar">
-          ${uso?`<div class="sb-uso" style="flex:${uso}">${pct(uso,tot)}</div>`:''}${pat?`<div class="sb-patio" style="flex:${pat}">${pct(pat,tot)}</div>`:''}${of?`<div class="sb-ofic" style="flex:${of}">${pct(of,tot)}</div>`:''}
-        </div>
-        <table class="mtable"><tbody>
-          <tr><td>Em uso</td><td>${pct(uso,tot)}</td><td>${uso}</td></tr>
-          <tr><td>No pátio</td><td>${pct(pat,tot)}</td><td>${pat}</td></tr>
-          <tr><td>Na oficina</td><td>${pct(of,tot)}</td><td>${of}</td></tr>
-          <tr><td>Idade média</td><td></td><td>${idadeMed==null?'—':idadeMed.toFixed(1).replace('.',',')+' anos'}</td></tr>
-          <tr><td>Revisões feitas · pendentes</td><td></td><td>${revFeita} · ${revPend}</td></tr>
-        </tbody></table>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-h"><h3>Alertas e histórico da placa</h3><span class="sub">${esc(v.placa)}</span></div>
-      ${alertasV.length || histV.length ? `<ul class="tl">
-        ${alertasV.map(a=>`<li class="al"><b>${esc(a.alerta)}</b><small>${esc(a.nivel)}${a.detalhe?' · '+esc(a.detalhe):''}</small></li>`).join('')}
-        ${histV.map(h=>{ const dt=h.quando?.toDate?h.quando.toDate():null; return `<li><b>${esc(h.resumo)}</b><small>${esc(h.tipo)}${dt?' · '+dt.toLocaleString('pt-BR'):''}</small></li>`; }).join('')}
-      </ul>` : '<div class="empty">Nenhum alerta nem alteração registrada para esta placa.</div>'}
+      <div id="vFicha">${fichaHTML(frota.find(v=>v.placa===selPlaca))}</div>
     </div>`;
 }
-$('flBody').addEventListener('click', e => {
-  const g = e.target.closest('[data-grp]');
-  if(g){ const m=g.dataset.grp; fechados.has(m)?fechados.delete(m):fechados.add(m); renderVeiculosModelo(); return; }
-  const it = e.target.closest('[data-placa]'); if(it) selecionar(it.dataset.placa, true);
-});
-$('vDetail').addEventListener('click', e => {
-  const ed = e.target.closest('[data-edit]'); if(ed){ abrirEdicao(ed.dataset.edit); return; }
-  const c = e.target.closest('[data-placa]'); if(c) selecionar(c.dataset.placa, false);
-});
-function selecionar(placa, rolar){
-  selPlaca = placa; const v=frota.find(x=>x.placa===placa); if(v) selModelo=v.modelo;
-  try{ localStorage.setItem('frota_placa', selPlaca); localStorage.setItem('frota_modelo', selModelo); }catch(e){}
-  renderVeiculosModelo();
-  if(rolar && window.innerWidth<=1100) $('vDetail').scrollIntoView({behavior:'smooth', block:'start'});
+function fichaHTML(v){
+  if(!v) return '<div class="card empty">Selecione um veículo na lista.</div>';
+  const d = diasDesde(v.statusDesde);
+  const alertasV = calcAlertas().filter(a=>a.placa===v.placa);
+  const histV = hist.filter(h=>h.placa===v.placa).slice(0,6);
+  const lic = v.docAno ? (Number(v.docAno)<ANO_ATUAL ? `${v.docAno} · vencido` : String(v.docAno)) : 'Sem registro';
+  return `<div class="card ficha-card">
+    <div class="vh" style="margin-bottom:14px;">
+      <div class="vh-who">${avatar(v)}<div style="min-width:0"><b>${esc(nomeExibicao(v))}</b><small>${esc(v.funcao?titulo(v.funcao):'')}${v.funcao?' · ':''}${esc(v.departamento)}</small></div></div>
+      ${canWrite ? `<button type="button" class="icon-btn" data-edit="${esc(v.placa)}" aria-label="Editar ${esc(v.placa)}" title="Editar veículo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg></button>` : ''}
+    </div>
+    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:6px;">${placaHTML(v.placa)}<span class="badge ${ST[v.status]}">${ST_LABEL[v.status]}${(v.status==='Pátio'||v.status==='Oficina')&&d!=null?` · ${d} d`:''}</span></div>
+    <div class="ficha">
+      <div><span>Situação desde</span><b>${v.statusDesde?brData(v.statusDesde):'—'}</b></div>
+      <div><span>Proprietário</span><b>${esc(v.proprietario==='Alugada'?'Alugado (Lets)':v.proprietario)}</b></div>
+      <div><span>Ano</span><b>${esc(v.ano||'—')}</b></div>
+      <div><span>Cor</span><b>${esc(v.cor?titulo(v.cor):'—')}</b></div>
+      <div><span>KM atual</span><b>${v.km?fmt(v.km)+' km':'—'}</b></div>
+      <div><span>Licenciamento</span><b>${esc(lic)}</b></div>
+      <div><span>Revisão</span><b>${esc(v.revisao==='Feita'&&v.ultimaRevisao?'Feita '+brData(v.ultimaRevisao):v.revisao)}</b></div>
+      <div><span>Retirada</span><b>${esc(v.retirada||'—')}</b></div>
+      <div><span>RENAVAM</span><b>${esc(v.renavam||'—')}</b></div>
+      <div><span>Unidade</span><b>${esc(v.unidade||'—')}</b></div>
+      <div class="full"><span>Observação</span><b>${esc(v.observacao||'—')}</b></div>
+    </div>
+    <div class="eyebrow" style="margin:16px 0 10px;">Alertas e histórico</div>
+    ${alertasV.length || histV.length ? `<ul class="tl">
+      ${alertasV.map(a=>`<li class="al"><b>${esc(a.alerta)}</b><small>${esc(a.nivel)}${a.detalhe?' · '+esc(a.detalhe):''}</small></li>`).join('')}
+      ${histV.map(h=>{ const dt=h.quando?.toDate?h.quando.toDate():null; return `<li><b>${esc(h.resumo)}</b><small>${esc(h.tipo)}${dt?' · '+dt.toLocaleString('pt-BR'):''}</small></li>`; }).join('')}
+    </ul>` : '<div class="muted" style="font-size:12.5px;">Nenhum alerta nem alteração registrada.</div>'}
+  </div>`;
 }
-$('flBusca').addEventListener('input', renderVeiculosModelo);
-$('flFilt').addEventListener('click', e => { const b=e.target.closest('[data-f]'); if(!b) return; flFiltro=b.dataset.f; document.querySelectorAll('#flFilt button').forEach(x=>x.classList.toggle('on', x===b)); renderVeiculosModelo(); });
+function abrirModelo(m){ selModelo = m; flFiltro=''; vBuscaTxt=''; selPlaca=null; try{ localStorage.setItem('frota_modelo', m); }catch(e){} renderVeiculosModelo(); window.scrollTo({top:0}); }
+$('mTabs').addEventListener('click', e => { const b=e.target.closest('[data-mod]'); if(b) abrirModelo(b.dataset.mod); });
+$('mBody').addEventListener('click', e => {
+  const ed = e.target.closest('[data-edit]'); if(ed){ abrirEdicao(ed.dataset.edit); return; }
+  const mc = e.target.closest('.mcard[data-mod]'); if(mc){ abrirModelo(mc.dataset.mod); return; }
+  const f = e.target.closest('[data-f]'); if(f){ flFiltro=f.dataset.f; selPlaca=null; renderVeiculosModelo(); return; }
+  const tr = e.target.closest('tr[data-placa]'); if(tr){ selecionar(tr.dataset.placa); }
+});
+$('mBody').addEventListener('keydown', e => { const tr=e.target.closest('tr[data-placa]'); if(tr && (e.key==='Enter'||e.key===' ')){ e.preventDefault(); selecionar(tr.dataset.placa); } });
+$('mBody').addEventListener('input', e => {
+  if(e.target.id!=='vBusca') return;
+  vBuscaTxt = e.target.value; const pos = e.target.selectionStart;
+  renderVeiculosModelo();
+  const el=$('vBusca'); if(el){ el.focus(); try{ el.setSelectionRange(pos,pos); }catch(_){} }
+});
+function selecionar(placa){
+  selPlaca = placa;
+  document.querySelectorAll('.vt tbody tr').forEach(tr => { const on = tr.dataset.placa===placa; tr.classList.toggle('on', on); tr.setAttribute('aria-selected', on); });
+  $('vFicha').innerHTML = fichaHTML(frota.find(v=>v.placa===placa));
+  try{ localStorage.setItem('frota_placa', placa); }catch(e){}
+  if(window.innerWidth<=1180) $('vFicha').scrollIntoView({behavior:'smooth', block:'start'});
+}
 
 /* ---------------------------- alertas (tela) ---------------------------- */
 let alFiltro = 'Todos';
@@ -853,7 +896,7 @@ function renderAlertas(alertas){
   $('alBody').innerHTML = rows.length ? rows.map(a=>`<tr><td><span class="badge ${a.nivel==='Crítico'?'crit':'aten'}">${a.nivel}</span></td><td><b>${a.placa!=='—'?`<button type="button" class="link" data-ver="${esc(a.placa)}">${esc(a.placa)}</button>`:'—'}</b></td><td>${esc(a.modelo)}</td><td>${esc(a.alerta)}</td><td class="hide-sm">${esc(a.detalhe)}</td><td class="hide-sm">${esc(a.condutor?titulo(a.condutor):'')}</td></tr>`).join('') : '<tr><td colspan="6" class="empty">Nenhum alerta.</td></tr>';
 }
 $('alChips').addEventListener('click', e => { const b=e.target.closest('[data-al]'); if(!b) return; alFiltro=b.dataset.al; renderAll(); });
-document.addEventListener('click', e => { const b=e.target.closest('[data-ver]'); if(!b) return; flFiltro=''; document.querySelectorAll('#flFilt button').forEach(x=>x.classList.toggle('on', x.dataset.f==='')); $('flBusca').value=''; selPlaca=b.dataset.ver; showView('veiculos'); renderVeiculosModelo(); });
+document.addEventListener('click', e => { const b=e.target.closest('[data-ver]'); if(!b) return; const v=frota.find(x=>x.placa===b.dataset.ver); if(!v) return; selModelo=v.modelo; flFiltro = v.status==='Devolvido' ? 'Devolvido' : ''; vBuscaTxt=''; selPlaca=v.placa; showView('veiculos'); renderVeiculosModelo(); });
 
 /* ---------------------------- cadastro completo ---------------------------- */
 let vSort = {k:'status', dir:1};
