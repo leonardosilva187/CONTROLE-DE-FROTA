@@ -2324,8 +2324,9 @@ function fichaCk(c){
     <div class="eyebrow" style="margin:16px 0 4px;">Avarias${c.tipo==='Retorno'?' novas':''} · ${(c.avarias||[]).length}</div>
     ${(c.avarias||[]).length || (velhas||[]).length ? diagRO(c, velhas) + (c.avarias||[]).map((a,i)=>`<div class="av-ro"><span class="mk-i">${i+1}</span><span><b>${esc(a.t)}</b>${a.obs?` · ${esc(a.obs)}`:''}</span></div>`).join('') + ((velhas||[]).length ? `<div class="note" style="margin-top:6px;">Cinza: ${velhas.length} avaria${velhas.length>1?'s':''} já registrada${velhas.length>1?'s':''} na saída.</div>`:'') : '<div class="muted" style="font-size:12.5px;">Nenhuma avaria marcada.</div>'}
     <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:16px;">
-      <button type="button" class="btn btn-line" data-ckprint="${esc(c.id)}" style="flex:1;">Imprimir</button>
-      ${canWrite && c.tipo==='Saída' && !c.retornoId ? `<button type="button" class="btn btn-dark" data-ckret="${esc(c.id)}" style="flex:1.4;">Fazer checklist de retorno</button>` : ''}
+      <button type="button" class="btn btn-line" data-ckprint="${esc(c.id)}" style="flex:1;">Imprimir checklist</button>
+      <button type="button" class="btn btn-line" data-ckreg="${esc(c.id)}" style="flex:1.3;" title="Registro de Utilização e Guarda de Veículo preenchido com os dados deste checklist">Registro de guarda</button>
+      ${canWrite && c.tipo==='Saída' && !c.retornoId ? `<button type="button" class="btn btn-dark" data-ckret="${esc(c.id)}" style="flex:1 1 100%;">Fazer checklist de retorno</button>` : ''}
     </div>
     ${canWrite ? `<button type="button" class="btn-x" data-ckdel="${esc(c.id)}" style="margin-top:12px;">Excluir este checklist</button>` : ''}
   </div>`;
@@ -2428,6 +2429,76 @@ function imprimirCk(c, modelo){
   if(!w){ toast('Libere as janelas pop-up deste site para imprimir.'); return; }
   w.document.open(); w.document.write(html); w.document.close();
 }
+
+/* ---------- registro de utilização e guarda de veículo (termo do RH preenchido pelo checklist) ---------- */
+const MESES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+const dataExtenso = iso => { if(!iso) return ''; const [a,m,d] = iso.split('-'); return `${parseInt(d,10)} de ${MESES[parseInt(m,10)-1]} de ${a}`; };
+function imprimirRegistro(c){
+  const saida = c.tipo==='Saída' ? c : checklists.find(x=>x.id===c.saidaId) || null;
+  const ret = c.tipo==='Retorno' ? c : (c.retornoId ? checklists.find(x=>x.id===c.retornoId) : null);
+  const v = frota.find(x=>x.placa===c.placa) || {};
+  const tpl = ckTpl(c.modelo);
+  const nome = String((saida||c).condutor||'').toUpperCase();
+  const marca = String(v.tipo || tpl?.tipo || c.modelo || '').toUpperCase().replace(/\s*\(ALUGADO\)\s*/,'');
+  const L = (val, w) => val ? `<b class="val">${esc(val)}</b>` : `<span class="lin" style="width:${w||46}mm"></span>`;
+  const kmTxt = n => n!=null && n!=='' ? fmt(n) : '';
+  const ass = `<div class="ass"><div><span class="lin" style="width:62mm"></span><b>EMPREGADO</b></div><div><span class="lin" style="width:62mm"></span><b>EMPREGADORA</b></div></div>
+    <div class="ass test"><div>Testemunha:<span class="lin" style="width:62mm; margin-top:9mm"></span>Nome:<br>CPF:</div><div>Testemunha:<span class="lin" style="width:62mm; margin-top:9mm"></span>Nome:<br>CPF:</div></div>`;
+  const html = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Registro de utilização · ${esc(c.placa)} · ${esc(titulo(nome))}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Questrial&display=swap" rel="stylesheet">
+  <style>
+    @page{size:A4; margin:30mm 20mm 20mm 30mm;} *{box-sizing:border-box;} html,body{margin:0;}
+    body{font:11pt/1.5 "Century Gothic","CenturyGothic","URW Gothic","Questrial",Arial,sans-serif; color:#000; text-align:justify; -webkit-print-color-adjust:exact; print-color-adjust:exact;}
+    h1{font-size:11pt; text-align:center; margin:0 0 18pt; font-weight:700;}
+    h2{font-size:11pt; margin:14pt 0 4pt; font-weight:700;}
+    p{margin:0 0 9pt;} .cab p{margin:0; font-weight:700;} .cab{margin-bottom:14pt;}
+    .campos{margin:0 0 0 12pt;} .campos div{margin:1pt 0;}
+    .val{font-weight:700;} .lin{display:inline-block; border-bottom:1px solid #000; height:1em; vertical-align:-2pt;}
+    ul{margin:4pt 0 10pt 18pt; padding:0;} li{margin:0 0 7pt;}
+    .local{text-align:right; margin:22pt 0 0; font-weight:700;}
+    .ass{display:flex; justify-content:space-between; gap:20mm; margin-top:20pt; text-align:left;} .ass div{flex:1;} .ass .lin{display:block; margin-bottom:3pt;}
+    .ass.test{margin-top:14pt; line-height:1.6;}
+    .dev{break-inside:avoid; page-break-inside:avoid; margin-top:24pt;}
+    .dev h2{background:#e7e7e7; text-align:center; padding:3pt 0; margin:0 0 6pt;}
+    .nota-cpf{display:none;}
+  </style></head><body>
+  <h1>REGISTRO DE UTILIZAÇÃO E GUARDA DE VEÍCULO</h1>
+  <div class="cab"><p>EMPREGADORA: DISDAL DISTRIBUIDORA DE ALIMENTOS LTDA</p><p>CNPJ: 08.482.850/0001-85</p></div>
+  <div class="cab"><p>EMPREGADO(A): ${esc(nome)}</p><p>CPF: <span class="lin" style="width:48mm"></span></p></div>
+  <p>Em complemento ao <b>CONTRATO DE TRABALHO,</b> no que se refere à entrega e assunção de responsabilidade sobre o uso de veículos automotores destinados exclusivamente ao exercício do trabalho, firmado entre a <b>EMPREGADORA</b> e o(a) <b>EMPREGADO(A)</b>, o presente documento tem por finalidade registrar a identificação do veículo que, por necessidade operacional, será disponibilizado ao(à) <b>EMPREGADO(A)</b> e permanecerá sob sua guarda e responsabilidade durante o período abaixo indicado.</p>
+  <h2>1. IDENTIFICAÇÃO DO VEÍCULO</h2>
+  <div class="campos"><div>Marca/Modelo: ${L(marca)}</div><div>Placa: ${L(c.placa)}</div><div>RENAVAM: ${L(v.renavam)}</div><div>Quilometragem na entrega: ${L(saida?kmTxt(saida.km):'',40)} km</div></div>
+  <h2>2. PERÍODO DE UTILIZAÇÃO</h2>
+  <div class="campos"><div>Data de retirada: ${L(saida?brData(saida.data):'')}</div><div>Horário de retirada: ${L(saida?saida.hora:'',30)}</div><div>Data prevista para devolução: <span class="lin" style="width:40mm"></span></div><div>Horário previsto para devolução: <span class="lin" style="width:30mm"></span></div><div>Quilometragem na devolução: ${L(ret?kmTxt(ret.km):'',40)} km</div></div>
+  <h2>3. RESPONSABILIDADE PELA GUARDA</h2>
+  <p>O(A) <b>EMPREGADO(A)</b> declara que recebeu o veículo acima identificado para utilização exclusivamente no exercício de suas atividades profissionais, assumindo, durante o período registrado neste documento, a condição de guardião(ã) momentâneo(a) do veículo, nos termos do Contrato firmado com a <b>EMPREGADORA</b>.</p>
+  <p>O(A) <b>EMPREGADO(A)</b> declara estar ciente de que deverá zelar pela guarda, conservação, segurança e adequada utilização do veículo durante todo o período em que estiver sob sua posse, observando integralmente as disposições do referido Contrato, as normas internas da <b>EMPREGADORA</b> e a legislação aplicável.</p>
+  <h2>4. CHECKLIST DE ENTREGA E DEVOLUÇÃO</h2>
+  <p>O(A) <b>EMPREGADO(A)</b> declara ciência de que o Checklist de Entrega e Devolução deverá ser obrigatoriamente preenchido e conferido no momento da retirada e da devolução do veículo.</p>
+  <p>As condições, avarias, equipamentos, acessórios, documentos, quilometragem e demais informações registradas no Checklist deverão ser conferidas pelo(a) <b>EMPREGADO(A),</b> que deverá comunicar imediatamente qualquer divergência ou condição não registrada.</p>
+  <p>O Checklist de Entrega e Devolução integra este Registro de Utilização e será considerado, juntamente com este documento, para fins de comprovação das condições do veículo no início e no término do período de guarda do(a) <b>EMPREGADO(A)</b>.</p>
+  <p>Eventuais avarias, danos, faltas de equipamentos ou outras irregularidades identificadas na devolução e que não estejam registradas no momento da entrega poderão ser objeto de apuração pela <b>EMPREGADORA</b>, considerando-se o período em que o veículo permaneceu sob a guarda do(a) <b>EMPREGADO(A),</b> sem prejuízo da análise dos demais elementos disponíveis.</p>
+  <h2>5. DECLARAÇÃO DO(A) EMPREGADO(A)</h2>
+  <p>Declaro que:</p>
+  <ul><li>recebi o veículo acima identificado para utilização nas atividades profissionais;</li>
+  <li>conferi as informações constantes deste Registro e do Checklist de Entrega;</li>
+  <li>estou ciente de que sou o(a) guardião(ã) momentâneo(a) do veículo durante o período aqui registrado;</li>
+  <li>comprometo-me a comunicar imediatamente qualquer acidente, sinistro, dano, avaria, defeito, irregularidade ou ocorrência envolvendo o veículo;</li>
+  <li>comprometo-me a devolver o veículo no local, data e horário determinados pela <b>EMPREGADORA</b>, acompanhado de seus documentos, chaves, equipamentos e acessórios;</li>
+  <li>estou ciente de que as informações constantes deste Registro e do Checklist poderão ser utilizadas pela <b>EMPREGADORA</b> para fins de controle, apuração de ocorrências e identificação do responsável pelo veículo durante o respectivo período de utilização;</li>
+  <li>estou ciente de que a utilização de veículo diverso daquele habitualmente utilizado não altera as obrigações assumidas no Termo de Responsabilidade, desde que o veículo esteja devidamente registrado neste documento.</li></ul>
+  <p>Declaro, por fim, que não possuo qualquer ressalva quanto às condições do veículo no momento de sua entrega, além daquelas expressamente registradas no Checklist de Entrega.</p>
+  <div class="dev" style="margin-top:0"><p class="local">BRASÍLIA - DF, ${esc(dataExtenso((saida||c).data))}</p>
+  ${ass}</div>
+  <div class="dev"><h2>DEVOLUÇÃO DO VEÍCULO</h2>
+    <div class="campos" style="margin-left:0"><div>Data: ${L(ret?brData(ret.data):'',40)}</div><div>Horário: ${L(ret?ret.hora:'',30)}</div><div>Quilometragem: ${L(ret?kmTxt(ret.km):'',40)} km</div></div>
+    ${ass}</div>
+  <script>window.onload=function(){var go=function(){setTimeout(function(){window.print();},300);}; if(document.fonts&&document.fonts.ready){document.fonts.ready.then(go);}else{go();}};<\/script></body></html>`;
+  const w = window.open('', '_blank');
+  if(!w){ toast('Libere as janelas pop-up deste site para imprimir.'); return; }
+  w.document.open(); w.document.write(html); w.document.close();
+}
+$('ckFicha').addEventListener('click', e=>{ const r = e.target.closest('[data-ckreg]'); if(!r) return; const c = checklists.find(x=>x.id===r.dataset.ckreg); if(c) imprimirRegistro(c); });
 
 /* ---------------------------- histórico ---------------------------- */
 async function logHist(tipo, placa, resumo){
