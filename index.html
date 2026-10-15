@@ -419,6 +419,18 @@ select[data-bcc="bancoMotorista"],select[data-bcc="bancoPassageiro"]{min-width:2
   .av-row{grid-template-columns:auto minmax(0,1fr) auto;} .av-row input{grid-column:1/-1;}
 }
 
+/* atalho do checklist (bem visível) */
+.ck-go{display:inline-flex; align-items:center; gap:8px; height:38px; padding:0 16px 0 13px; border-radius:999px; border:0; background:var(--orange); color:#14161b; font-size:13px; font-weight:800; box-shadow:0 6px 16px rgba(245,165,36,.35);}
+.ck-go:hover{filter:brightness(1.05); transform:translateY(-1px);}
+.ck-go.on{background:var(--black); color:#fff; box-shadow:none;}
+.rail-btn[data-view="checklist"]{color:var(--orange);}
+.rail-btn .novo{position:absolute; top:-4px; right:-8px; background:var(--orange); color:#14161b; font-size:8.5px; font-weight:900; letter-spacing:.4px; padding:1px 4px; border-radius:5px;}
+.ck-banner{display:flex; align-items:center; gap:16px; flex-wrap:wrap; background:linear-gradient(120deg,#14161b,#2a2d35); color:#fff; border-radius:var(--r); padding:16px 20px; margin-bottom:16px; box-shadow:var(--shadow);}
+.ck-banner .ic{width:46px; height:46px; border-radius:12px; background:var(--orange); color:#14161b; display:grid; place-items:center; flex-shrink:0;}
+.ck-banner b{font-size:15px;} .ck-banner small{display:block; color:#b9bdc8; font-size:12.5px; margin-top:2px;}
+.ck-banner .btn{margin-left:auto; background:var(--orange); color:#14161b;}
+@media (max-width:760px){ .ck-go span{display:none;} .ck-go{padding:0 12px;} .rail-btn .novo{display:none;} }
+
 @media (max-width:1100px){ .fleet{grid-template-columns:1fr;} .fleet-list{position:static;} .fl-body{max-height:340px;} }
 @media (max-width:760px){
   #rail{inset:auto 0 0 0; width:auto; height:62px; flex-direction:row; justify-content:space-around; padding:0 6px; gap:0;}
@@ -443,7 +455,7 @@ select[data-bcc="bancoMotorista"],select[data-bcc="bancoPassageiro"]{min-width:2
   <button type="button" class="rail-btn" data-view="painel" aria-label="Painel"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span class="tt">Painel</span></button>
   <button type="button" class="rail-btn" data-view="veiculos" aria-label="Veículos"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 15V8h12v7"/><path d="M14 10h4l3 3v2h-7"/><circle cx="6.5" cy="16.5" r="1.8"/><circle cx="17" cy="16.5" r="1.8"/></svg><span class="tt">Veículos</span></button>
   <button type="button" class="rail-btn" data-view="revisao" aria-label="Revisão"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.3 5.3L3 18l3 3 6.4-6.4a4 4 0 0 0 5.3-5.3l-2.6 2.6-2.4-.6-.6-2.4z"/></svg><span class="tt">Revisão</span></button>
-  <button type="button" class="rail-btn" data-view="checklist" aria-label="Checklist"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M8.5 12.5l2 2 4-4.5"/><path d="M9 18h6"/></svg><span class="tt">Checklist de saída e retorno</span></button>
+  <button type="button" class="rail-btn" data-view="checklist" aria-label="Checklist"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M8.5 12.5l2 2 4-4.5"/><path d="M9 18h6"/></svg><span class="novo">NOVO</span><span class="tt">Checklist de saída e retorno</span></button>
   <button type="button" class="rail-btn" data-view="colaboradores" aria-label="Colaboradores"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.3"/><path d="M2.8 19.5c.6-3.2 3-5.2 6.2-5.2s5.6 2 6.2 5.2"/><path d="M16 4.9a3.2 3.2 0 0 1 0 6.2M18.6 14.6c1.5.8 2.4 2.5 2.7 4.9"/></svg><span class="tt">Colaboradores</span></button>
   <button type="button" class="rail-btn" data-view="alertas" aria-label="Alertas"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9.5 17h-19z"/><path d="M12 10v4M12 17.5v.5"/></svg><span class="tt">Alertas</span></button>
   <button type="button" class="rail-btn" data-view="cadastro" aria-label="Cadastro"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span class="tt">Cadastro completo</span></button>
@@ -461,12 +473,14 @@ select[data-bcc="bancoMotorista"],select[data-bcc="bancoPassageiro"]{min-width:2
     <div class="tb-right">
       <span class="pill" id="statusTag"><span class="dot"></span><span id="statusTxt">conectando…</span></span>
       <span class="pill"><span id="clock">--:--</span></span>
+      <button type="button" class="ck-go" id="ckGoTop" title="Checklist de saída e retorno dos veículos"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M8.5 12.5l2 2 4-4.5"/></svg><span>Checklist de veículos</span></button>
       <span class="pill" id="editPill" style="display:none;"><span class="dot" style="background:var(--blue)"></span>Modo edição</span>
     </div>
   </div>
 
   <!-- ===================== PAINEL ===================== -->
   <section id="viewPainel" class="view">
+    <div class="ck-banner"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M8.5 12.5l2 2 4-4.5"/></svg></span><div><b>Checklist de saída e retorno</b><small id="ckBannerTxt">Vistoria dos veículos por modelo, com itens OK / N/OK, avarias e comparação na volta.</small></div><button type="button" class="btn" id="ckGoBanner">Abrir checklist</button></div>
     <p class="resumo" id="resumo">Carregando a frota…</p>
     <div class="kpis" id="kpis"></div>
     <div class="grid2">
@@ -2645,6 +2659,7 @@ const VIEWS = {checklist:['viewChecklist','Checklist de saída e retorno'], revi
 function showView(v){
   if(!VIEWS[v]) v='painel';
   Object.entries(VIEWS).forEach(([k,[id]]) => $(id).style.display = k===v ? '' : 'none');
+  $('ckGoTop').classList.toggle('on', v==='checklist');
   document.querySelectorAll('.rail-btn').forEach(b => { b.classList.toggle('on', b.dataset.view===v); b.toggleAttribute('aria-current', b.dataset.view===v); });
   $('pageTitle').firstChild.textContent = VIEWS[v][1];
   try{ localStorage.setItem('frota_view', v); }catch(e){}
@@ -2652,6 +2667,8 @@ function showView(v){
   window.scrollTo({top:0});
 }
 document.querySelectorAll('.rail-btn').forEach(b => b.addEventListener('click', () => showView(b.dataset.view)));
+window.addEventListener('hashchange', () => { const h=location.hash.slice(1); if(VIEWS[h] && $(VIEWS[h][0]).style.display==='none'){ showView(h); if(h==='checklist') renderChecklist(); } });
+['ckGoTop','ckGoBanner'].forEach(id => $(id).addEventListener('click', () => { ckAba='novo'; showView('checklist'); renderChecklist(); }));
 $('verAlertas').addEventListener('click', () => showView('alertas'));
 let inicial = location.hash.slice(1); try{ inicial = inicial || localStorage.getItem('frota_view') || 'painel'; }catch(e){ inicial = inicial || 'painel'; }
 showView(inicial);
