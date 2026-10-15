@@ -189,6 +189,14 @@ table.tb{width:100%; border-collapse:collapse; font-size:12.5px;}
 th.sortable{cursor:pointer; user-select:none;} th.sortable:hover{color:var(--blue);}
 th[aria-sort="ascending"]::after{content:" ▲"; font-size:9px;} th[aria-sort="descending"]::after{content:" ▼"; font-size:9px;}
 .obs-cell{max-width:230px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.cond-edit{width:100%; min-width:180px; max-width:260px; padding:6px 8px; border:1px solid var(--line); border-radius:8px; background:#fff; font-size:12.5px; font-weight:600; color:var(--ink);}
+.cond-edit:focus,.obs-edit:focus{outline:none; border-color:var(--blue); box-shadow:0 0 0 3px var(--blue-soft);}
+.obs-edit{width:100%; min-width:190px; padding:6px 8px; border:1px solid var(--line); border-radius:8px; background:#fff; font:inherit; font-size:12px; color:var(--ink); resize:vertical; line-height:1.4;}
+.obs-edit.salvo{border-color:var(--green); box-shadow:0 0 0 3px var(--green-soft);}
+.lock-card{display:flex; align-items:center; gap:16px; flex-wrap:wrap;}
+.lock-card .ic{width:44px; height:44px; border-radius:12px; background:var(--canvas); display:grid; place-items:center; color:var(--ink2);}
+.colab-tag{font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:999px; background:var(--line2); color:var(--muted);}
+.colab-tag.cad{background:var(--blue-soft); color:var(--blue);}
 .st-edit{padding:5px 8px; border-radius:999px; font-size:12px; font-weight:700; border:1px solid var(--line); background:#fff; color:var(--ink);}
 .st-edit.uso{color:var(--green); background:var(--green-soft); border-color:transparent;}
 .st-edit.patio{color:#b77400; background:var(--orange-soft); border-color:transparent;}
@@ -309,6 +317,7 @@ th[aria-sort="ascending"]::after{content:" ▲"; font-size:9px;} th[aria-sort="d
   <div class="rail-sep"></div>
   <button type="button" class="rail-btn" data-view="afast" aria-label="Férias e afastamentos"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span class="tt">Férias e afastamentos</span></button>
   <button type="button" class="rail-btn" data-view="hist" aria-label="Histórico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span class="tt">Histórico de alterações</span></button>
+  <button type="button" class="rail-btn" data-view="cadastros" aria-label="Cadastros"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.4 3.2-5.5 6.5-5.5s5.9 2.1 6.5 5.5"/><path d="M19 8v6M16 11h6"/></svg><span class="tt">Cadastros</span></button>
   <button type="button" class="rail-btn" data-view="edicao" aria-label="Modo edição"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span class="tt">Modo edição</span></button>
   <div class="rail-foot" aria-hidden="true">DS</div>
 </nav>
@@ -432,6 +441,73 @@ th[aria-sort="ascending"]::after{content:" ▲"; font-size:9px;} th[aria-sort="d
     </div>
   </section>
 
+  <!-- ===================== CADASTROS ===================== -->
+  <section id="viewCadastros" class="view" style="display:none;">
+    <div class="card lock-card" id="cadLocked">
+      <span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
+      <div style="flex:1; min-width:220px;"><b style="font-size:14.5px;">Cadastros disponíveis só no Modo edição</b><div class="note" style="margin-top:3px;">Para cadastrar colaboradores e veículos, entre com o PIN de edição.</div></div>
+      <button type="button" class="btn btn-dark" id="cadIrEdicao">Ir para o Modo edição</button>
+    </div>
+    <div id="cadOpen" style="display:none;">
+      <div class="fchips" id="cadTabs">
+        <button type="button" class="fchip on" data-cad="colab">Novo colaborador</button>
+        <button type="button" class="fchip" data-cad="veic">Novo veículo</button>
+      </div>
+      <div id="cadColab">
+        <div class="grid2" style="align-items:start;">
+          <div class="card form">
+            <div class="card-h"><h3>Cadastrar colaborador</h3><span class="sub">fica disponível na lista de condutores</span></div>
+            <div class="form-grid">
+              <div class="full"><label for="c_nome">Nome completo *</label><input id="c_nome" type="text" placeholder="Ex: João da Silva Souza" autocomplete="off"></div>
+              <div><label for="c_funcao">Função</label><input id="c_funcao" type="text" placeholder="Ex: Vendedor"></div>
+              <div><label for="c_departamento">Departamento</label><select id="c_departamento"><option>Vendedores</option><option>Comercial</option><option>Merchandising</option><option>Diretoria</option><option>Operacional</option><option>Outro</option></select></div>
+              <div><label for="c_matricula">Matrícula</label><input id="c_matricula" type="text"></div>
+              <div><label for="c_cnhVenc">Vencimento da CNH</label><input id="c_cnhVenc" type="date"></div>
+              <div class="full"><label for="c_veiculo">Já entregar um veículo (opcional)</label><select id="c_veiculo"></select></div>
+              <div class="full"><label for="c_obs">Observação</label><textarea id="c_obs" rows="2"></textarea></div>
+            </div>
+            <button class="btn btn-dark" id="btnColabSalvar" type="button" style="margin-top:14px;">Cadastrar colaborador</button>
+            <div id="colabMsg" class="note"></div>
+          </div>
+          <div class="card">
+            <div class="card-h"><h3>Colaboradores</h3><span class="sub" id="colabCount"></span></div>
+            <div class="vtools"><input id="colabBusca" type="search" placeholder="Buscar colaborador…" aria-label="Buscar colaborador"></div>
+            <div class="tablewrap" style="max-height:520px; min-height:0;">
+              <table class="tb"><thead><tr><th>Nome</th><th>Veículo</th><th class="hide-sm">Função</th><th class="hide-sm">CNH</th><th></th></tr></thead><tbody id="colabBody"></tbody></table>
+            </div>
+            <div class="note" id="colabNote"></div>
+          </div>
+        </div>
+      </div>
+      <div id="cadVeic" style="display:none;">
+        <div class="card form" style="max-width:900px;">
+          <div class="card-h"><h3>Cadastrar veículo</h3><span class="sub">a foto aparece sozinha quando o tipo é de um modelo conhecido</span></div>
+          <div class="form-grid">
+            <div><label for="n_placa">Placa *</label><input id="n_placa" type="text" maxlength="8" style="text-transform:uppercase" placeholder="ABC1D23"></div>
+            <div><label for="n_tipo">Tipo de veículo *</label><input id="n_tipo" type="text" list="dlTipos" placeholder="Ex: I/FIAT SCUDO CARGO TD"></div>
+            <div><label for="n_condutor">Condutor</label><select id="n_condutor" class="cond-sel"></select></div>
+            <div><label for="n_status">Situação</label><select id="n_status"><option>Em uso</option><option>Pátio</option><option>Oficina</option></select></div>
+            <div><label for="n_departamento">Departamento</label><select id="n_departamento"><option>Vendedores</option><option>Comercial</option><option>Merchandising</option><option>Diretoria</option><option>Sem dado</option></select></div>
+            <div><label for="n_funcao">Função</label><input id="n_funcao" type="text"></div>
+            <div><label for="n_proprietario">Proprietário</label><select id="n_proprietario"><option>Própria</option><option>Alugada</option></select></div>
+            <div><label for="n_ano">Ano (fab./modelo)</label><input id="n_ano" type="text" placeholder="2026/2026"></div>
+            <div><label for="n_renavam">RENAVAM</label><input id="n_renavam" type="text" inputmode="numeric"></div>
+            <div><label for="n_cor">Cor</label><input id="n_cor" type="text" value="BRANCA"></div>
+            <div><label for="n_retirada">Retirada do veículo</label><input id="n_retirada" type="text" placeholder="dd/mm/aaaa"></div>
+            <div><label for="n_docAno">Licenciamento (ano do documento)</label><input id="n_docAno" type="number" min="2000" max="2100"></div>
+            <div><label for="n_revisao">Revisão</label><select id="n_revisao"><option>Sem registro</option><option>Feita</option><option>Pendente</option></select></div>
+            <div><label for="n_ultimaRevisao">Data da última revisão</label><input id="n_ultimaRevisao" type="date"></div>
+            <div><label for="n_km">KM atual</label><input id="n_km" type="number" min="0" step="1"></div>
+            <div class="full"><label for="n_observacao">Observação</label><textarea id="n_observacao" rows="2"></textarea></div>
+          </div>
+          <datalist id="dlTipos"></datalist>
+          <button class="btn btn-dark" id="btnVeicSalvar" type="button" style="margin-top:14px;">Cadastrar veículo</button>
+          <div id="veicMsg" class="note"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ===================== EDIÇÃO ===================== -->
   <section id="viewEdicao" class="view" style="display:none;">
     <div class="card form" style="max-width:860px;">
@@ -455,7 +531,7 @@ th[aria-sort="ascending"]::after{content:" ▲"; font-size:9px;} th[aria-sort="d
           <button class="btn btn-dark" id="btnBulkAnalyze" type="button" style="margin-top:10px;">Analisar e pré-visualizar</button>
           <div id="bulkMsg" class="note"></div>
         </div>
-        <button class="btn btn-line" id="btnNovo" type="button">+ Cadastrar veículo novo</button>
+        <button class="btn btn-line" id="btnNovo" type="button">Abrir Cadastros (colaborador e veículo)</button>
         <div class="note">Para editar um veículo, abra a aba do modelo em Veículos, selecione a placa e use o botão de lápis. A situação também pode ser trocada direto no Cadastro completo.</div>
       </div>
       <div class="note">Link público: qualquer pessoa vê o painel ao vivo. Só quem tiver o PIN consegue editar a frota.</div>
@@ -473,7 +549,7 @@ th[aria-sort="ascending"]::after{content:" ▲"; font-size:9px;} th[aria-sort="d
       <div><label for="e_placa">Placa</label><input id="e_placa" type="text" maxlength="8" style="text-transform:uppercase"></div>
       <div><label for="e_tipo">Tipo de veículo</label><input id="e_tipo" type="text" placeholder="Ex: I/FIAT SCUDO CARGO TD"></div>
       <div><label for="e_status">Situação</label><select id="e_status"><option>Em uso</option><option>Pátio</option><option>Oficina</option><option>Devolvido</option></select></div>
-      <div><label for="e_condutor">Condutor atual</label><input id="e_condutor" type="text" list="dlCondutores"></div>
+      <div><label for="e_condutor">Condutor atual</label><select id="e_condutor" class="cond-sel"></select></div>
       <div><label for="e_departamento">Departamento</label><select id="e_departamento"><option>Vendedores</option><option>Comercial</option><option>Merchandising</option><option>Diretoria</option><option>Sem dado</option></select></div>
       <div><label for="e_funcao">Função</label><input id="e_funcao" type="text"></div>
       <div><label for="e_proprietario">Proprietário</label><select id="e_proprietario"><option>Própria</option><option>Alugada</option><option>Sem dado</option></select></div>
@@ -553,6 +629,7 @@ const db = getFirestore(app);
 const frotaRef = collection(db, "frota");
 const histRef = collection(db, "frota_historico");
 const afRef = collection(db, "frota_afastamentos");
+const colabRef = collection(db, "frota_colaboradores");
 
 const SEED = {"veiculos":[["CITROEN JUMPY CARGO","GAZ2E95","OALAS DAMASCENO VIEIRA","","1299935930","2022/2023","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","09/07/2024","2026"],["CITROEN JUMPY CARGO","RUE1C31","MARCOS VINICIUS PEREIRA DE OLIVEIRA","","1298070780","2022/2023","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","24/01/2023",""],["CITROEN JUMPY CARGO","RUE1C37","ADAILTON DA SILVA VIANA","","1298070853","2022/2023","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","25/09/2024",""],["CITROEN JUMPY CARGO","RUE1C14","PAULO HENRIQUE GONÇALVES SABINO","","1298070594","2022/2023","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","25/09/2024",""],["CITROEN JUMPY CARGO","RUE1C16","ANTONIO ALVES DA MOTA FILHO","","1298070608","2022/2023","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","15/07/2022",""],["CITROEN JUMPY CARGO","RUE1C11","RAFAEL FRANCELINO DE QUEIROZ","","1298070543","2022/2023","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","26/01/2023",""],["CITROEN JUMPY CARGO","RUE1C19","EULER JUNIOR FERREIRA DA SILVA","","1298070659","2022/2023","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","25/09/2024",""],["CITROEN JUMPY CARGO","RUE1C35","JHENIS RODRIGUES DOS SANTOS","ESTAVA COM IMAVAN","1298070837","2022/2023","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","25/09/2024",""],["CITROEN JUMPY CARGO","RUE1C38","SERGIO HENRIQUE DE JESES ARAUJO","","1298070870","2022/2023","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","03/10/2022",""],["CITROEN JUMPY CARGO","RTX1E69","JEFERSON ABRANTES DA SILVA","","1292456954","2022/2023","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","25/09/2024",""],["I/ PEUGEOT E EXPERT CARGO","RTW8H85","WESCLEY CLAUDINO DE SOUSA","","1292684817","2022/2022","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","09/07/2024",""],["I/ PEUGEOT E EXPERT CARGO","RTX1E59","DARLAN PEREIRA DE OLIVEIRA","","1292456750","2022/2022","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","21/11/2022",""],["I/ PEUGEOT E EXPERT CARGO","RTX1E43","GABRIEL BRENER DA SILVA","","1292456571","2022/2022","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","06/12/2022",""],["I/ PEUGEOT E EXPERT CARGO","RUE1C04","DIONAI MARTINS DA CUNHA","","1298070462","2022/2022","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","25/09/2024",""],["I/FIAT SCUDO CARGO TD","OVO5A15","BRUCE MARTINS DA SILVA","REVISÃO FEITA","1454904019","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","12/09/2025",""],["I/FIAT SCUDO CARGO TD","OVO5B39","RONALDO FABRIZIO COELHO DA SILVA","FAZER REVISÃO","1454790757","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","12/09/2025",""],["I/FIAT SCUDO CARGO TD","OVO4J10","CARLOS ELIAS ALVES","REVISÃO FEITA","1454790803","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","12/09/2025",""],["I/FIAT SCUDO CARGO TD","OVO4J22","RIEDE BATISTA LOBO","FAZER ORÇAMENTO BATIDA","1454784463","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","12/09/2025",""],["I/FIAT SCUDO CARGO TD","OZX7G43","JHEYSSON GENESIO SOARES PANUNCIO","REVISÃO FEITA","1458682789","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","12/09/2025",""],["I/FIAT SCUDO CARGO TD","RER6F92","VICTOR SECUNDO DIAS","REVISÃO FEITA","1463293809","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","08/10/2025",""],["I/FIAT SCUDO CARGO TD","RER2H90","WOSHINGTON BARCELOS FAGUNDES DE ARAUJO","","1463058397","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","08/10/2025",""],["I/FIAT SCUDO CARGO TD","RER2H98","WILLIAM DE CARVALHO DIAS","","1463061282","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","08/10/2025",""],["I/FIAT SCUDO CARGO TD","RER6F94","JORGE ANTONIO MATOS NETO","","1463153829","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","08/10/2025",""],["I/FIAT SCUDO CARGO TD","RER6F93","MATHEUS ROBERTO PEREIRA DE OLIVEIRA","","1463385563","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","08/10/2025",""],["I/FIAT SCUDO CARGO TD","RER6F91","WHAGNO MARTINS DOS SANTOS","REVISÃO OK","1463295011","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","08/10/2025",""],["I/FIAT SCUDO CARGO TD","RER6F83","OFICINA","OFICINA","1463297227","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","08/10/2025",""],["I/FIAT SCUDO CARGO TD","RER6F90","GILFERSON GIBEON LOPES DE SENA","FAZER REVISÃO","1463295810","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","08/10/2025",""],["I/FIAT SCUDO CARGO TD","RER6F89","JOAO PEDRO DA SILVA GONÇALVES","","1463296379","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","10/11/2025",""],["I/FIAT SCUDO CARGO TD","RER6F87","ANTONIO FRANCISCO DA SILVA CUNHA","REVISÃO FEITA","1463296891","2025/2025","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","10/11/2025",""],["FIAT/ARGO 1.0 FLEX (Alugado)","GMF9F20","RUBENS DA CRUZ GARCIA","","","2024/2024","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","25/04/2024",""],["FIAT/ARGO 1.0 FLEX (Alugado)","GMF9F29","WENDEL WANDO DO NASCIMENTO LOPES","","1387088570","2024/2024","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","-",""],["FIAT/ARGO 1.0 FLEX (Alugado)","GMF9F27","ROMEU ALVES DA NATIVIDADE","","1387088553","2024/2024","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","-",""],["FIAT/ARGO 1.0 FLEX (Alugado)","SIP6E45","LILIAN CASTORINA PIGNATA DE MELO","","1357907718","2023/2024","COMERCIAL","DIRETOR","BRANCA","LETS","DISDAL","22/11/2023",""],["FIAT/ARGO 1.0 FLEX (Alugado)","TCH8J02","PRISCILA PEREIRA CANDIDO","","1404097098","2024/2025","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","08/10/2024",""],["FIAT/ARGO 1.0 FLEX (Alugado)","TCY8C71","JANAINA APARECIDA DE JESUS SOUSA","","1410063663","2024/2025","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","22/11/2024",""],["FIAT/ARGO 1.0 FLEX (Alugado)","TCY8C78","JOSE IVALDO DA CRUZ SILVA","","1410063736","2024/2025","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","22/11/2024",""],["FIAT/ARGO 1.0 FLEX (Alugado)","TZY0A05","SILVIO FERREIRA DOS SANTOS","","1501363040","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","04/09/2026","2026"],["FIAT/ARGO 1.0 FLEX (Alugado)","TZZ3J55","LUCAS RIBEIRO ALVES PEREIRA","","1502492900","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","10/09/2026",""],["FIAT/ARGO 1.0 FLEX (Alugado)","TZZ3J58","JULIO GLESSON TORRES ROCHA","","1502492978","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","04/09/2026","2026"],["FIAT/ARGO 1.0 FLEX (Alugado)","TZZ3J59","WALLISON PEREIRA DIAS DE MESQUITA","","1502492994","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","04/09/2026",""],["FIAT/ARGO 1.0 FLEX (Alugado)","TZZ3J61","RAFAEL BEZERRA DOS SANTOS","","1502493028","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","04/09/2026",""],["FIAT/ARGO 1.0 FLEX (Alugado)","TZZ3J62","LUCAS NERES MONCUETH","","1502493036","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","04/09/2026",""],["FIAT/ARGO 1.0 FLEX (Alugado)","UAE5F07","RENATO FERNANDES SOUSA SILVA","","1503947308","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","04/09/2026","2026"],["FIAT/ARGO 1.0 FLEX (Alugado)","UAE5F09","JOAO FABIANO GOMES FERREIRA","","1503947324","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","04/09/2026","2026"],["FIAT/ARGO 1.0 FLEX (Alugado)","UAE5F10","FLAVIO AUGUSTO TREVIZOLO","","1503947332","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","04/09/2026","2026"],["FIAT/ARGO 1.0 FLEX (Alugado)","UAE5F12","MATHEUS DE SOUSA CRUZ","","1503947340","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","04/09/2026","2026"],["FIAT/ARGO 1.0 FLEX (Alugado)","UAE5F13","RACHEL STELLA ROCHA CAETANO","","1503947359","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","04/09/2026","2026"],["FIAT/ARGO 1.0 FLEX (Alugado)","UVM8J14","ELIANE GOMES DE SOUZA","","1509887390","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","04/09/2026","2026"],["FIAT/ARGO 1.0 FLEX (Alugado)","UVM8J17","BRUNA CAROLINE SILVA","","1509887463","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","10/09/2026",""],["FIAT/ARGO 1.0 FLEX (Alugado)","TZZ3J60","PATIO","","1502493001","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","","2026"],["FIAT/ARGO 1.0 FLEX (Alugado)","TZZ3J57","PATIO","","1502492960","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","","2026"],["FIAT/ARGO 1.0 FLEX (Alugado)","UVV7I62","PATIO","","1519078398","2026/2026","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","","2026"],["FIAT/FIORINO ENDURANCE","SGP1E32","GIVALDO FERNANDES","","1324344390","2022/2023","MERCHANDISING","COORDENADOR","BRANCA","FERRARI","DISDAL","04/11/2022",""],["FIAT/FIORINO ENDURANCE","UIZ0B25","PATIO","FÉRIAS","1489497371","2026/2026","MERCHANDISING","COORDENADOR","BRANCA","FERRARI","DISDAL","19/05/2026",""],["FIAT/FIORINO ENDURANCE","UJD3A97","EDUARDO HENRIQUE SILVA TEIXEIRA","","1506563128","2026/2027","MERCHANDISING","COORDENADOR","BRANCA","FERRARI","DISDAL","",""],["FIAT/FIORINO ENDURANCE","UJD3A80","SIMONE DA SILVA SANTOS","","1506562288","2026/2027","MERCHANDISING","COORDENADOR","BRANCA","FERRARI","DISDAL","",""],["FIAT/FIORINO ENDURANCE","UJD4G72","LUIZ FERNANDO SOUZA SANTANA","","","","","","","","","",""],["Kombi Furgão 1.4 Flex","AVU4773","NILVAN PEREIRA DO NASCIMENTO","","480484562","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","08/09/2022","2026"],["Kombi Furgão 1.4 Flex","AWN3981","RODRIGO HORNORIO CASSIANO","","509492290","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","","2026"],["Kombi Furgão 1.4 Flex","AWR7018","MARCIO VICENTE DA SILVA JUNIOR","","528520261","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","13/10/2022","2026"],["Kombi Furgão 1.4 Flex","AWR7022","OFICINA","FALTA ARRUAMR BANCO","528516485","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","","2026"],["Kombi Furgão 1.4 Flex","EQY4215","PATIO","","329686444","2011/2012","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","04/03/2024","2026"],["Kombi Furgão 1.4 Flex","EZC2997","ANGELO ZENOLY ALI FIGUEIREDO","","538956780","2013/2014","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","04/03/2024","2026"],["Kombi Furgão 1.4 Flex","FGC0279","EDSON ROCHA COELHO","FALTA ARRUAMR BANCO","529739569","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","12/07/2022","2026"],["Kombi Furgão 1.4 Flex","IVD2J92","PATIO","ANDRE","598570608","2013/2014","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","16/07/2022","2026"],["Kombi Furgão 1.4 Flex","JEH8392","OFICINA","ANDRE","505684551","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","20/01/2023","2026"],["Kombi Furgão 1.4 Flex","JEH8632","JARBAS GUTEMBERG DE SOUZA","","505778718","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","11/01/2023","2026"],["Kombi Furgão 1.4 Flex","JEH9282","OFICINA","IMAVAN LANTERNAGEM","505808820","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","12/09/2022","2026"],["Kombi Furgão 1.4 Flex","JEH9302","OFICINA","","505808730","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","22/08/2022","2026"],["Kombi Furgão 1.4 Flex","JEN3311","LUCAS BRAIAN DOS SANTOS RODRIGUES BISPO","","504371550","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","","2026"],["Kombi Furgão 1.4 Flex","JER0A17","OFICINA","","509413056","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","19/09/2022","2026"],["Kombi Furgão 1.4 Flex","JEU0130","PATIO","","509284469","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","","2026"],["Kombi Furgão 1.4 Flex","NDL9307","RYAN SANTOS PEREIRA DA SILVA","","589781936","2013/2014","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","26/09/2022",""],["Kombi Furgão 1.4 Flex","OHA8F85","ADENILSON LOPES DE SOUZA","","480018995","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","","2026"],["Kombi Furgão 1.4 Flex","OVQ9450","FERNANDO JULIO NOBREGA DA SILVA","MANDAR PARA OFICINA","597918210","2013/2014","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","21/05/2022",""],["I/NISSAN SENTRA EXC CVT","SGZ7E39","GUSTAVO PEREIRA ALVES","","1433877705","2025/2025","DIRETORIA COMERCIAL","DIRETOR","BRANCA","FERRARI","DISDAL","15/04/2025",""],["I/NISSAN SENTRA EXC CVT","SGZ6J52","CLAUDIONOR BATISTA DA SILVA JUNIOR","","1433700740","2025/2025","DIRETORIA OPERACIONAL","DIRETOR","BRANCA","FERRARI","DISDAL","15/04/2025",""],["RENAULT/MASTER 13M3 25DCI","EPG2G94","JOSE LUIZ RODRIGUES DA COSTA","","472055909","2012/2013","FLEX","VENDEDORES","BRANCA","FERRARI","DISDAL","26/01/2026",""],["RENAULT/MASTER 13M3 25DCI","JKF5A04","ISLEI JOSÉ TAVARES","","480323887","2012/2013","FLEX","VENDEDORES","PRATA","FERRARI","DISDAL","05/08/2022","2026"],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH1F85","","DEVOLVIDO","1324838741","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH6I96","","DEVOLVIDO","1325123118","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH8E23","","DEVOLVIDO","1325215519","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH9J20","","DEVOLVIDO","1325314320","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVI1B90","","DEVOLVIDO","1304930260","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","11/04/2024",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVI4B76","","DEVOLVIDO","1325428814","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","14/12/2022",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH1F90","","DEVOLVIDO","1324838814","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","-",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH6I97","DAVI SOARES DE LIMA","SERÁ RENOVADO","1325123126","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","-",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH1F88","","DEVOLVIDO","1324838784","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH1F89","","DEVOLVIDO","1324838806","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","26/11/2022",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH1F81","","DEVOLVIDO","1324838695","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH1F82","","DEVOLVIDO","1324838709","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH8E24","","DEVOLVIDO","1325215535","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","26/11/2022",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVH8E25","","DEVOLVIDO","1325215551","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","",""],["VW/GOL 1.0 FLEX 12V 5P (ALUGADO)","RVL5H60","","DEVOLVIDO","1326299767","2022/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","",""],["VW/GOL MPI (ALUGADO)","RVT5C82","PATIO","","1330441696","2023/2023","COMERCIAL","GERENTE","BRANCA","LETS","DISDAL","",""]],"afastamentos":[["DIONAI MARTINS DA CUNHA","FERIAS","",""],["CRISTIANO DOS SANTOS FERREIRA","FERIAS","14/10/2026",""]]};
 
@@ -656,7 +733,7 @@ function svgVeiculo(modelo, cor){
 }
 
 /* ---------------------------- estado ---------------------------- */
-let frota = [], afast = [], hist = [], canWrite = false, carregou = false;
+let frota = [], afast = [], hist = [], colabs = [], colabsErro = false, canWrite = false, carregou = false;
 const ativos = () => frota.filter(v => v.status !== 'Devolvido');
 let selModelo = null, selPlaca = null, flFiltro = '', vBuscaTxt = '';
 try{ selModelo = localStorage.getItem('frota_modelo') || '__geral'; selPlaca = localStorage.getItem('frota_placa'); }catch(e){ selModelo='__geral'; }
@@ -682,6 +759,10 @@ function calcAlertas(){
     if(v.condutor && fora.has(norm(v.condutor))){ const a=fora.get(norm(v.condutor)); add(v,'Atenção','Condutor afastado',`${a.motivo}${a.retorno?' até '+brData(a.retorno):''} · carro pode ser remanejado`); }
     if(!v.docAno) add(v,'Atenção','Licenciamento sem registro','Ano do documento vazio');
   });
+  const em30 = new Date(new Date(hoje).getTime()+30*864e5).toISOString().slice(0,10);
+  colabs.forEach(c => { if(!c.cnhVenc) return; const v = frota.find(x=>x.status!=='Devolvido' && norm(x.condutor)===norm(c.nome));
+    if(c.cnhVenc < hoje) out.push({placa:v?v.placa:'—', modelo:v?v.modelo:'—', condutor:c.nome, nivel:'Crítico', alerta:'CNH vencida', detalhe:`Venceu em ${brData(c.cnhVenc)}`});
+    else if(c.cnhVenc <= em30) out.push({placa:v?v.placa:'—', modelo:v?v.modelo:'—', condutor:c.nome, nivel:'Atenção', alerta:'CNH vence em breve', detalhe:`Vence em ${brData(c.cnhVenc)}`}); });
   afast.forEach(a => { if(a.retorno && a.retorno < hoje) out.push({placa:'—', modelo:'—', condutor:a.condutor, nivel:'Atenção', alerta:'Retorno vencido', detalhe:`${a.motivo} terminou em ${brData(a.retorno)} · encerrar ou atualizar`}); });
   return out.sort((a,b) => (a.nivel===b.nivel?0:a.nivel==='Crítico'?-1:1) || a.alerta.localeCompare(b.alerta) || a.placa.localeCompare(b.placa));
 }
@@ -819,10 +900,10 @@ function renderModelo(o){
               const rev = v.revisao==='Pendente' ? '<span class="badge aten">Pendente</span>' : v.revisao==='Feita' ? `<span class="muted">Feita${v.ultimaRevisao?' '+brData(v.ultimaRevisao):''}</span>` : '<span class="muted">—</span>';
               return `<tr class="${v.placa===selPlaca?'on':''}" data-placa="${esc(v.placa)}" tabindex="0" aria-selected="${v.placa===selPlaca}">
                 <td>${placaHTML(v.placa,true)}</td>
-                <td><div class="who">${avatar(v)}<span style="min-width:0"><b>${esc(nomeExibicao(v))}</b><small>${esc(v.funcao?titulo(v.funcao):'—')}</small></span></div></td>
+                <td>${canWrite && v.status!=='Devolvido' ? `<div class="who">${avatar(v)}<select class="cond-edit" data-cond="${esc(v.placa)}" aria-label="Condutor de ${esc(v.placa)}">${optsCondutor(v.condutor)}</select></div>` : `<div class="who">${avatar(v)}<span style="min-width:0"><b>${esc(nomeExibicao(v))}</b><small>${esc(v.funcao?titulo(v.funcao):'—')}</small></span></div>`}</td>
                 <td><span class="badge ${ST[v.status]}">${ST_LABEL[v.status]}</span>${mostra&&d!=null?`<div class="dias${d>=7?' alto':''}" style="margin-top:3px">há ${d} d</div>`:''}</td>
                 <td class="hide-sm">${esc(v.departamento)}</td><td class="hide-sm">${esc(v.ano||'—')}</td><td class="hide-sm">${lic}</td><td class="hide-sm">${rev}</td>
-                <td class="hide-sm"><div class="obs-cell" title="${esc(v.observacao)}">${esc(v.observacao)||'<span class="muted">—</span>'}</div></td></tr>`;
+                <td class="hide-sm">${canWrite ? `<textarea class="obs-edit" data-obs="${esc(v.placa)}" rows="2" aria-label="Observação de ${esc(v.placa)}" placeholder="Escreva uma observação…">${esc(v.observacao)}</textarea>` : `<div class="obs-cell" title="${esc(v.observacao)}">${esc(v.observacao)||'<span class="muted">—</span>'}</div>`}</td></tr>`;
             }).join('') : '<tr><td colspan="8" class="empty">Nenhum veículo deste modelo com esse filtro.</td></tr>'}</tbody>
           </table>
         </div>
@@ -853,7 +934,7 @@ function fichaHTML(v){
       <div><span>Retirada</span><b>${esc(v.retirada||'—')}</b></div>
       <div><span>RENAVAM</span><b>${esc(v.renavam||'—')}</b></div>
       <div><span>Unidade</span><b>${esc(v.unidade||'—')}</b></div>
-      <div class="full"><span>Observação</span><b>${esc(v.observacao||'—')}</b></div>
+      <div class="full"><span>Observação</span>${canWrite ? `<textarea class="obs-edit" data-obs="${esc(v.placa)}" rows="3" style="margin-top:5px;" aria-label="Observação de ${esc(v.placa)}" placeholder="Escreva uma observação…">${esc(v.observacao)}</textarea><small class="muted" style="font-size:11px;">Salva ao sair do campo.</small>` : `<b>${esc(v.observacao||'—')}</b>`}</div>
     </div>
     <div class="eyebrow" style="margin:16px 0 10px;">Alertas e histórico</div>
     ${alertasV.length || histV.length ? `<ul class="tl">
@@ -868,9 +949,10 @@ $('mBody').addEventListener('click', e => {
   const ed = e.target.closest('[data-edit]'); if(ed){ abrirEdicao(ed.dataset.edit); return; }
   const mc = e.target.closest('.mcard[data-mod]'); if(mc){ abrirModelo(mc.dataset.mod); return; }
   const f = e.target.closest('[data-f]'); if(f){ flFiltro=f.dataset.f; selPlaca=null; renderVeiculosModelo(); return; }
+  if(e.target.closest('select,textarea,input')) return;
   const tr = e.target.closest('tr[data-placa]'); if(tr){ selecionar(tr.dataset.placa); }
 });
-$('mBody').addEventListener('keydown', e => { const tr=e.target.closest('tr[data-placa]'); if(tr && (e.key==='Enter'||e.key===' ')){ e.preventDefault(); selecionar(tr.dataset.placa); } });
+$('mBody').addEventListener('keydown', e => { if(e.target.closest('select,textarea,input')) return; const tr=e.target.closest('tr[data-placa]'); if(tr && (e.key==='Enter'||e.key===' ')){ e.preventDefault(); selecionar(tr.dataset.placa); } });
 $('mBody').addEventListener('input', e => {
   if(e.target.id!=='vBusca') return;
   vBuscaTxt = e.target.value; const pos = e.target.selectionStart;
@@ -884,6 +966,141 @@ function selecionar(placa){
   try{ localStorage.setItem('frota_placa', placa); }catch(e){}
   if(window.innerWidth<=1180) $('vFicha').scrollIntoView({behavior:'smooth', block:'start'});
 }
+
+/* ---------------------------- condutores e observações editáveis ---------------------------- */
+function nomesCondutores(){
+  const m = new Map();
+  const add = n => { const k = norm(n); if(k && k!=='OFICINA' && k!=='PATIO' && !m.has(k)) m.set(k, String(n).trim().toUpperCase()); };
+  colabs.forEach(c=>add(c.nome)); frota.forEach(v=>{ add(v.condutor); add(v.condutorAnterior); }); afast.forEach(a=>add(a.condutor));
+  return [...m.values()].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+}
+function optsCondutor(atual){
+  const nomes = nomesCondutores(), cur = String(atual||'').trim().toUpperCase();
+  if(cur && !nomes.some(n=>norm(n)===norm(cur))) nomes.unshift(cur);
+  const ocupado = new Map(frota.filter(v=>v.status!=='Devolvido' && v.condutor).map(v=>[norm(v.condutor), v.placa]));
+  return `<option value="">— Sem condutor —</option>` + nomes.map(n => { const p = ocupado.get(norm(n)); const sel = norm(n)===norm(cur);
+    return `<option value="${esc(n)}"${sel?' selected':''}>${esc(titulo(n))}${p && !sel ? ` · ${esc(p)}` : ''}</option>`; }).join('');
+}
+async function salvarCondutor(placa, novo){
+  const v = frota.find(x=>x.placa===placa); if(!v || !canWrite) return;
+  novo = String(novo||'').trim().toUpperCase();
+  if(norm(novo)===norm(v.condutor)) return;
+  const hoje = hojeISO(), dados = {condutor:novo, atualizadoEm:serverTimestamp()};
+  if(!novo && v.status==='Em uso'){ dados.status='Pátio'; dados.statusDesde=hoje; }
+  if(novo && v.status==='Pátio'){ dados.status='Em uso'; dados.statusDesde=hoje; }
+  if(v.condutor) dados.condutorAnterior = v.condutor;
+  const outro = novo ? frota.find(x=>x.placa!==placa && x.status!=='Devolvido' && norm(x.condutor)===norm(novo)) : null;
+  try{
+    await updateDoc(doc(db,'frota',placa), dados);
+    await logHist('atualizado', placa, `Condutor: ${v.condutor?titulo(v.condutor):'—'} → ${novo?titulo(novo):'sem condutor'}${dados.status?` · situação: ${dados.status}`:''}`);
+    toast(outro ? `${titulo(novo)} agora está em ${placa} e também consta em ${outro.placa}.` : `${placa}: condutor atualizado.`);
+  }catch(err){ toast('Não foi possível salvar: '+(err.code||err.message)); renderVeiculosSeguro(true); }
+}
+async function salvarObs(placa, txt, el){
+  const v = frota.find(x=>x.placa===placa); if(!v || !canWrite) return;
+  txt = String(txt||'').trim(); if(txt===String(v.observacao||'').trim()) return;
+  try{
+    await updateDoc(doc(db,'frota',placa), {observacao:txt, atualizadoEm:serverTimestamp()});
+    await logHist('atualizado', placa, `Observação: ${txt||'(apagada)'}`);
+    if(el){ el.classList.add('salvo'); setTimeout(()=>el.classList.remove('salvo'), 1200); }
+    toast(`${placa}: observação salva.`);
+  }catch(err){ toast('Não foi possível salvar: '+(err.code||err.message)); }
+}
+$('mBody').addEventListener('change', e => {
+  const c = e.target.closest('select[data-cond]'); if(c){ salvarCondutor(c.dataset.cond, c.value); return; }
+  const o = e.target.closest('textarea[data-obs]'); if(o){ salvarObs(o.dataset.obs, o.value, o); }
+});
+// Não redesenha a tela enquanto alguém digita ou escolhe um condutor
+let renderPendente = false;
+const editandoInline = () => { const a=document.activeElement; return !!(a && a.closest && a.closest('#mBody') && a.matches('textarea,select')); };
+function renderVeiculosSeguro(forcar){
+  if(!forcar && editandoInline()){ renderPendente = true; return; }
+  renderPendente = false; renderVeiculosModelo();
+}
+$('mBody').addEventListener('focusout', () => setTimeout(() => { if(renderPendente && !editandoInline()) renderVeiculosSeguro(); }, 150));
+
+/* ---------------------------- cadastros ---------------------------- */
+let cadAba = 'colab';
+function renderCadastros(){
+  $('cadLocked').style.display = canWrite ? 'none' : '';
+  $('cadOpen').style.display = canWrite ? '' : 'none';
+  document.querySelectorAll('#cadTabs [data-cad]').forEach(b => b.classList.toggle('on', b.dataset.cad===cadAba));
+  $('cadColab').style.display = cadAba==='colab' ? '' : 'none';
+  $('cadVeic').style.display = cadAba==='veic' ? '' : 'none';
+  if(!canWrite) return;
+  // listas suspensas de condutor (formulário de veículo e modal de edição)
+  document.querySelectorAll('select.cond-sel').forEach(sel => { if(document.activeElement===sel) return; const v = sel.value; sel.innerHTML = optsCondutor(v); sel.value = v; });
+  $('dlTipos').innerHTML = [...new Set(frota.map(v=>v.tipo).filter(Boolean))].sort().map(t=>`<option value="${esc(t)}">`).join('');
+  const livres = frota.filter(v=>v.status==='Pátio').sort((a,b)=>a.modelo.localeCompare(b.modelo)||a.placa.localeCompare(b.placa));
+  if(document.activeElement!==$('c_veiculo')){ const cur=$('c_veiculo').value;
+    $('c_veiculo').innerHTML = `<option value="">Não entregar agora</option>` + livres.map(v=>`<option value="${esc(v.placa)}">${esc(v.placa)} · ${esc(v.modelo)} (no pátio)</option>`).join('');
+    $('c_veiculo').value = livres.some(v=>v.placa===cur) ? cur : ''; }
+  // lista de colaboradores
+  const q = norm($('colabBusca').value);
+  const veic = new Map(frota.filter(v=>v.status!=='Devolvido' && v.condutor).map(v=>[norm(v.condutor), v]));
+  const cad = new Map(colabs.map(c=>[norm(c.nome), c]));
+  const todos = nomesCondutores().map(n => ({nome:n, c:cad.get(norm(n)), v:veic.get(norm(n))})).filter(x => !q || norm(x.nome).includes(q));
+  $('colabCount').textContent = `${todos.length} nome${todos.length===1?'':'s'}`;
+  const hoje = hojeISO();
+  $('colabBody').innerHTML = todos.length ? todos.map(x => `<tr>
+      <td><b>${esc(titulo(x.nome))}</b> ${x.c?'<span class="colab-tag cad">cadastrado</span>':''}</td>
+      <td>${x.v?`<button type="button" class="link" data-ver="${esc(x.v.placa)}">${esc(x.v.placa)}</button> <span class="muted">· ${esc(x.v.modelo)}</span>`:'<span class="muted">sem veículo</span>'}</td>
+      <td class="hide-sm">${esc(x.c?.funcao ? titulo(x.c.funcao) : (x.v?.funcao ? titulo(x.v.funcao) : '—'))}</td>
+      <td class="hide-sm">${x.c?.cnhVenc ? `<span class="${x.c.cnhVenc<hoje?'venc':''}">${brData(x.c.cnhVenc)}</span>` : '<span class="muted">—</span>'}</td>
+      <td>${x.c && !x.v ? `<button type="button" class="btn-x" data-delcolab="${esc(x.c.id)}">Excluir</button>` : ''}</td></tr>`).join('')
+    : '<tr><td colspan="5" class="empty">Nenhum colaborador encontrado.</td></tr>';
+  $('colabNote').textContent = colabsErro ? 'A lista de colaboradores cadastrados não pôde ser lida. Publique as regras do Firestore atualizadas (arquivo firestore.rules).' : 'Inclui os condutores que já estão na frota. Só colaboradores cadastrados aqui e sem veículo podem ser excluídos.';
+}
+$('cadTabs').addEventListener('click', e => { const b=e.target.closest('[data-cad]'); if(!b) return; cadAba=b.dataset.cad; renderCadastros(); });
+$('cadIrEdicao').addEventListener('click', () => showView('edicao'));
+$('colabBusca').addEventListener('input', renderCadastros);
+$('btnColabSalvar').addEventListener('click', async () => {
+  if(!canWrite) return;
+  const nome = $('c_nome').value.trim().replace(/\s+/g,' ').toUpperCase();
+  if(nome.split(' ').length < 2){ $('colabMsg').textContent = 'Informe o nome completo (nome e sobrenome).'; return; }
+  if(nomesCondutores().some(n=>norm(n)===norm(nome))){ $('colabMsg').textContent = 'Esse nome já está na lista de condutores.'; return; }
+  const placa = $('c_veiculo').value;
+  const body = {nome, funcao:$('c_funcao').value.trim().toUpperCase(), departamento:$('c_departamento').value, matricula:$('c_matricula').value.trim(), cnhVenc:$('c_cnhVenc').value, observacao:$('c_obs').value.trim(), criadoEm:serverTimestamp()};
+  $('btnColabSalvar').disabled = true;
+  try{
+    await addDoc(colabRef, body);
+    await logHist('criado','—',`Colaborador cadastrado: ${titulo(nome)}${body.funcao?' ('+titulo(body.funcao)+')':''}`);
+    if(placa){ await salvarCondutor(placa, nome); }
+    ['c_nome','c_funcao','c_matricula','c_cnhVenc','c_obs'].forEach(id=>$(id).value=''); $('c_veiculo').value='';
+    $('colabMsg').textContent = ''; toast(`${titulo(nome)} cadastrado${placa?` e vinculado a ${placa}`:''}.`);
+  }catch(err){ $('colabMsg').textContent = String(err.code).includes('permission') ? 'Sem permissão para gravar colaboradores. Publique as regras do Firestore atualizadas (arquivo firestore.rules).' : 'Não foi possível salvar: '+(err.code||err.message); }
+  $('btnColabSalvar').disabled = false;
+});
+$('colabBody').addEventListener('click', async e => {
+  const b = e.target.closest('[data-delcolab]'); if(!b || !canWrite) return;
+  const c = colabs.find(x=>x.id===b.dataset.delcolab); if(!c) return;
+  if(!confirm(`Excluir ${titulo(c.nome)} da lista de colaboradores?`)) return;
+  try{ await deleteDoc(doc(db,'frota_colaboradores',c.id)); await logHist('excluido','—',`Colaborador excluído: ${titulo(c.nome)}`); toast('Colaborador excluído.'); }
+  catch(err){ toast('Erro: '+(err.code||err.message)); }
+});
+const N_CAMPOS = ['placa','tipo','condutor','status','departamento','funcao','proprietario','ano','renavam','cor','retirada','docAno','revisao','ultimaRevisao','km','observacao'];
+$('btnVeicSalvar').addEventListener('click', async () => {
+  if(!canWrite) return;
+  const d = {}; N_CAMPOS.forEach(c => d[c] = $('n_'+c).value.trim());
+  d.placa = norm(d.placa).replace(/[^A-Z0-9]/g,'');
+  if(!/^[A-Z0-9]{7}$/.test(d.placa)){ $('veicMsg').textContent='Placa inválida. Use 7 letras e números, ex: RER6F92.'; return; }
+  if(!d.tipo){ $('veicMsg').textContent='Informe o tipo de veículo (ex: I/FIAT SCUDO CARGO TD).'; return; }
+  if(frota.some(v=>v.placa===d.placa)){ $('veicMsg').textContent='Essa placa já está cadastrada.'; return; }
+  d.tipo = d.tipo.toUpperCase(); d.cor = d.cor.toUpperCase(); d.funcao = d.funcao.toUpperCase(); d.condutor = d.condutor.toUpperCase();
+  if(d.condutor && d.status==='Pátio') d.status='Em uso';
+  if(!d.condutor && d.status==='Em uso') d.status='Pátio';
+  d.docAno = d.docAno ? parseInt(d.docAno,10) : ''; d.km = d.km ? parseInt(d.km,10) : '';
+  d.modelo = modeloDe(d.tipo); d.unidade = 'DISDAL'; d.statusDesde = hojeISO();
+  $('btnVeicSalvar').disabled = true;
+  try{
+    await setDoc(doc(db,'frota',d.placa), {...d, atualizadoEm:serverTimestamp()});
+    await logHist('criado', d.placa, `${d.modelo} cadastrado (${d.status}${d.condutor?' · '+titulo(d.condutor):''})`);
+    N_CAMPOS.forEach(c => { const el=$('n_'+c); el.value = c==='status'?'Em uso':c==='revisao'?'Sem registro':c==='departamento'?'Vendedores':c==='proprietario'?'Própria':c==='cor'?'BRANCA':''; });
+    $('veicMsg').textContent=''; toast(`${d.placa} cadastrado em ${d.modelo}.`);
+    selModelo = d.modelo; selPlaca = d.placa; flFiltro=''; vBuscaTxt=''; showView('veiculos'); renderVeiculosSeguro(true);
+  }catch(err){ $('veicMsg').textContent='Não foi possível salvar: '+(err.code||err.message); }
+  $('btnVeicSalvar').disabled = false;
+});
 
 /* ---------------------------- alertas (tela) ---------------------------- */
 let alFiltro = 'Todos';
@@ -1001,6 +1218,7 @@ function abrirEdicao(placa){
   const v = placa ? frota.find(x=>x.placa===placa) : null;
   editando = v ? v.placa : null;
   $('emTitle').textContent = v ? `Editar ${v.placa}` : 'Cadastrar veículo';
+  $('e_condutor').innerHTML = optsCondutor(v?.condutor);
   CAMPOS.forEach(c => { const el=$('e_'+c); el.value = v ? (v[c] ?? '') : (c==='status'?'Em uso':c==='revisao'?'Sem registro':c==='departamento'?'Vendedores':c==='proprietario'?'Própria':''); });
   $('e_placa').readOnly = !!v; $('btnEmExcluir').style.display = v ? '' : 'none'; $('emMsg').textContent='';
   $('editModal').classList.add('on');
@@ -1009,7 +1227,7 @@ function fecharEdicao(){ $('editModal').classList.remove('on'); editando=null; }
 $('btnEmCancelar').addEventListener('click', fecharEdicao);
 $('editModal').addEventListener('click', e => { if(e.target.id==='editModal') fecharEdicao(); });
 document.addEventListener('keydown', e => { if(e.key==='Escape'){ fecharEdicao(); $('bulkModal').classList.remove('on'); } });
-$('btnNovo').addEventListener('click', () => abrirEdicao(null));
+$('btnNovo').addEventListener('click', () => { cadAba='veic'; showView('cadastros'); renderCadastros(); });
 $('btnEmSalvar').addEventListener('click', async () => {
   const d = {}; CAMPOS.forEach(c => d[c] = $('e_'+c).value.trim());
   d.placa = norm(d.placa).replace(/[^A-Z0-9]/g,'');
@@ -1107,12 +1325,12 @@ $('btnSeed').addEventListener('click', async () => {
 /* ---------------------------- render geral ---------------------------- */
 function renderAll(){
   const al = calcAlertas();
-  renderPainel(al); renderAlertas(al); renderVeiculosModelo(); renderCadastro(); renderAfast(); renderHist();
+  renderPainel(al); renderAlertas(al); renderVeiculosSeguro(); renderCadastro(); renderAfast(); renderHist(); renderCadastros();
   $('seedBox').style.display = (canWrite && carregou && !frota.length) ? '' : 'none';
 }
 
 /* ---------------------------- navegação ---------------------------- */
-const VIEWS = {painel:['viewPainel','Painel da frota'], veiculos:['viewVeiculos','Veículos por modelo'], alertas:['viewAlertas','Alertas'], cadastro:['viewCadastro','Cadastro completo'], afast:['viewAfast','Férias e afastamentos'], hist:['viewHist','Histórico de alterações'], edicao:['viewEdicao','Modo edição']};
+const VIEWS = {cadastros:['viewCadastros','Cadastros'], painel:['viewPainel','Painel da frota'], veiculos:['viewVeiculos','Veículos por modelo'], alertas:['viewAlertas','Alertas'], cadastro:['viewCadastro','Cadastro completo'], afast:['viewAfast','Férias e afastamentos'], hist:['viewHist','Histórico de alterações'], edicao:['viewEdicao','Modo edição']};
 function showView(v){
   if(!VIEWS[v]) v='painel';
   Object.entries(VIEWS).forEach(([k,[id]]) => $(id).style.display = k===v ? '' : 'none');
@@ -1153,8 +1371,9 @@ $('pinInput').addEventListener('keydown', e => { if(e.key==='Enter') entrar(); }
 function online(){ $('statusTxt').textContent='ao vivo'; $('statusTag').className='pill live'; }
 function falhou(err){ $('statusTxt').textContent='sem conexão'; $('statusTag').className='pill bad'; console.error(err); if(String(err.code).includes('permission')) toast('Sem permissão para ler a frota. Publique as regras do Firestore (arquivo firestore.rules).'); }
 onSnapshot(frotaRef, snap => { frota = snap.docs.map(d => ({placa:d.id, ...d.data()})).map(v => ({...v, modelo: v.modelo || modeloDe(v.tipo)})); carregou = true; online(); renderAll(); }, falhou);
+onSnapshot(colabRef, snap => { colabs = snap.docs.map(d => ({id:d.id, ...d.data()})); colabsErro=false; renderAll(); }, err => { colabsErro = true; console.warn('frota_colaboradores:', err.code||err); renderCadastros(); });
 onSnapshot(afRef, snap => { afast = snap.docs.map(d => ({id:d.id, ...d.data()})); renderAll(); }, falhou);
-onSnapshot(query(histRef, orderBy('quando','desc'), limit(200)), snap => { hist = snap.docs.map(d => d.data()); renderHist(); renderVeiculosModelo(); }, falhou);
+onSnapshot(query(histRef, orderBy('quando','desc'), limit(200)), snap => { hist = snap.docs.map(d => d.data()); renderHist(); renderVeiculosSeguro(); }, falhou);
 </script>
 </body>
 </html>
