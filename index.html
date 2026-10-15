@@ -329,6 +329,7 @@ th[aria-sort="ascending"]::after{content:" ▲"; font-size:9px;} th[aria-sort="d
 .in-sm{width:100%; min-width:96px; padding:6px 8px; border:1px solid var(--line); border-radius:8px; background:#fff; font-size:12.5px; color:var(--ink); font-variant-numeric:tabular-nums;}
 .in-sm:focus{outline:none; border-color:var(--blue); box-shadow:0 0 0 3px var(--blue-soft);}
 .in-sm.salvo{border-color:var(--green); box-shadow:0 0 0 3px var(--green-soft);}
+select[data-bcc="bancoMotorista"],select[data-bcc="bancoPassageiro"]{min-width:205px;} select[data-bcc="bancoStatus"]{min-width:128px;}
 .rv-big{display:flex; align-items:baseline; gap:6px; margin:6px 0 4px;}
 .rv-big b{font-size:24px; font-weight:800; font-variant-numeric:tabular-nums;} .rv-big span{color:var(--muted); font-size:12px; font-weight:600;}
 
@@ -422,6 +423,11 @@ th[aria-sort="ascending"]::after{content:" ▲"; font-size:9px;} th[aria-sort="d
 
   <!-- ===================== REVISÃO ===================== -->
   <section id="viewRevisao" class="view" style="display:none;">
+    <div class="fchips" id="rvTabs" role="tablist" style="margin-bottom:14px;">
+      <button type="button" class="fchip on" data-rvtab="km" role="tab">Revisão por KM</button>
+      <button type="button" class="fchip" data-rvtab="bancos" role="tab">Bancos das Kombis</button>
+    </div>
+    <div id="rvMain">
     <div class="box warn" id="impRevBox" style="display:none; margin-top:0;">
       <h4>Planilha de revisão pronta para importar</h4>
       <div class="note" style="margin-top:0;" id="impRevTxt"></div>
@@ -454,6 +460,39 @@ th[aria-sort="ascending"]::after{content:" ▲"; font-size:9px;} th[aria-sort="d
         <div class="note">Situação calculada: revisar quando passa do intervalo de KM do veículo (padrão 10.000 km), quando a última revisão tem mais de 12 meses ou quando está marcada como pendente. "Próxima" quando faltam 1.000 km ou menos.</div>
       </div>
       <div id="rvFicha"></div>
+    </div>
+    </div>
+    <div id="bcMain" style="display:none;">
+      <div class="box warn" id="impBcBox" style="display:none; margin-top:0;">
+        <h4>Relatório de bancos das Kombis pronto para importar</h4>
+        <div class="note" style="margin-top:0;" id="impBcTxt"></div>
+        <button class="btn btn-dark" id="btnImpBc" type="button" style="margin-top:10px;">Importar relatório de bancos</button>
+      </div>
+      <div class="kpis" id="bcKpis"></div>
+      <div class="cl-layout">
+        <div class="card">
+          <div class="card-h"><h3>Reforma de bancos</h3><span class="sub" id="bcCount"></span></div>
+          <div class="ftools">
+            <input id="bcBusca" type="search" placeholder="Buscar placa, condutor, serviço…" aria-label="Buscar veículo">
+            <select id="bcAdd" aria-label="Adicionar veículo à lista" style="display:none;"></select>
+          </div>
+          <div class="fchips" id="bcChips"></div>
+          <div class="tablewrap" style="max-height:calc(100vh - 360px); min-height:260px;">
+            <table class="tb vt">
+              <thead><tr id="bcHead">
+                <th class="sortable" data-k="placa">Placa</th>
+                <th class="sortable" data-k="bancoStatus">Andamento</th>
+                <th class="sortable" data-k="bancoMotorista">Banco do motorista</th>
+                <th class="sortable" data-k="bancoPassageiro">Banco do passageiro</th>
+                <th class="sortable hide-sm" data-k="bancoData">Data</th>
+                <th class="hide-sm">Observação</th>
+              </tr></thead>
+              <tbody id="bcBody"></tbody>
+            </table>
+          </div>
+        </div>
+        <div id="bcFicha"></div>
+      </div>
     </div>
   </section>
 
@@ -793,6 +832,8 @@ const SEED = {"veiculos":[["CITROEN JUMPY CARGO","GAZ2E95","OALAS DAMASCENO VIEI
 const BASE_COLAB = [{"nome":"ADAILTON DA SILVA VIANA","departamento":"Vendedores","supervisor":"Wogton Almeida","cnhVenc":"2027-10-18"},{"nome":"ADENILSON LOPES DE SOUZA","departamento":"Vendedores","supervisor":"Vanilson Moreira Pereira","cnhVenc":"2035-11-04"},{"nome":"ADRIANA MIRANDA DA ROCHA RODRIGUES","departamento":"Vendedores","supervisor":"","cnhVenc":"2036-01-24"},{"nome":"AMOS RODRIGUES DA SILVA","departamento":"Vendedores","supervisor":"Rubens","cnhVenc":"2032-10-17"},{"nome":"ANGELO ZENOLY ALI FIGUEIREDO","departamento":"Comercial","supervisor":"Rubens","cnhVenc":"2028-04-19"},{"nome":"ANTONIO ALVES DA MOTA FILHO","departamento":"Vendedores","supervisor":"Wogton Almeida","cnhVenc":"2033-02-28"},{"nome":"ANTONIO FRANCISCO DA SILVA CUNHA","departamento":"Vendedores","supervisor":"Vanilson Moreira Pereira","cnhVenc":"2031-10-22"},{"nome":"BRUCE MARTINS DA SILVA","departamento":"Vendedores","supervisor":"Wendel Wando","cnhVenc":"2033-01-26"},{"nome":"BRUNA CAROLINE SILVA","departamento":"Comercial","supervisor":"","cnhVenc":"2032-05-07"},{"nome":"CARLOS ELIAS ALVES","departamento":"Vendedores","supervisor":"Maicon Solivan","cnhVenc":""},{"nome":"CLAUDIONOR BATISTA DA SILVA JUNIOR","departamento":"Operacional","supervisor":"","cnhVenc":"2035-02-05"},{"nome":"CRISTIANO DOS SANTOS FERREIRA","departamento":"Merchandising","supervisor":"Lucas Ribeiro","cnhVenc":"2033-02-17"},{"nome":"DANIEL OLIVEIRA CAMPOS DOURADO","departamento":"Comercial","supervisor":"Maicon Solivan","cnhVenc":"2036-01-16"},{"nome":"DARLAN PEREIRA DE OLIVEIRA","departamento":"Comercial","supervisor":"Maicon Solivan","cnhVenc":"2032-02-15"},{"nome":"DAVI SOARES DE LIMA","departamento":"Comercial","supervisor":"Janaina Aparecida de Jesus Sousa","cnhVenc":"2034-05-09"},{"nome":"DAYANE DA SILVA AMORIM","departamento":"Vendedores","supervisor":"Romário Duarte","cnhVenc":"2032-08-10"},{"nome":"DIEGO FAGNER DA CONCEIÇÃO FREITAS","departamento":"Vendedores","supervisor":"Romário Duarte","cnhVenc":"2033-02-14"},{"nome":"DIEGO LEMOS DA SILVA","departamento":"Comercial","supervisor":"Romário Duarte","cnhVenc":"2034-07-12"},{"nome":"DIEGO RAMOS DA COSTA","departamento":"Vendedores","supervisor":"Wendel Wando","cnhVenc":"2033-05-19"},{"nome":"DIONAI MARTINS DA CUNHA","departamento":"Vendedores","supervisor":"Maicon Solivan","cnhVenc":""},{"nome":"DJALMA SANTOS DE SOUSA","departamento":"Vendedores","supervisor":"Vanilson Moreira Pereira","cnhVenc":""},{"nome":"DOUGLAS TELES DE LIMA","departamento":"Vendedores","supervisor":"Romário Duarte","cnhVenc":"2039-09-11"},{"nome":"EBSON COSTA OLIVEIRA","departamento":"Comercial","supervisor":"Janaina Aparecida de Jesus Sousa","cnhVenc":"2031-12-27"},{"nome":"EDSON ROCHA COELHO","departamento":"Vendedores","supervisor":"Maicon Solivan","cnhVenc":"2034-10-18"},{"nome":"EDUARDO HENRIQUE SILVA TEIXEIRA","departamento":"Merchandising","supervisor":"Lucas Ribeiro","cnhVenc":"2033-11-13"},{"nome":"ELIANE GOMES DE SOUZA","departamento":"Comercial","supervisor":"","cnhVenc":"2031-09-01"},{"nome":"ELIAS AMORIM ROSA","departamento":"Vendedores","supervisor":"Wogton Almeida","cnhVenc":"2028-05-17"},{"nome":"EULER JUNIOR FERREIRA DA SILVA","departamento":"Vendedores","supervisor":"Maicon Solivan","cnhVenc":"2025-08-28"},{"nome":"FABRICIO PAIVA DE MELO","departamento":"Merchandising","supervisor":"","cnhVenc":"2034-01-03"},{"nome":"FELIPE MARQUES ARAUJO","departamento":"Vendedores","supervisor":"Vanilson Moreira Pereira","cnhVenc":"2031-11-05"},{"nome":"FERNANDO JULIO NOBREGA DA SILVA","departamento":"Comercial","supervisor":"Rubens","cnhVenc":""},{"nome":"FLAVIO AUGUSTO TREVIZOLO","departamento":"Comercial","supervisor":"","cnhVenc":"2032-02-22"},{"nome":"FRANCISCO FLAVIO FERREIRA GOMES","departamento":"Merchandising","supervisor":"Lucas Ribeiro","cnhVenc":"2035-01-09"},{"nome":"FRANCISCO RODRIGUES RIBEIRO","departamento":"Vendedores","supervisor":"Vanilson Moreira Pereira","cnhVenc":"2034-09-05"},{"nome":"GABRIEL ANSELMO BATISTA FERREIRA DE FREITAS","departamento":"Comercial","supervisor":"Rubens","cnhVenc":"2033-12-16"},{"nome":"GABRIEL BRENER DA SILVA","departamento":"Vendedores","supervisor":"Maicon Solivan","cnhVenc":"2031-10-25"},{"nome":"GABRIEL WADREN FIGUEREDO PIRES","departamento":"Comercial","supervisor":"Thiago Viana","cnhVenc":"2027-07-23"},{"nome":"GEANY RODRIGUES DA SILVA","departamento":"Vendedores","supervisor":"","cnhVenc":"2032-07-28"},{"nome":"GILFERSON GIBEON LOPES DE SENA","departamento":"Vendedores","supervisor":"Wogton Almeida","cnhVenc":"2032-10-27"},{"nome":"GILSON LIMA DOS SANTOS","departamento":"Vendedores","supervisor":"Wogton Almeida","cnhVenc":"2031-05-07"},{"nome":"GIVALDO FERNANDES","departamento":"Merchandising","supervisor":"Lucas Ribeiro","cnhVenc":""},{"nome":"GUSTAVO CESARIO DAS NEVES","departamento":"Vendedores","supervisor":"","cnhVenc":"2033-04-19"},{"nome":"GUSTAVO PEREIRA ALVES","departamento":"Comercial","supervisor":"","cnhVenc":""},{"nome":"HEDENE REZENDE MORAIS","departamento":"Vendedores","supervisor":"Maicon Solivan","cnhVenc":"2025-11-14"},{"nome":"HERLY CHARLE MARTINS FONTINELE","departamento":"Vendedores","supervisor":"Wogton Almeida","cnhVenc":"2032-03-22"},{"nome":"ISLEI JOSÉ TAVARES","departamento":"Vendedores","supervisor":"Romário Duarte","cnhVenc":"2024-09-30"},{"nome":"JANAINA APARECIDA DE JESUS SOUSA","departamento":"Comercial","supervisor":"Romeu da Natividade","cnhVenc":"2032-08-22"},{"nome":"JARBAS GUTEMBERG DE SOUZA","departamento":"Vendedores","supervisor":"Romário Duarte","cnhVenc":"2032-02-08"},{"nome":"JEFERSON ABRANTES DA SILVA","departamento":"Vendedores","supervisor":"Maicon Solivan","cnhVenc":"2031-12-09"},{"nome":"JHENIS RODRIGUES DOS SANTOS","departamento":"Vendedores","supervisor":"Maicon Solivan","cnhVenc":"2026-03-17"},{"nome":"JHEYSSON GENESIO SOARES PANUNCIO","departamento":"Vendedores","supervisor":"","cnhVenc":"2033-11-11"},{"nome":"JOAO FABIANO GOMES FERREIRA","departamento":"Comercial","supervisor":"Romeu da Natividade","cnhVenc":"2032-06-22"},{"nome":"JOAO PEDRO DA SILVA GONÇALVES","departamento":"Vendedores","supervisor":"Romário Duarte","cnhVenc":"2026-01-11"},{"nome":"JOAO VICTOR RAMOS DE MOURA","departamento":"Vendedores","supervisor":"Wogton Almeida","cnhVenc":"2033-04-28"},{"nome":"JORGE ANTONIO MATOS NETO","departamento":"Vendedores","supervisor":"","cnhVenc":"2027-03-14"},{"nome":"JOSE CARLOS NEVES GONÇALVES","departamento":"Sem dado","supervisor":"Romeu da Natividade","cnhVenc":""},{"nome":"JOSE IVALDO DA CRUZ SILVA","departamento":"Comercial","supervisor":"Romeu da Natividade","cnhVenc":"2024-11-09"},{"nome":"JOSE LUIZ RODRIGUES DA COSTA","departamento":"Vendedores","supervisor":"Wogton Almeida","cnhVenc":"2023-12-11"},{"nome":"JOSE SOUZA ALVES JUNIOR","departamento":"Comercial","supervisor":"Goias","cnhVenc":"2036-12-13"},{"nome":"JULIO GLESSON TORRES ROCHA","departamento":"Comercial","supervisor":"","cnhVenc":"2031-04-13"},{"nome":"LILIAN CASTORINA PIGNATA DE MELO","departamento":"Comercial","supervisor":"Romeu da Natividade","cnhVenc":"2033-11-27"},{"nome":"LUCAS BRAIAN DOS SANTOS RODRIGUES BISPO","departamento":"Vendedores","supervisor":"Romário Duarte","cnhVenc":"2035-01-25"},{"nome":"LUCAS DA SILVA FAUSTINO","departamento":"Vendedores","supervisor":"","cnhVenc":"2035-02-27"},{"nome":"LUCAS DOS REIS","departamento":"Comercial","supervisor":"Romeu da Natividade","cnhVenc":""},{"nome":"LUCAS NERES MONCUETH","departamento":"Vendedores","supervisor":"Bruna Caroline","cnhVenc":""},{"nome":"LUCAS RIBEIRO ALVES PEREIRA","departamento":"Merchandising","supervisor":"","cnhVenc":""},{"nome":"LUCIANA FREITAS DA SILVA","departamento":"Merchandising","supervisor":"Lucas Ribeiro","cnhVenc":"2032-08-23"},{"nome":"LUIZ FERNANDO SOUZA SANTANA","departamento":"Merchandising","supervisor":"","cnhVenc":"2029-07-15"},{"nome":"MAICON SOLIVAN MORAES DE BARROS","departamento":"Vendedores","supervisor":"","cnhVenc":"2031-07-31","funcao":"SUPERVISOR"},{"nome":"MARCIO VICENTE DA SILVA JUNIOR","departamento":"Vendedores","supervisor":"Romário Duarte","cnhVenc":"2034-04-04"},{"nome":"MARCOS VINICIUS PEREIRA DE OLIVEIRA","departamento":"Comercial","supervisor":"Rubens","cnhVenc":"2033-01-21"},{"nome":"MATHEUS DE SOUSA CRUZ","departamento":"Comercial","supervisor":"José Ivaldo","cnhVenc":"2031-05-18"},{"nome":"MATHEUS MELO DE SOUSA","departamento":"Comercial","supervisor":"Maicon Solivan","cnhVenc":"2031-09-14"},{"nome":"MATHEUS ROBERTO PEREIRA DE OLIVEIRA","departamento":"Vendedores","supervisor":"","cnhVenc":"2033-10-28"},{"nome":"MAXUEL REGIS ALMEIDA","departamento":"Vendedores","supervisor":"Romário Duarte","cnhVenc":"2028-04-10"},{"nome":"MODESTO ROMAN ROSS JUNIOR","departamento":"Vendedores","supervisor":"","cnhVenc":"2033-02-26"},{"nome":"NILVAN PEREIRA DO NASCIMENTO","departamento":"Vendedores","supervisor":"Vanilson Moreira Pereira","cnhVenc":"2033-01-03"},{"nome":"OALAS DAMASCENO VIEIRA","departamento":"Vendedores","supervisor":"Wendel Wando","cnhVenc":""},{"nome":"PABLO WILLIAM CUSTODIO QUEIROZ - (MAX)","departamento":"Merchandising","supervisor":"","cnhVenc":"2033-03-08"},{"nome":"PAULO HENRIQUE GONÇALVES SABINO","departamento":"Vendedores","supervisor":"Maicon Solivan","cnhVenc":"2034-03-08"},{"nome":"PRISCILA PEREIRA CANDIDO","departamento":"Comercial","supervisor":"Janaina Aparecida de Jesus Sousa","cnhVenc":"2024-12-16"},{"nome":"RACHEL STELLA ROCHA CAETANO","departamento":"Comercial","supervisor":"Romeu da Natividade","cnhVenc":"2033-07-27"},{"nome":"RAFAEL BEZERRA DOS SANTOS","departamento":"Comercial","supervisor":"Gustavo","cnhVenc":"2031-10-26"},{"nome":"RAFAEL FRANCELINO DE QUEIROZ","departamento":"Comercial","supervisor":"Rubens","cnhVenc":"2034-12-04"},{"nome":"RAIANDERSON SOARES DA MATA","departamento":"Vendedores","supervisor":"Vanilson Moreira Pereira","cnhVenc":"2028-01-17"},{"nome":"RENATO FERNANDES SOUSA SILVA","departamento":"Vendedores","supervisor":"Janaina Aparecida de Jesus Sousa","cnhVenc":"2035-01-19"},{"nome":"RIEDE BATISTA LOBO","departamento":"Vendedores","supervisor":"Wogton Almeida","cnhVenc":"2035-05-24"},{"nome":"RODRIGO HORNORIO CASSIANO","departamento":"Comercial","supervisor":"Vanilson Moreira Pereira","cnhVenc":"2031-07-20"},{"nome":"ROMARIO DUARTE MARQUES","departamento":"Vendedores","supervisor":"","cnhVenc":"2024-08-26","funcao":"SUPERVISOR"},{"nome":"ROMEU ALVES DA NATIVIDADE","departamento":"Comercial","supervisor":"Gustavo","cnhVenc":""},{"nome":"RONALDO FABRIZIO COELHO DA SILVA","departamento":"Vendedores","supervisor":"Wendel Wando","cnhVenc":"2024-11-18"},{"nome":"RUBENS DA CRUZ GARCIA","departamento":"Comercial","supervisor":"Romeu da Natividade","cnhVenc":"2030-03-05"},{"nome":"RYAN SANTOS PEREIRA DA SILVA","departamento":"Vendedores","supervisor":"Wendel Wando","cnhVenc":"2033-03-28"},{"nome":"SERGIO HENRIQUE DE JESES ARAUJO","departamento":"Vendedores","supervisor":"Wendel Wando","cnhVenc":"2033-06-14"},{"nome":"SILVIO FERREIRA DOS SANTOS","departamento":"Comercial","supervisor":"Romeu da Natividade","cnhVenc":"2031-11-03"},{"nome":"SIMONE DA SILVA SANTOS","departamento":"Merchandising","supervisor":"Lucas Ribeiro","cnhVenc":""},{"nome":"THIAGO VIANA TORRES ALVES","departamento":"Vendedores","supervisor":"Wogton Almeida","cnhVenc":"2031-07-17"},{"nome":"TIAGO CARVALHO DE SENA","departamento":"Comercial","supervisor":"","cnhVenc":"2032-09-09"},{"nome":"VANILSON MOREIRA PEREIRA","departamento":"Vendedores","supervisor":"Romário Duarte","cnhVenc":""},{"nome":"VICTOR SECUNDO DIAS","departamento":"Vendedores","supervisor":"Romário Duarte","cnhVenc":"2026-03-05"},{"nome":"WALISSON DA SILVA MOURA","departamento":"Vendedores","supervisor":"Wendel Wando","cnhVenc":"2034-02-28"},{"nome":"WALLISON PEREIRA DIAS DE MESQUITA","departamento":"Vendedores","supervisor":"Julio Glesson","cnhVenc":"2032-08-01"},{"nome":"WALYSSON LUCIO TRISTAO","departamento":"Manutenção","supervisor":"Emerson Apolinario","cnhVenc":"2032-03-26"},{"nome":"WENDEL WANDO DO NASCIMENTO LOPES","departamento":"Comercial","supervisor":"Gustavo","cnhVenc":"2025-09-02"},{"nome":"WESCLEY CLAUDINO DE SOUSA","departamento":"Vendedores","supervisor":"Wendel Wando","cnhVenc":"2024-12-30"},{"nome":"WHAGNO MARTINS DOS SANTOS","departamento":"Comercial","supervisor":"Wogton Almeida","cnhVenc":"2034-03-02"},{"nome":"WILLIAM DA CRUZ","departamento":"Vendedores","supervisor":"Wogton Almeida","cnhVenc":"2032-08-16"},{"nome":"WILLIAM DE CARVALHO DIAS","departamento":"Vendedores","supervisor":"","cnhVenc":"2032-05-12"},{"nome":"WILLIAM DOS SANTOS SILVA","departamento":"Vendedores","supervisor":"","cnhVenc":"2034-07-05"},{"nome":"WOGTON ALMEIDA DOS SANTOS FILHO","departamento":"Comercial","supervisor":"Julio Glesson","cnhVenc":"2032-02-19"},{"nome":"WOSHINGTON BARCELOS FAGUNDES DE ARAUJO","departamento":"Vendedores","supervisor":"Romário Duarte","cnhVenc":"2032-05-13"},{"nome":"YGOR DINIZ DE CEIA","departamento":"Comercial","supervisor":"Romário Duarte","cnhVenc":"2035-09-04"}];
 // Planilha REVISÃO FROTAS (data e KM da última revisão, KM atual, situação e data de atualização do KM)
 const BASE_REV = [{"placa":"GAZ2E95","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"RUE1C31","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"RUE1C37","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"RUE1C14","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"RUE1C16","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"RUE1C11","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"RUE1C19","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"RUE1C35","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"RUE1C38","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"RTX1E69","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"RTW8H85","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"RTX1E59","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"RTX1E43","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"RUE1C04","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"OVO5A15","ultimaRevisao":"2026-09-29","kmUltimaRevisao":15000,"km":16183,"situacao":"OK","kmAtualizadoEm":"","agendamento":""},{"placa":"OVO5B39","ultimaRevisao":"2026-10-03","kmUltimaRevisao":20396,"km":20402,"situacao":"OK","kmAtualizadoEm":"2026-10-03","agendamento":""},{"placa":"OVO4J10","ultimaRevisao":"2026-09-11","kmUltimaRevisao":16788,"km":17845,"situacao":"OK","kmAtualizadoEm":"2026-10-03","agendamento":""},{"placa":"OVO4J22","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"OZX7G43","ultimaRevisao":"2026-09-29","kmUltimaRevisao":20300,"km":20840,"situacao":"OK","kmAtualizadoEm":"","agendamento":""},{"placa":"RER6F92","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"RER2H90","ultimaRevisao":"","kmUltimaRevisao":0,"km":16068,"situacao":"OK","kmAtualizadoEm":"","agendamento":""},{"placa":"RER2H98","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"RER6F94","ultimaRevisao":"","kmUltimaRevisao":0,"km":14847,"situacao":"OK","kmAtualizadoEm":"2026-10-03","agendamento":""},{"placa":"RER6F93","ultimaRevisao":"2026-09-20","kmUltimaRevisao":20000,"km":26500,"situacao":"OK","kmAtualizadoEm":"2026-10-02","agendamento":""},{"placa":"RER6F91","ultimaRevisao":"2026-09-26","kmUltimaRevisao":13000,"km":13710,"situacao":"OK","kmAtualizadoEm":"2026-10-02","agendamento":""},{"placa":"RER6F83","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"RER6F90","ultimaRevisao":"","kmUltimaRevisao":0,"km":12481,"situacao":"OK","kmAtualizadoEm":"","agendamento":""},{"placa":"RER6F89","ultimaRevisao":"2026-09-26","kmUltimaRevisao":20197,"km":20447,"situacao":"OK","kmAtualizadoEm":"2026-10-02","agendamento":""},{"placa":"RER6F87","ultimaRevisao":"2026-10-03","kmUltimaRevisao":16252,"km":16374,"situacao":"OK","kmAtualizadoEm":"2026-10-03","agendamento":""},{"placa":"GMF9F20","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"GMF9F29","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"SIP6E45","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"GMF9F27","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"TCH8J02","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"TCY8C71","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"TCY8C78","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"TZY0A05","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"TZZ3J55","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"TZZ3J58","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"TZZ3J59","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"TZZ3J61","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"TZZ3J62","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"UAE5F07","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"UAE5F09","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"UAE5F10","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"UAE5F12","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"UAE5F13","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"UVM8J14","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"UVM8J17","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"SGP1E32","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"UIZ0B25","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"UJD3A97","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"UJD3A80","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"UJD4G72","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"AVU4773","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"AWN3981","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"AWR7018","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"AWR7022","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"EQY4215","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"EZC2997","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"FGC0279","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"IVD2J92","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"JEH8392","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"JEH8632","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"JEH9282","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"JEH9302","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"JEN3311","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"JER0A17","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"JEU0130","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"NDL9307","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"OHA8F85","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"OVQ9450","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"SGZ7E39","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"SGZ6J52","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"EPG2G94","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"JKF5A04","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""},{"placa":"RVH6I97","ultimaRevisao":"","kmUltimaRevisao":"","km":"","situacao":"REVISÃO","kmAtualizadoEm":"","agendamento":""}];
+// Relatório BANCOS KOMBIS (serviço no banco do motorista e do passageiro)
+const BASE_BANCOS = [{"placa":"AVU4773","motorista":"Assento / reencapar","passageiro":"","obs":"Só motorista"},{"placa":"AWN3981","motorista":"Assento / reencapar","passageiro":"","obs":"Só motorista"},{"placa":"AWR7018","motorista":"Completo (encosto e assento)","passageiro":"","obs":"Só motorista"},{"placa":"AWR7022","motorista":"Assento / reencapar","passageiro":"","obs":"Só motorista"},{"placa":"EQY4215","motorista":"Completo (encosto e assento)","passageiro":"Completo (encosto e assento)","obs":"Completo"},{"placa":"EZC2997","motorista":"Assento / reencapar","passageiro":"","obs":"Só motorista"},{"placa":"FGC0279","motorista":"Assento / reencapar","passageiro":"","obs":"Só motorista"},{"placa":"IVD2J92","motorista":"Assento / reencapar","passageiro":"","obs":"Só motorista"},{"placa":"JEH8392","motorista":"Reencapar ou costurar","passageiro":"Reencapar ou costurar","obs":"Fora"},{"placa":"JEH8632","motorista":"Assento / reencapar","passageiro":"","obs":"Só motorista"},{"placa":"JEH9282","motorista":"Assento / reencapar","passageiro":"","obs":"Só motorista"},{"placa":"JEH9302","motorista":"Completo (encosto e assento)","passageiro":"","obs":"Só motorista"},{"placa":"JEN3311","motorista":"Completo (encosto e assento)","passageiro":"","obs":"Só motorista"},{"placa":"JER0A17","motorista":"Assento / reencapar","passageiro":"","obs":"Só motorista e olhar a estrutura do banco"},{"placa":"JEU0130","motorista":"Completo (encosto e assento)","passageiro":"Reencapar ou costurar","obs":"As duas"},{"placa":"NDL9307","motorista":"Costurar","passageiro":"Não precisa","obs":"Fora"},{"placa":"OHA8F85","motorista":"Assento","passageiro":"","obs":"Só motorista"},{"placa":"OVQ9450","motorista":"Completo (encosto e assento)","passageiro":"","obs":"Só motorista"}];
 
 /* ---------------------------- utilidades ---------------------------- */
 const $ = id => document.getElementById(id);
@@ -915,6 +956,7 @@ function calcAlertas(){
       if(ri.sit==='Revisar' && ri.motivo!=='pendente') add(v,'Crítico','Revisão vencida', ri.texto);
       else if(ri.sit==='Revisar') add(v,'Atenção','Revisão pendente', ri.texto);
       else if(ri.sit==='Próxima') add(v,'Atenção','Revisão próxima', ri.texto);
+      if(bancoPendente(v)) add(v,'Atenção','Banco a reformar', [v.bancoMotorista?'Motorista: '+v.bancoMotorista:'', v.bancoPassageiro&&v.bancoPassageiro!=='Não precisa'?'Passageiro: '+v.bancoPassageiro:''].filter(Boolean).join(' · '));
       if(v.statusAgendamento==='Agendado' && v.dataAgendamento && v.dataAgendamento < hoje) add(v,'Crítico','Agendamento atrasado',`Revisão agendada para ${brData(v.dataAgendamento)}`); }
     if(o.includes('BATIDA')) add(v,'Crítico','Batida sem orçamento',v.observacao);
     if(v.docAno && Number(v.docAno) < ANO_ATUAL) add(v,'Crítico','Licenciamento vencido','Documento de '+v.docAno);
@@ -1176,7 +1218,7 @@ $('mBody').addEventListener('change', e => {
 });
 // Não redesenha a tela enquanto alguém digita ou escolhe um condutor
 let renderPendente = false;
-const editandoInline = () => { const a=document.activeElement; return !!(a && a.closest && a.closest('#mBody, #rvBody, #rvFicha') && a.matches('textarea,select,input')); };
+const editandoInline = () => { const a=document.activeElement; return !!(a && a.closest && a.closest('#mBody, #rvBody, #rvFicha, #bcBody, #bcFicha') && a.matches('textarea,select,input')); };
 function renderVeiculosSeguro(forcar){
   if(!forcar && editandoInline()){ renderPendente = true; return; }
   renderPendente = false; renderVeiculosModelo();
@@ -1284,10 +1326,14 @@ function revInfo(v){
 }
 const SIT_CLASS = {'Revisar':'crit','Próxima':'aten','Em dia':'uso','Sem dados':'dev'};
 const SIT_ORD = {'Revisar':0,'Próxima':1,'Sem dados':2,'Em dia':3};
-let rvFiltro='', rvSel=null, rvSort={k:'sit', dir:1};
+let rvFiltro='', rvSel=null, rvSort={k:'sit', dir:1}, rvAba='km';
 const AGENDA = ['', 'Agendado', 'Em oficina', 'Concluído'];
-function renderRevisaoSeguro(forcar){ if(!forcar && editandoInline() && document.activeElement.closest('#rvBody, #rvFicha')){ renderPendente=true; return; } renderRevisao(); }
+function renderRevisaoSeguro(forcar){ if(!forcar && editandoInline() && document.activeElement.closest('#rvBody, #rvFicha, #bcBody, #bcFicha')){ renderPendente=true; return; } renderRevisao(); }
 function renderRevisao(){
+  document.querySelectorAll('#rvTabs [data-rvtab]').forEach(b=>{ const on=b.dataset.rvtab===rvAba; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
+  $('rvMain').style.display = rvAba==='km' ? '' : 'none';
+  $('bcMain').style.display = rvAba==='bancos' ? '' : 'none';
+  renderBancos();
   const base = frota.filter(v=>v.status!=='Devolvido');
   // importação
   const porPlaca = new Map(frota.map(v=>[v.placa, v]));
@@ -1417,6 +1463,131 @@ $('btnImpRev').addEventListener('click', async () => {
     toast(`${alvo.length} veículos atualizados com os dados de revisão.`);
   }catch(err){ toast('Erro ao importar: '+(err.code||err.message)); }
   $('btnImpRev').disabled = false;
+});
+
+/* ---------------------------- bancos das Kombis ---------------------------- */
+const SERV_BANCO = ['', 'Não precisa', 'Assento', 'Assento / reencapar', 'Reencapar ou costurar', 'Costurar', 'Completo (encosto e assento)'];
+const ANDAMENTO = ['Pendente', 'Orçamento', 'Agendado', 'Em execução', 'Concluído'];
+const AND_CLASS = {'Pendente':'crit','Orçamento':'aten','Agendado':'aten','Em execução':'patio','Concluído':'uso'};
+const precisa = s => s && s!=='Não precisa';
+const naLista = v => !!(v.bancoStatus || precisa(v.bancoMotorista) || precisa(v.bancoPassageiro));
+const bancoPendente = v => naLista(v) && v.bancoStatus!=='Concluído' && v.status!=='Devolvido';
+let bcFiltro='', bcSel=null, bcSort={k:'bancoStatus', dir:1};
+function renderBancos(){
+  const porPlaca = new Map(frota.map(v=>[v.placa, v]));
+  const pend = BASE_BANCOS.filter(b => porPlaca.has(b.placa) && !porPlaca.get(b.placa).bancoImportado);
+  $('impBcBox').style.display = (canWrite && carregou && pend.length) ? '' : 'none';
+  if(pend.length) $('impBcTxt').textContent = `${pend.length} Kombis no relatório: ${pend.filter(b=>!precisa(b.passageiro)).length} só com o banco do motorista e ${pend.filter(b=>precisa(b.passageiro)).length} com os dois bancos. Todas entram como "Pendente".`;
+  const lista = frota.filter(v=>v.status!=='Devolvido' && naLista(v));
+  const n = f => lista.filter(f).length;
+  const dois = v => precisa(v.bancoMotorista) && precisa(v.bancoPassageiro);
+  const andamento = v => ['Orçamento','Agendado','Em execução'].includes(v.bancoStatus);
+  $('bcKpis').innerHTML = [
+    ['Veículos na lista', lista.length, 'com reforma de banco', 'var(--blue)'],
+    ['Pendentes', n(v=>(v.bancoStatus||'Pendente')==='Pendente'), 'sem orçamento ou agendamento', 'var(--red)'],
+    ['Em andamento', n(andamento), 'orçamento, agendado ou em execução', 'var(--orange)'],
+    ['Concluídos', n(v=>v.bancoStatus==='Concluído'), 'reforma entregue', 'var(--green)'],
+    ['Só motorista', n(v=>precisa(v.bancoMotorista) && !precisa(v.bancoPassageiro)), 'um banco por veículo', 'var(--black)'],
+    ['Os dois bancos', n(dois), 'motorista e passageiro', 'var(--muted)'],
+  ].map(([t,q,p,c])=>`<div class="kpi" style="--c:${c}"><div class="t"><i></i>${t}</div><div class="n">${fmt(q)}</div><div class="p">${esc(p)}</div></div>`).join('');
+  const chips = [['','Todos',lista.length],['Pendente','Pendentes',n(v=>(v.bancoStatus||'Pendente')==='Pendente')],['andamento','Em andamento',n(andamento)],['Concluído','Concluídos',n(v=>v.bancoStatus==='Concluído')],['mot','Só motorista',n(v=>precisa(v.bancoMotorista)&&!precisa(v.bancoPassageiro))],['dois','Os dois bancos',n(dois)],['completo','Reforma completa',n(v=>/Completo/.test(v.bancoMotorista||'')||/Completo/.test(v.bancoPassageiro||''))]];
+  $('bcChips').innerHTML = chips.map(([f,l,q])=>`<button type="button" class="fchip${bcFiltro===f?' on':''}" data-bcf="${f}">${l} · ${q}</button>`).join('');
+  // adicionar veículo à lista (modo edição)
+  const fora = frota.filter(v=>v.status!=='Devolvido' && !naLista(v)).sort((a,b)=>a.modelo.localeCompare(b.modelo)||a.placa.localeCompare(b.placa));
+  $('bcAdd').style.display = canWrite ? '' : 'none';
+  if(canWrite && document.activeElement!==$('bcAdd')) $('bcAdd').innerHTML = `<option value="">+ Adicionar veículo à lista…</option>` + fora.map(v=>`<option value="${esc(v.placa)}">${esc(v.placa)} · ${esc(v.modelo)}</option>`).join('');
+  const q = norm($('bcBusca').value);
+  let rows = lista.filter(v => !q || norm([v.placa,v.condutor,v.modelo,v.bancoMotorista,v.bancoPassageiro,v.bancoObs].join(' ')).includes(q))
+    .filter(v => !bcFiltro || (bcFiltro==='Pendente' && (v.bancoStatus||'Pendente')==='Pendente') || v.bancoStatus===bcFiltro || (bcFiltro==='andamento'&&andamento(v)) || (bcFiltro==='mot'&&precisa(v.bancoMotorista)&&!precisa(v.bancoPassageiro)) || (bcFiltro==='dois'&&dois(v)) || (bcFiltro==='completo'&&(/Completo/.test(v.bancoMotorista||'')||/Completo/.test(v.bancoPassageiro||''))));
+  const {k, dir} = bcSort;
+  const val = v => k==='bancoStatus' ? ANDAMENTO.indexOf(v.bancoStatus||'Pendente') : k==='bancoMotorista'||k==='bancoPassageiro' ? SERV_BANCO.indexOf(v[k]||'') : (v[k]||'');
+  rows.sort((a,b)=>(val(a)>val(b)?1:val(a)<val(b)?-1:0)*dir || a.placa.localeCompare(b.placa));
+  document.querySelectorAll('#bcHead th.sortable').forEach(th=>th.setAttribute('aria-sort', th.dataset.k===k?(dir>0?'ascending':'descending'):'none'));
+  $('bcCount').textContent = `${rows.length} de ${lista.length}`;
+  if(!rows.find(v=>v.placa===bcSel)) bcSel = rows[0]?.placa || null;
+  const ed = canWrite;
+  const sel = (campo, v, opts, rot) => `<select class="in-sm" data-bcc="${campo}" data-p="${esc(v.placa)}" aria-label="${rot} de ${esc(v.placa)}">${opts.map(o=>`<option value="${esc(o)}"${(v[campo]||(campo==='bancoStatus'?'Pendente':''))===o?' selected':''}>${esc(o||'—')}</option>`).join('')}</select>`;
+  $('bcBody').innerHTML = rows.length ? rows.map(v => `<tr class="${v.placa===bcSel?'on':''}" data-bc="${esc(v.placa)}" tabindex="0">
+      <td>${placaHTML(v.placa,true)}<div class="muted" style="font-size:11px; margin-top:3px;">${esc(nomeExibicao(v))}</div></td>
+      <td>${ed?sel('bancoStatus',v,ANDAMENTO,'Andamento'):`<span class="badge ${AND_CLASS[v.bancoStatus||'Pendente']}">${esc(v.bancoStatus||'Pendente')}</span>`}</td>
+      <td>${ed?sel('bancoMotorista',v,SERV_BANCO,'Banco do motorista'):esc(v.bancoMotorista||'—')}</td>
+      <td>${ed?sel('bancoPassageiro',v,SERV_BANCO,'Banco do passageiro'):(v.bancoPassageiro?esc(v.bancoPassageiro):'<span class="muted">—</span>')}</td>
+      <td class="hide-sm">${ed?`<input type="date" class="in-sm" data-bcc="bancoData" data-p="${esc(v.placa)}" value="${esc(v.bancoData||'')}" aria-label="Data da reforma de ${esc(v.placa)}">`:(v.bancoData?brData(v.bancoData):'<span class="muted">—</span>')}</td>
+      <td class="hide-sm">${ed?`<textarea class="obs-edit" rows="2" data-bcc="bancoObs" data-p="${esc(v.placa)}" aria-label="Observação do banco de ${esc(v.placa)}" placeholder="Observação…">${esc(v.bancoObs||'')}</textarea>`:`<div class="obs-cell" title="${esc(v.bancoObs||'')}">${esc(v.bancoObs||'')||'<span class="muted">—</span>'}</div>`}</td></tr>`).join('')
+    : `<tr><td colspan="6" class="empty">${lista.length?'Nenhum veículo com esse filtro.':'Nenhum veículo com reforma de banco registrada.'}</td></tr>`;
+  $('bcFicha').innerHTML = fichaBanco(frota.find(v=>v.placa===bcSel));
+}
+function fichaBanco(v){
+  if(!v) return '<div class="card empty">Selecione um veículo.</div>';
+  const hv = hist.filter(h=>h.placa===v.placa && /banco/i.test(h.resumo||'')).slice(0,6);
+  const st = v.bancoStatus||'Pendente';
+  return `<div class="card ficha-card">
+    <div class="vh" style="margin-bottom:10px;"><div class="vh-who">${avatar(v)}<div style="min-width:0"><b>${esc(nomeExibicao(v))}</b><small>${esc(v.modelo)} · ${esc(v.status)}</small></div></div><span class="badge ${AND_CLASS[st]}">${esc(st)}</span></div>
+    <div class="cl-veic" style="margin-top:0;"><span class="th">${svgVeiculo(v.modelo, v.cor)}</span><span style="min-width:0">${placaHTML(v.placa)}<div class="muted" style="font-size:11.5px; margin-top:4px;">${esc(v.tipo)}</div></span></div>
+    <div class="ficha" style="margin-top:8px;">
+      <div class="full"><span>Banco do motorista</span><b>${esc(v.bancoMotorista||'—')}</b></div>
+      <div class="full"><span>Banco do passageiro</span><b>${esc(v.bancoPassageiro||'—')}</b></div>
+      <div><span>Andamento</span><b>${esc(st)}</b></div>
+      <div><span>Data</span><b>${v.bancoData?brData(v.bancoData):'—'}</b></div>
+      <div class="full"><span>Observação</span><b>${esc(v.bancoObs||'—')}</b></div>
+    </div>
+    ${canWrite && st!=='Concluído' ? `<button type="button" class="btn btn-dark" data-bcok="${esc(v.placa)}" style="width:100%; margin-top:14px;">Marcar reforma como concluída</button>` : ''}
+    ${canWrite ? `<button type="button" class="btn btn-line" data-bcdel="${esc(v.placa)}" style="width:100%; margin-top:8px;">Tirar da lista de bancos</button>` : ''}
+    <div class="eyebrow" style="margin:16px 0 10px;">Histórico do banco</div>
+    ${hv.length?`<ul class="tl">${hv.map(h=>{const dt=h.quando?.toDate?h.quando.toDate():null; return `<li><b>${esc(h.resumo)}</b><small>${dt?dt.toLocaleString('pt-BR'):''}</small></li>`;}).join('')}</ul>`:'<div class="muted" style="font-size:12.5px;">Nenhuma alteração registrada.</div>'}
+  </div>`;
+}
+const BC_ROT = {bancoStatus:'Banco · andamento', bancoMotorista:'Banco do motorista', bancoPassageiro:'Banco do passageiro', bancoData:'Banco · data', bancoObs:'Banco · observação'};
+async function salvarBanco(placa, campo, valor, el){
+  const v = frota.find(x=>x.placa===placa); if(!v || !canWrite) return;
+  valor = String(valor??'').trim();
+  const atual = campo==='bancoStatus' ? (v.bancoStatus||'Pendente') : String(v[campo]||'');
+  if(atual===valor) return;
+  const d = {[campo]:valor, atualizadoEm:serverTimestamp()};
+  if(campo==='bancoStatus' && valor==='Concluído' && !v.bancoData) d.bancoData = hojeISO();
+  try{
+    await updateDoc(doc(db,'frota',placa), d);
+    await logHist('atualizado', placa, `${BC_ROT[campo]}: ${campo==='bancoData'?(brData(atual)||'—'):(atual||'—')} → ${campo==='bancoData'?(brData(valor)||'—'):(valor||'—')}`);
+    if(el){ el.classList.add('salvo'); setTimeout(()=>el.classList.remove('salvo'), 1200); }
+    toast(`${placa}: ${BC_ROT[campo].toLowerCase()} salvo.`);
+  }catch(err){ toast('Não foi possível salvar: '+(err.code||err.message)); }
+}
+$('rvTabs').addEventListener('click', e=>{ const b=e.target.closest('[data-rvtab]'); if(!b) return; rvAba=b.dataset.rvtab; renderRevisao(); });
+$('bcBusca').addEventListener('input', renderBancos);
+$('bcChips').addEventListener('click', e=>{ const b=e.target.closest('[data-bcf]'); if(!b) return; bcFiltro=b.dataset.bcf; renderBancos(); });
+document.querySelectorAll('#bcHead th.sortable').forEach(th=>th.addEventListener('click',()=>{ const k=th.dataset.k; bcSort={k, dir: bcSort.k===k?-bcSort.dir:1}; renderBancos(); }));
+function selBanco(placa){ bcSel=placa; document.querySelectorAll('#bcBody tr').forEach(tr=>tr.classList.toggle('on', tr.dataset.bc===placa)); $('bcFicha').innerHTML = fichaBanco(frota.find(v=>v.placa===placa)); if(window.innerWidth<=1180) $('bcFicha').scrollIntoView({behavior:'smooth', block:'start'}); }
+$('bcBody').addEventListener('click', e=>{ if(e.target.closest('input,select,textarea')) return; const tr=e.target.closest('tr[data-bc]'); if(tr) selBanco(tr.dataset.bc); });
+$('bcBody').addEventListener('keydown', e=>{ if(e.target.closest('input,select,textarea')) return; const tr=e.target.closest('tr[data-bc]'); if(tr && (e.key==='Enter'||e.key===' ')){ e.preventDefault(); selBanco(tr.dataset.bc); } });
+$('bcBody').addEventListener('change', e=>{ const el=e.target.closest('[data-bcc]'); if(el) salvarBanco(el.dataset.p, el.dataset.bcc, el.value, el); });
+['bcBody','bcFicha'].forEach(id => $(id).addEventListener('focusout', () => setTimeout(() => { if(renderPendente && !editandoInline()){ renderPendente=false; renderVeiculosModelo(); renderRevisao(); } }, 150)));
+$('bcAdd').addEventListener('change', async e=>{
+  const placa = e.target.value; if(!placa || !canWrite) return;
+  try{ await updateDoc(doc(db,'frota',placa), {bancoStatus:'Pendente', atualizadoEm:serverTimestamp()}); await logHist('atualizado', placa, 'Banco · andamento: adicionado à lista (Pendente)'); bcSel=placa; toast(`${placa} adicionado à lista de bancos.`); }
+  catch(err){ toast('Não foi possível salvar: '+(err.code||err.message)); }
+  e.target.value='';
+});
+$('bcFicha').addEventListener('click', async e=>{
+  const ok = e.target.closest('[data-bcok]'), del = e.target.closest('[data-bcdel]');
+  if(ok){ salvarBanco(ok.dataset.bcok, 'bancoStatus', 'Concluído'); return; }
+  if(del && canWrite){ const p=del.dataset.bcdel; if(!confirm(`Tirar ${p} da lista de reforma de bancos?`)) return;
+    try{ await updateDoc(doc(db,'frota',p), {bancoStatus:'', bancoMotorista:'', bancoPassageiro:'', bancoData:'', bancoObs:'', atualizadoEm:serverTimestamp()}); await logHist('atualizado', p, 'Banco · retirado da lista de reforma'); toast(`${p} retirado da lista.`); }
+    catch(err){ toast('Não foi possível salvar: '+(err.code||err.message)); } }
+});
+$('btnImpBc').addEventListener('click', async () => {
+  if(!canWrite) return;
+  const porPlaca = new Map(frota.map(v=>[v.placa, v]));
+  const alvo = BASE_BANCOS.filter(b => porPlaca.has(b.placa) && !porPlaca.get(b.placa).bancoImportado);
+  if(!alvo.length){ toast('Nada novo para importar.'); return; }
+  $('btnImpBc').disabled = true;
+  try{
+    const bt = writeBatch(db);
+    alvo.forEach(b => bt.set(doc(db,'frota',b.placa), {bancoImportado:true, bancoMotorista:b.motorista, bancoPassageiro:b.passageiro, bancoObs:b.obs, bancoStatus:'Pendente', atualizadoEm:serverTimestamp()}, {merge:true}));
+    await bt.commit();
+    await logHist('importacao','—',`Relatório de bancos das Kombis: ${alvo.length} veículos (${alvo.filter(b=>precisa(b.passageiro)).length} com os dois bancos)`);
+    toast(`${alvo.length} Kombis importadas para a reforma de bancos.`);
+  }catch(err){ toast('Erro ao importar: '+(err.code||err.message)); }
+  $('btnImpBc').disabled = false;
 });
 
 /* ---------------------------- colaboradores ---------------------------- */
@@ -1808,7 +1979,7 @@ function montarNotificacoes(){
   calcAlertas().filter(a => PRAZOS.includes(a.alerta)).forEach(a => {
     if(a.alerta==='Na oficina'){ const v=frota.find(x=>x.placa===a.placa); const d=diasDesde(v?.statusDesde); if(d==null || d<7) return; }
     if(a.alerta==='Alugado parado no pátio'){ const v=frota.find(x=>x.placa===a.placa); const d=diasDesde(v?.statusDesde); if(d==null || d<3) return; }
-    const alvo = a.placa!=='—' && (a.alerta.startsWith('Revisão') || a.alerta==='Agendamento atrasado') ? {rev:a.placa} : a.placa!=='—' ? {placa:a.placa} : a.alerta.startsWith('CNH') ? {colab:a.condutor} : a.alerta==='Retorno vencido' ? {view:'afast'} : {view:'alertas'};
+    const alvo = a.alerta==='Banco a reformar' ? {banco:a.placa} : a.placa!=='—' && (a.alerta.startsWith('Revisão') || a.alerta==='Agendamento atrasado') ? {rev:a.placa} : a.placa!=='—' ? {placa:a.placa} : a.alerta.startsWith('CNH') ? {colab:a.condutor} : a.alerta==='Retorno vencido' ? {view:'afast'} : {view:'alertas'};
     out.push({id:`p|${a.alerta}|${a.placa}|${norm(a.condutor)}`, cat:'prazo', nivel:a.nivel, titulo:`${a.alerta}${a.placa!=='—'?' · '+a.placa:''}`, detalhe:[a.condutor?titulo(a.condutor):'', a.detalhe].filter(Boolean).join(' · '), quando:null, alvo});
   });
   // alterações e cadastros do histórico (últimos 30 dias)
@@ -1869,6 +2040,7 @@ $('notifLista').addEventListener('click', e => {
   renderNotificacoes();
 });
 function irPara(alvo){
+  if(alvo.banco){ rvAba='bancos'; bcFiltro=''; $('bcBusca').value=''; bcSel=alvo.banco; showView('revisao'); renderRevisao(); return; }
   if(alvo.rev){ rvFiltro=''; $('rvBusca').value=''; $('rvModelo').value=''; rvSel=alvo.rev; showView('revisao'); renderRevisao(); return; }
   if(alvo.placa){
     const v = frota.find(x=>x.placa===alvo.placa);
