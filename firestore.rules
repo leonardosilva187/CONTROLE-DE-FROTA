@@ -1,22 +1,34 @@
 // ============================================================
-// REGRAS DO FIRESTORE — Rastreamento de Cargas + Controle de Frota
-// Os dois painéis usam o mesmo projeto Firebase.
+// REGRAS DO FIRESTORE — Rastreamento de Cargas + Controle de Frota + Controle de CIOT
+// Os três painéis usam o mesmo projeto Firebase.
 // Console Firebase > Firestore Database > Regras > apagar tudo > colar > Publicar
 // ============================================================
 
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Rastreamento de Cargas (já existentes)
-    match /notas/{id}              { allow read: if true; allow write: if request.auth != null; }
-    match /historico/{id}          { allow read: if true; allow write: if request.auth != null; }
-    match /resumo_diario/{id}      { allow read: if true; allow write: if request.auth != null; }
+    // Rastreamento de Cargas
+    match /notas/{id}               { allow read: if true; allow write: if request.auth != null; }
+    match /historico/{id}           { allow read: if true; allow write: if request.auth != null; }
+    match /resumo_diario/{id}       { allow read: if true; allow write: if request.auth != null; }
 
-    // Controle de Frota (novas)
-    match /frota/{id}              { allow read: if true; allow write: if request.auth != null; }
-    match /frota_historico/{id}    { allow read: if true; allow write: if request.auth != null; }
-    match /frota_afastamentos/{id} { allow read: if true; allow write: if request.auth != null; }
+    // Controle de Frota
+    match /frota/{id}               { allow read: if true; allow write: if request.auth != null; }
+    match /frota_historico/{id}     { allow read: if true; allow write: if request.auth != null; }
+    match /frota_afastamentos/{id}  { allow read: if true; allow write: if request.auth != null; }
     match /frota_colaboradores/{id} { allow read: if true; allow write: if request.auth != null; }
     match /frota_checklists/{id}    { allow read: if true; allow write: if request.auth != null; }
+    // Controle de Frota — dados PRIVADOS dos colaboradores (CPF e nº da CNH): só os administradores
+    match /frota_sensiveis/{id}     { allow read, write: if ciotLiberado(); }
+
+    // Controle de CIOT — PRIVADO: só o(s) e-mail(s) da lista lê(em) e grava(m).
+    // Administradores com acesso (cada um precisa ter usuário em Authentication > Users).
+    function ciotLiberado() {
+      return request.auth != null
+        && request.auth.token.email in ['leonardools187@gmail.com', 'lucasjhones02@gmail.com'];
+    }
+    match /ciot_motoristas/{id}     { allow read, write: if ciotLiberado(); }
+    match /ciot_registros/{id}      { allow read, write: if ciotLiberado(); }
+    match /ciot_historico/{id}      { allow read, write: if ciotLiberado(); }
   }
 }
