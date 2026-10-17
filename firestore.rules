@@ -30,5 +30,10 @@ service cloud.firestore {
     match /ciot_motoristas/{id}     { allow read, write: if ciotLiberado(); }
     match /ciot_registros/{id}      { allow read, write: if ciotLiberado(); }
     match /ciot_historico/{id}      { allow read, write: if ciotLiberado(); }
+
+    // Controle de CIOT — ACESSO PÚBLICO (somente consulta): cópia sem CPF, CNPJ e telefone.
+    // Qualquer pessoa lê; só os administradores gravam (o painel atualiza sozinho).
+    match /ciot_pub_motoristas/{id} { allow read: if true; allow write: if ciotLiberado(); }
+    match /ciot_pub_registros/{id}  { allow read: if true; allow write: if ciotLiberado(); }
   }
 }
