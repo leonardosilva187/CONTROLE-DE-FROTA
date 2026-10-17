@@ -25,7 +25,7 @@ service cloud.firestore {
     // Administradores com acesso (cada um precisa ter usuário em Authentication > Users).
     function ciotLiberado() {
       return request.auth != null
-        && request.auth.token.email in ['leonardools187@gmail.com', 'lucasjhones02@gmail.com'];
+        && request.auth.token.email in ['leonardools187@gmail.com', 'lucasjhones02@gmail.com', 'ramonmatos28@gmail.com'];
     }
     match /ciot_motoristas/{id}     { allow read, write: if ciotLiberado(); }
     match /ciot_registros/{id}      { allow read, write: if ciotLiberado(); }
